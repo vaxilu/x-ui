@@ -68,7 +68,7 @@
                         <a-card hoverable>
                             xray 状态:
                             <a-tag :color="status.xray.color">[[ status.xray.state ]]</a-tag>
-                            <a-tooltip v-if="status.xray.stat === State.Error">
+                            <a-tooltip v-if="status.xray.state === State.Error">
                                 <template slot="title">
                                     <p v-for="line in status.xray.errorMsg.split('\n')">[[ line ]]</p>
                                 </template>
@@ -175,7 +175,6 @@
         </template>
     </a-modal>
 </a-layout>
-</body>
 {{template "js" .}}
 <script>
 
@@ -330,4 +329,5 @@
     });
 
 </script>
+</body>
 </html>

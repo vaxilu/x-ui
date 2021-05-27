@@ -3,6 +3,9 @@ package main
 import (
 	"github.com/op/go-logging"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 	"x-ui/config"
 	"x-ui/database"
 	"x-ui/logger"
@@ -30,9 +33,23 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server := web.NewServer()
-	err = server.Run()
-	if err != nil {
-		log.Println(err)
+	var server *web.Server
+
+	server = web.NewServer()
+	go server.Run()
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGHUP)
+	for {
+		sig := <-sigCh
+
+		if sig == syscall.SIGHUP {
+			server.Stop()
+			server = web.NewServer()
+			go server.Run()
+		} else {
+			return
+		}
 	}
+
 }

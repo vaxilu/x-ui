@@ -15,10 +15,14 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"runtime"
+	"strconv"
+	"time"
 	"x-ui/config"
 	"x-ui/logger"
 	"x-ui/util/common"
 	"x-ui/web/controller"
+	"x-ui/web/service"
 )
 
 //go:embed assets/*
@@ -38,22 +42,43 @@ func (f *wrapAssetsFS) Open(name string) (fs.File, error) {
 	return f.FS.Open("assets/" + name)
 }
 
+func stopServer(s *Server) {
+	s.Stop()
+}
+
 type Server struct {
+	*server
+}
+
+func NewServer() *Server {
+	s := &Server{newServer()}
+	runtime.SetFinalizer(s, stopServer)
+	return s
+}
+
+type server struct {
 	listener net.Listener
 
 	index  *controller.IndexController
 	server *controller.ServerController
 	xui    *controller.XUIController
 
+	xrayService    service.XrayService
+	settingService service.SettingService
+
 	ctx    context.Context
 	cancel context.CancelFunc
 }
 
-func NewServer() *Server {
-	return new(Server)
+func newServer() *server {
+	ctx, cancel := context.WithCancel(context.Background())
+	return &server{
+		ctx:    ctx,
+		cancel: cancel,
+	}
 }
 
-func (s *Server) initRouter() (*gin.Engine, error) {
+func (s *server) initRouter() (*gin.Engine, error) {
 	if config.IsDebug() {
 		gin.SetMode(gin.DebugMode)
 	} else {
@@ -64,9 +89,22 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 
 	engine := gin.Default()
 
-	store := cookie.NewStore(config.GetSecret())
+	secret, err := s.settingService.GetSecret()
+	if err != nil {
+		return nil, err
+	}
+
+	basePath, err := s.settingService.GetBasePath()
+	if err != nil {
+		return nil, err
+	}
+
+	store := cookie.NewStore(secret)
 	engine.Use(sessions.Sessions("session", store))
-	err := s.initI18n(engine)
+	engine.Use(func(c *gin.Context) {
+		c.Set("base_path", basePath)
+	})
+	err = s.initI18n(engine)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +112,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	if config.IsDebug() {
 		// for develop
 		engine.LoadHTMLGlob("web/html/**/*.html")
-		engine.StaticFS(config.GetBasePath()+"assets", http.FS(os.DirFS("web/assets")))
+		engine.StaticFS(basePath+"assets", http.FS(os.DirFS("web/assets")))
 	} else {
 		t := template.New("")
 		t, err = t.ParseFS(htmlFS, "html/**/*.html")
@@ -82,10 +120,10 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 			return nil, err
 		}
 		engine.SetHTMLTemplate(t)
-		engine.StaticFS(config.GetBasePath()+"assets", http.FS(&wrapAssetsFS{FS: assetsFS}))
+		engine.StaticFS(basePath+"assets", http.FS(&wrapAssetsFS{FS: assetsFS}))
 	}
 
-	g := engine.Group(config.GetBasePath())
+	g := engine.Group(basePath)
 
 	s.index = controller.NewIndexController(g)
 	s.server = controller.NewServerController(g)
@@ -94,7 +132,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	return engine, nil
 }
 
-func (s *Server) initI18n(engine *gin.Engine) error {
+func (s *server) initI18n(engine *gin.Engine) error {
 	bundle := i18n.NewBundle(language.SimplifiedChinese)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	err := fs.WalkDir(i18nFS, "translation", func(path string, d fs.DirEntry, err error) error {
@@ -163,18 +201,66 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 	return nil
 }
 
-func (s *Server) Run() error {
+func (s *server) startTask() {
+	go func() {
+		err := s.xrayService.StartXray()
+		if err != nil {
+			logger.Warning("start xray failed:", err)
+		}
+		ticker := time.NewTicker(time.Second * 30)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-s.ctx.Done():
+				return
+			case <-ticker.C:
+			}
+			if s.xrayService.IsXrayRunning() {
+				continue
+			}
+			err := s.xrayService.StartXray()
+			if err != nil {
+				logger.Warning("start xray failed:", err)
+			}
+		}
+	}()
+}
+
+func (s *server) Run() error {
 	engine, err := s.initRouter()
 	if err != nil {
 		return err
 	}
-	certFile := config.GetCertFile()
-	keyFile := config.GetKeyFile()
-	if certFile != "" || keyFile != "" {
-		logger.Info("web server run https on", config.GetListen())
-		return engine.RunTLS(config.GetListen(), certFile, keyFile)
-	} else {
-		logger.Info("web server run http on", config.GetListen())
-		return engine.Run(config.GetListen())
+
+	s.startTask()
+
+	certFile, err := s.settingService.GetCertFile()
+	if err != nil {
+		return err
 	}
+	keyFile, err := s.settingService.GetKeyFile()
+	if err != nil {
+		return err
+	}
+	listen, err := s.settingService.GetListen()
+	if err != nil {
+		return err
+	}
+	port, err := s.settingService.GetPort()
+	if err != nil {
+		return err
+	}
+	listenAddr := net.JoinHostPort(listen, strconv.Itoa(port))
+	if certFile != "" || keyFile != "" {
+		logger.Info("web server run https on", listenAddr)
+		return engine.RunTLS(listenAddr, certFile, keyFile)
+	} else {
+		logger.Info("web server run http on", listenAddr)
+		return engine.Run(listenAddr)
+	}
+}
+
+func (s *Server) Stop() error {
+	s.cancel()
+	return s.listener.Close()
 }

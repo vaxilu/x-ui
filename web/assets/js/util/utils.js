@@ -13,7 +13,7 @@ class HttpUtil {
         }
     }
 
-    static async _respToMsg(resp) {
+    static _respToMsg(resp) {
         const data = resp.data;
         if (data == null) {
             return new Msg(true);
@@ -227,6 +227,10 @@ class ObjectUtil {
         for (const key of Object.keys(src)) {
             if (!src.hasOwnProperty(key)) {
                 continue;
+            } else if (!dest.hasOwnProperty(key)) {
+                continue;
+            } else if (src[key] === undefined) {
+                continue;
             }
             if (ignoreEmpty) {
                 dest[key] = src[key];
@@ -257,6 +261,13 @@ class ObjectUtil {
         if (!this.isEmpty(func) && typeof func === 'function') {
             func(...args);
         }
+    }
+
+    static orDefault(obj, defaultValue) {
+        if (obj == null) {
+            return defaultValue;
+        }
+        return obj;
     }
 
 }

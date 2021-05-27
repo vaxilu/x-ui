@@ -51,7 +51,7 @@ func jsonMsgObj(c *gin.Context, msg string, obj interface{}, err error) {
 	} else {
 		m.Success = false
 		m.Msg = msg + "失败: " + err.Error()
-		logger.Warning(msg, err)
+		logger.Warning(msg+"失败: ", err)
 	}
 	c.JSON(http.StatusOK, m)
 }
@@ -76,7 +76,7 @@ func html(c *gin.Context, name string, title string, data gin.H) {
 	}
 	data["title"] = title
 	data["request_uri"] = c.Request.RequestURI
-	data["base_path"] = config.GetBasePath()
+	data["base_path"] = c.GetString("base_path")
 	c.HTML(http.StatusOK, name, getContext(data))
 }
 

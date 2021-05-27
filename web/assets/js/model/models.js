@@ -20,3 +20,27 @@ class Msg {
         }
     }
 }
+
+class DBInbound {
+    id = 0;
+    userId = 0;
+    up = 0;
+    down = 0;
+    remark = 0;
+    enable = false;
+    expiryTime = 0;
+    listen = "";
+    port = 0;
+    protocol = "";
+    settings = "";
+    streamSettings = "";
+    tag = "";
+    sniffing = "";
+
+    constructor(data) {
+        if (data == null) {
+            return;
+        }
+        ObjectUtil.cloneProps(this, data);
+    }
+}

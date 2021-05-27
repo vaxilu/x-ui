@@ -1,3 +1,4 @@
 .idea
 tmp
 bin/xray-darwin-arm64
+bin/config.json
