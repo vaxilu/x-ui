@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"strconv"
 	"strings"
+	"time"
 	"x-ui/database"
 	"x-ui/database/model"
 	"x-ui/logger"
@@ -109,4 +110,18 @@ func (s *SettingService) GetBasePath() (string, error) {
 		basePath += "/"
 	}
 	return basePath, nil
+}
+
+func (s *SettingService) GetTimeLocation() (*time.Location, error) {
+	defaultLocation := "Asia/Shanghai"
+	l, err := s.getString("time_location", defaultLocation)
+	if err != nil {
+		return nil, err
+	}
+	location, err := time.LoadLocation(l)
+	if err != nil {
+		logger.Errorf("location <%v> not exist, using default location: %v", l, defaultLocation)
+		return time.LoadLocation(defaultLocation)
+	}
+	return location, nil
 }

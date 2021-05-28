@@ -1,0 +1,45 @@
+{{define "form/tlsSettings"}}
+<!-- tls enable -->
+<a-form layout="inline" v-if="inbound.canSetTls()">
+    <a-form-item label="tls">
+        <a-switch v-model="inbound.tls">
+        </a-switch>
+    </a-form-item>
+    <a-form-item v-if="inbound.canEnableXTls()" label="xtls">
+        <a-switch v-model="inbound.xtls"></a-switch>
+    </a-form-item>
+</a-form>
+
+<!-- tls settings -->
+<a-form v-if="inbound.tls || inbound.xtls"
+        layout="inline">
+    <a-form-item label="域名">
+        <a-input v-model.trim="inbound.stream.tls.server"></a-input>
+    </a-form-item>
+    <a-form-item label="证书">
+        <a-radio-group v-model="inbound.stream.tls.certs[0].useFile"
+                       button-style="solid">
+            <a-radio-button :value="true">certificate file path</a-radio-button>
+            <a-radio-button :value="false">certificate file content</a-radio-button>
+        </a-radio-group>
+    </a-form-item>
+    <template v-if="inbound.stream.tls.certs[0].useFile">
+        <a-form-item label="公钥文件路径">
+            <a-input v-model.trim="inbound.stream.tls.certs[0].certFile"></a-input>
+        </a-form-item>
+        <a-form-item label="密钥文件路径">
+            <a-input v-model.trim="inbound.stream.tls.certs[0].keyFile"></a-input>
+        </a-form-item>
+    </template>
+    <template v-else>
+        <a-form-item label="公钥内容">
+            <a-input type="textarea" :rows="2"
+                     v-model="inbound.stream.tls.certs[0].cert"></a-input>
+        </a-form-item>
+        <a-form-item label="密钥内容">
+            <a-input type="textarea" :rows="2"
+                     v-model="inbound.stream.tls.certs[0].key"></a-input>
+        </a-form-item>
+    </template>
+</a-form>
+{{end}}

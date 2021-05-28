@@ -23,12 +23,6 @@
                 </transition>
                 <transition name="list" appear>
                     <a-card hoverable style="margin-bottom: 20px;">
-                        <div slot="title">
-                            <a-button type="primary" icon="plus" @click="openAddInbound"></a-button>
-                        </div>
-                        <a-row>
-                            <a-input v-model="searchKey" placeholder="search" autofocus></a-input>
-                        </a-row>
                         <a-row>
                             <a-col :xs="24" :sm="24" :lg="12">
                                 upload / download：
@@ -51,36 +45,37 @@
                 </transition>
                 <transition name="list" appear>
                     <a-card hoverable>
-                        <a-table :columns="columns" :row-key="inbound => inbound.id"
+                        <div slot="title">
+                            <a-button type="primary" icon="plus" @click="openAddInbound"></a-button>
+                        </div>
+                        <a-input v-model="searchKey" placeholder="search" autofocus style="max-width: 300px"></a-input>
+                        <a-table :columns="columns" :row-key="dbInbound => dbInbound.id"
                                  :data-source="dbInbounds"
                                  :loading="spinning" :scroll="{ x: 1500 }"
                                  :pagination="false"
+                                 style="margin-top: 20px"
                                  @change="() => getDBInbounds()">
-                            <template slot="protocol" slot-scope="text, inbound">
-                                <a-tag color="blue">[[ inbound.protocol ]]</a-tag>
+                            <template slot="protocol" slot-scope="text, dbInbound">
+                                <a-tag color="blue">[[ dbInbound.protocol ]]</a-tag>
                             </template>
-                            <template slot="settings" slot-scope="text, inbound">
+                            <template slot="settings" slot-scope="text, dbInbound">
                                 <a-button type="link">查看</a-button>
                             </template>
-                            <template slot="streamSettings" slot-scope="text, inbound">
+                            <template slot="streamSettings" slot-scope="text, dbInbound">
                                 <a-button type="link">查看</a-button>
                             </template>
-                            <template slot="enable" slot-scope="text, inbound">
-                                <a-tag v-if="inbound.enable" color="green">启用</a-tag>
+                            <template slot="enable" slot-scope="text, dbInbound">
+                                <a-tag v-if="dbInbound.enable" color="green">启用</a-tag>
                                 <a-tag v-else color="red">禁用</a-tag>
                             </template>
-                            <template slot="expiryTime" slot-scope="text, inbound">
-                                <span v-if="inbound.expiryTime > 0" color="red">[[ DateUtil.formatMillis(inbound.expiryTime) ]]</span>
+                            <template slot="expiryTime" slot-scope="text, dbInbound">
+                                <span v-if="dbInbound.expiryTime > 0" color="red">[[ DateUtil.formatMillis(dbInbound.expiryTime) ]]</span>
                                 <span v-else>无限期</span>
                             </template>
-                            <template slot="action" slot-scope="text, inbound">
-                                <a-button type="primary" icon="qrcode"></a-button>
-                                <a-button type="primary" icon="edit"></a-button>
-                                <a-button type="danger" icon="delete" @click="delInbound(inbound)"></a-button>
-                            </template>
-
-                            <template slot="expandedRowRender" slot-scope="inbound" style="margin: 0">
-                                [[ inbound.id ]]
+                            <template slot="action" slot-scope="text, dbInbound">
+                                <a-button v-if="dbInbound.hasLink()" type="primary" icon="qrcode" @click="showQrcode(dbInbound)"></a-button>
+                                <a-button type="primary" icon="edit" @click="openEditInbound(dbInbound)"></a-button>
+                                <a-button type="danger" icon="delete" @click="delInbound(dbInbound)"></a-button>
                             </template>
                         </a-table>
                     </a-card>
@@ -147,7 +142,6 @@
             loading(spinning=true) {
                 this.spinning = spinning;
             },
-            empDefault(o, defaultValue='') {return ObjectUtil.isEmpty(o) ? defaultValue : o},
             async getDBInbounds() {
                 this.loading();
                 const msg = await HttpUtil.post('/xui/inbounds');
@@ -179,59 +173,71 @@
                 inModal.show({
                     title: 'add account',
                     okText: 'add',
-                    confirm: async () => {
+                    confirm: async (inbound, dbInbound) => {
                         inModal.loading();
-                        await this.addInbound(inModal.inbound);
-                        inModal.closeLoading();
+                        await this.addInbound(inbound, dbInbound);
+                        inModal.close();
                     }
                 });
             },
-            openEditInbound(inbound) {
+            openEditInbound(dbInbound) {
+                const inbound = dbInbound.toInbound();
                 inModal.show({
                     title: 'update account',
                     okText: 'update',
                     inbound: inbound,
-                    confirm: async () => {
+                    dbInbound: dbInbound,
+                    confirm: async (inbound, dbInbound) => {
                         inModal.loading();
-                        inModal.inbound.id = inbound.id;
-                        await this.updateInbound(inModal.inbound);
-                        inModal.closeLoading();
+                        await this.updateInbound(inbound, dbInbound);
+                        inModal.close();
                     }
                 });
             },
-            async addInbound(inbound) {
-                let data = {
-                    port: inbound.port,
+            async addInbound(inbound, dbInbound) {
+                const data = {
+                    remark: dbInbound.remark,
+                    enable: dbInbound.enable,
+
                     listen: inbound.listen,
+                    port: inbound.port,
                     protocol: inbound.protocol,
-                    settings: inbound.settings.toString(false),
-                    stream_settings: inbound.stream.toString(false),
-                    sniffing: [Protocols.VMESS, Protocols.VLESS, Protocols.SHADOWSOCKS].indexOf(inbound.protocol) >= 0 ? inbound.sniffing.toString(false) : '{}',
-                    remark: inbound.remark,
+                    settings: inbound.settings.toString(),
+                    stream_settings: inbound.stream.toString(),
+                    sniffing: inbound.canSniffing() ? inbound.sniffing.toString() : '{}',
                 };
                 await this.submit('/xui/inbound/add', data, inModal);
             },
-            async updateInbound(inbound) {
+            async updateInbound(inbound, dbInbound) {
                 const data = {
-                    port: inbound.port,
+                    remark: dbInbound.remark,
+                    enable: dbInbound.enable,
+
                     listen: inbound.listen,
+                    port: inbound.port,
                     protocol: inbound.protocol,
-                    settings: inbound.settings.toString(false),
-                    stream_settings: inbound.stream.toString(false),
-                    sniffing: [Protocols.VMESS, Protocols.VLESS, Protocols.SHADOWSOCKS].indexOf(inbound.protocol) >= 0 ? inbound.sniffing.toString(false) : '{}',
-                    remark: inbound.remark,
-                    enable: inbound.enable,
+                    settings: inbound.settings.toString(),
+                    stream_settings: inbound.stream.toString(),
+                    sniffing: inbound.canSniffing() ? inbound.sniffing.toString() : '{}',
                 };
-                await this.submit(`/xui/inbound/update/${inbound.id}`, data, inModal);
+                await this.submit(`/xui/inbound/update/${dbInbound.id}`, data, inModal);
             },
-            delInbound(inbound) {
+            delInbound(dbInbound) {
                 this.$confirm({
                     title: 'delete account',
                     content: 'Cannot be restored after deletion, confirm deletion?',
                     okText: 'delete',
                     cancelText: 'cancel',
-                    onOk: () => this.submit('/xui/inbound/del/' + inbound.id),
+                    onOk: () => this.submit('/xui/inbound/del/' + dbInbound.id),
                 });
+            },
+            showQrcode(dbInbound) {
+                let address = location.hostname;
+                if (!ObjectUtil.isEmpty(dbInbound.listen) || dbInbound.listen !== "0.0.0.0") {
+                    address = dbInbound.listen;
+                }
+                const link = dbInbound.genLink(address);
+                qrModal.show('二维码', link);
             },
             resetTraffic(inbound) {
                 this.submit(`/xui/reset_traffic/${inbound.id}`);
@@ -244,14 +250,10 @@
                 this.submit(`/xui/inbound/update/${inbound.id}`, data);
             },
             async submit(url, data, modal) {
-                const msg = await HttpUtil.post(url, data);
+                const msg = await HttpUtil.postWithModal(url, data, modal);
                 if (msg.success) {
                     this.getDBInbounds();
-                    if (modal != null) {
-                        modal.close();
-                    }
                 }
-                return msg;
             },
         },
         watch: {

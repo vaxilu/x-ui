@@ -1,36 +1,16 @@
 package controller
 
 import (
-	"context"
 	"github.com/gin-gonic/gin"
-	"runtime"
 	"time"
+	"x-ui/web/global"
 	"x-ui/web/service"
 )
 
-func stopServerController(a *ServerController) {
-	a.stopTask()
-}
-
 type ServerController struct {
-	*serverController
-}
-
-func NewServerController(g *gin.RouterGroup) *ServerController {
-	a := &ServerController{
-		serverController: newServerController(g),
-	}
-	runtime.SetFinalizer(a, stopServerController)
-	return a
-}
-
-type serverController struct {
 	BaseController
 
 	serverService service.ServerService
-
-	ctx    context.Context
-	cancel context.CancelFunc
 
 	lastStatus        *service.Status
 	lastGetStatusTime time.Time
@@ -39,11 +19,8 @@ type serverController struct {
 	lastGetVersionsTime time.Time
 }
 
-func newServerController(g *gin.RouterGroup) *serverController {
-	ctx, cancel := context.WithCancel(context.Background())
-	a := &serverController{
-		ctx:               ctx,
-		cancel:            cancel,
+func NewServerController(g *gin.RouterGroup) *ServerController {
+	a := &ServerController{
 		lastGetStatusTime: time.Now(),
 	}
 	a.initRouter(g)
@@ -51,23 +28,28 @@ func newServerController(g *gin.RouterGroup) *serverController {
 	return a
 }
 
-func (a *serverController) initRouter(g *gin.RouterGroup) {
-	g.POST("/server/status", a.status)
-	g.POST("/server/getXrayVersion", a.getXrayVersion)
-	g.POST("/server/installXray/:version", a.installXray)
+func (a *ServerController) initRouter(g *gin.RouterGroup) {
+	g = g.Group("/server")
+
+	g.Use(a.checkLogin)
+	g.POST("/status", a.status)
+	g.POST("/getXrayVersion", a.getXrayVersion)
+	g.POST("/installXray/:version", a.installXray)
 }
 
-func (a *serverController) refreshStatus() {
+func (a *ServerController) refreshStatus() {
 	status := a.serverService.GetStatus(a.lastStatus)
 	a.lastStatus = status
 }
 
-func (a *serverController) startTask() {
+func (a *ServerController) startTask() {
+	webServer := global.GetWebServer()
+	ctx := webServer.GetCtx()
 	go func() {
 		for {
 			select {
-			case <-a.ctx.Done():
-				break
+			case <-ctx.Done():
+				return
 			default:
 			}
 			now := time.Now()
@@ -80,17 +62,13 @@ func (a *serverController) startTask() {
 	}()
 }
 
-func (a *serverController) stopTask() {
-	a.cancel()
-}
-
-func (a *serverController) status(c *gin.Context) {
+func (a *ServerController) status(c *gin.Context) {
 	a.lastGetStatusTime = time.Now()
 
 	jsonObj(c, a.lastStatus, nil)
 }
 
-func (a *serverController) getXrayVersion(c *gin.Context) {
+func (a *ServerController) getXrayVersion(c *gin.Context) {
 	now := time.Now()
 	if now.Sub(a.lastGetVersionsTime) <= time.Minute {
 		jsonObj(c, a.lastVersions, nil)
@@ -109,7 +87,7 @@ func (a *serverController) getXrayVersion(c *gin.Context) {
 	jsonObj(c, versions, nil)
 }
 
-func (a *serverController) installXray(c *gin.Context) {
+func (a *ServerController) installXray(c *gin.Context) {
 	version := c.Param("version")
 	err := a.serverService.UpdateXray(version)
 	jsonMsg(c, "安装 xray", err)

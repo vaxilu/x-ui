@@ -2,9 +2,12 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"go.uber.org/atomic"
 	"log"
 	"strconv"
 	"x-ui/database/model"
+	"x-ui/logger"
+	"x-ui/web/global"
 	"x-ui/web/service"
 	"x-ui/web/session"
 )
@@ -13,23 +16,43 @@ type XUIController struct {
 	BaseController
 
 	inboundService service.InboundService
+	xrayService    service.XrayService
+
+	isNeedXrayRestart atomic.Bool
 }
 
 func NewXUIController(g *gin.RouterGroup) *XUIController {
 	a := &XUIController{}
 	a.initRouter(g)
+	a.startTask()
 	return a
 }
 
 func (a *XUIController) initRouter(g *gin.RouterGroup) {
 	g = g.Group("/xui")
+	g.Use(a.checkLogin)
 
 	g.GET("/", a.index)
 	g.GET("/inbounds", a.inbounds)
-	g.POST("/inbounds", a.postInbounds)
+	g.POST("/inbounds", a.getInbounds)
 	g.POST("/inbound/add", a.addInbound)
 	g.POST("/inbound/del/:id", a.delInbound)
+	g.POST("/inbound/update/:id", a.updateInbound)
 	g.GET("/setting", a.setting)
+}
+
+func (a *XUIController) startTask() {
+	webServer := global.GetWebServer()
+	c := webServer.GetCron()
+	c.AddFunc("@every 10s", func() {
+		if a.isNeedXrayRestart.Load() {
+			err := a.xrayService.RestartXray()
+			if err != nil {
+				logger.Error("restart xray failed:", err)
+			}
+			a.isNeedXrayRestart.Store(false)
+		}
+	})
 }
 
 func (a *XUIController) index(c *gin.Context) {
@@ -44,7 +67,7 @@ func (a *XUIController) setting(c *gin.Context) {
 	html(c, "setting.html", "设置", nil)
 }
 
-func (a *XUIController) postInbounds(c *gin.Context) {
+func (a *XUIController) getInbounds(c *gin.Context) {
 	user := session.GetLoginUser(c)
 	inbounds, err := a.inboundService.GetInbounds(user.Id)
 	if err != nil {
@@ -67,6 +90,9 @@ func (a *XUIController) addInbound(c *gin.Context) {
 	log.Println(inbound)
 	err = a.inboundService.AddInbound(inbound)
 	jsonMsg(c, "添加", err)
+	if err == nil {
+		a.isNeedXrayRestart.Store(true)
+	}
 }
 
 func (a *XUIController) delInbound(c *gin.Context) {
@@ -77,4 +103,28 @@ func (a *XUIController) delInbound(c *gin.Context) {
 	}
 	err = a.inboundService.DelInbound(id)
 	jsonMsg(c, "删除", err)
+	if err == nil {
+		a.isNeedXrayRestart.Store(true)
+	}
+}
+
+func (a *XUIController) updateInbound(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		jsonMsg(c, "修改", err)
+		return
+	}
+	inbound := &model.Inbound{
+		Id: id,
+	}
+	err = c.ShouldBind(inbound)
+	if err != nil {
+		jsonMsg(c, "修改", err)
+		return
+	}
+	err = a.inboundService.UpdateInbound(inbound)
+	jsonMsg(c, "修改", err)
+	if err == nil {
+		a.isNeedXrayRestart.Store(true)
+	}
 }

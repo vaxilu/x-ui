@@ -2,12 +2,14 @@ package web
 
 import (
 	"context"
+	"crypto/tls"
 	"embed"
 	"github.com/BurntSushi/toml"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/robfig/cron/v3"
 	"golang.org/x/text/language"
 	"html/template"
 	"io"
@@ -15,9 +17,7 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"runtime"
 	"strconv"
-	"time"
 	"x-ui/config"
 	"x-ui/logger"
 	"x-ui/util/common"
@@ -42,21 +42,7 @@ func (f *wrapAssetsFS) Open(name string) (fs.File, error) {
 	return f.FS.Open("assets/" + name)
 }
 
-func stopServer(s *Server) {
-	s.Stop()
-}
-
 type Server struct {
-	*server
-}
-
-func NewServer() *Server {
-	s := &Server{newServer()}
-	runtime.SetFinalizer(s, stopServer)
-	return s
-}
-
-type server struct {
 	listener net.Listener
 
 	index  *controller.IndexController
@@ -66,19 +52,63 @@ type server struct {
 	xrayService    service.XrayService
 	settingService service.SettingService
 
+	cron *cron.Cron
+
 	ctx    context.Context
 	cancel context.CancelFunc
 }
 
-func newServer() *server {
+func NewServer() *Server {
 	ctx, cancel := context.WithCancel(context.Background())
-	return &server{
+	return &Server{
 		ctx:    ctx,
 		cancel: cancel,
 	}
 }
 
-func (s *server) initRouter() (*gin.Engine, error) {
+func (s *Server) getHtmlFiles() ([]string, error) {
+	files := make([]string, 0)
+	dir, _ := os.Getwd()
+	err := fs.WalkDir(os.DirFS(dir), "web/html", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		files = append(files, path)
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
+}
+
+func (s *Server) getHtmlTemplate(funcMap template.FuncMap) (*template.Template, error) {
+	t := template.New("").Funcs(funcMap)
+	err := fs.WalkDir(htmlFS, "html", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			newT, err := t.ParseFS(htmlFS, path+"/*.html")
+			if err != nil {
+				// ignore
+				return nil
+			}
+			t = newT
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return t, nil
+}
+
+func (s *Server) initRouter() (*gin.Engine, error) {
 	if config.IsDebug() {
 		gin.SetMode(gin.DebugMode)
 	} else {
@@ -111,11 +141,15 @@ func (s *server) initRouter() (*gin.Engine, error) {
 
 	if config.IsDebug() {
 		// for develop
-		engine.LoadHTMLGlob("web/html/**/*.html")
+		files, err := s.getHtmlFiles()
+		if err != nil {
+			return nil, err
+		}
+		engine.LoadHTMLFiles(files...)
 		engine.StaticFS(basePath+"assets", http.FS(os.DirFS("web/assets")))
 	} else {
-		t := template.New("")
-		t, err = t.ParseFS(htmlFS, "html/**/*.html")
+		// for prod
+		t, err := s.getHtmlTemplate(engine.FuncMap)
 		if err != nil {
 			return nil, err
 		}
@@ -132,7 +166,7 @@ func (s *server) initRouter() (*gin.Engine, error) {
 	return engine, nil
 }
 
-func (s *server) initI18n(engine *gin.Engine) error {
+func (s *Server) initI18n(engine *gin.Engine) error {
 	bundle := i18n.NewBundle(language.SimplifiedChinese)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	err := fs.WalkDir(i18nFS, "translation", func(path string, d fs.DirEntry, err error) error {
@@ -201,38 +235,40 @@ func (s *server) initI18n(engine *gin.Engine) error {
 	return nil
 }
 
-func (s *server) startTask() {
-	go func() {
+func (s *Server) startTask() {
+	err := s.xrayService.StartXray()
+	if err != nil {
+		logger.Warning("start xray failed:", err)
+	}
+	s.cron.AddFunc("@every 30s", func() {
+		if s.xrayService.IsXrayRunning() {
+			return
+		}
 		err := s.xrayService.StartXray()
 		if err != nil {
 			logger.Warning("start xray failed:", err)
 		}
-		ticker := time.NewTicker(time.Second * 30)
-		defer ticker.Stop()
-		for {
-			select {
-			case <-s.ctx.Done():
-				return
-			case <-ticker.C:
-			}
-			if s.xrayService.IsXrayRunning() {
-				continue
-			}
-			err := s.xrayService.StartXray()
-			if err != nil {
-				logger.Warning("start xray failed:", err)
-			}
-		}
-	}()
+	})
 }
 
-func (s *server) Run() error {
+func (s *Server) Start() (err error) {
+	defer func() {
+		if err != nil {
+			s.Stop()
+		}
+	}()
+
+	loc, err := s.settingService.GetTimeLocation()
+	if err != nil {
+		return err
+	}
+	s.cron = cron.New(cron.WithLocation(loc), cron.WithSeconds())
+	s.cron.Start()
+
 	engine, err := s.initRouter()
 	if err != nil {
 		return err
 	}
-
-	s.startTask()
 
 	certFile, err := s.settingService.GetCertFile()
 	if err != nil {
@@ -251,16 +287,51 @@ func (s *server) Run() error {
 		return err
 	}
 	listenAddr := net.JoinHostPort(listen, strconv.Itoa(port))
+	var listener net.Listener
 	if certFile != "" || keyFile != "" {
-		logger.Info("web server run https on", listenAddr)
-		return engine.RunTLS(listenAddr, certFile, keyFile)
+		cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+		if err != nil {
+			return err
+		}
+		c := &tls.Config{
+			Certificates: []tls.Certificate{cert},
+		}
+		listener, err = tls.Listen("tcp", listenAddr, c)
 	} else {
-		logger.Info("web server run http on", listenAddr)
-		return engine.Run(listenAddr)
+		listener, err = net.Listen("tcp", listenAddr)
 	}
+	if err != nil {
+		return err
+	}
+	if certFile != "" || keyFile != "" {
+		logger.Info("web server run https on", listener.Addr())
+	} else {
+		logger.Info("web server run http on", listener.Addr())
+	}
+	s.listener = listener
+
+	s.startTask()
+
+	go engine.RunListener(listener)
+
+	return nil
 }
 
 func (s *Server) Stop() error {
 	s.cancel()
-	return s.listener.Close()
+	if s.cron != nil {
+		s.cron.Stop()
+	}
+	if s.listener != nil {
+		return s.listener.Close()
+	}
+	return nil
+}
+
+func (s *Server) GetCtx() context.Context {
+	return s.ctx
+}
+
+func (s *Server) GetCron() *cron.Cron {
+	return s.cron
 }

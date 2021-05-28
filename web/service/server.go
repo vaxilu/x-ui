@@ -264,7 +264,12 @@ func (s *ServerService) UpdateXray(version string) error {
 	}
 
 	s.xrayService.StopXray()
-	defer s.xrayService.StartXray()
+	defer func() {
+		err := s.xrayService.StartXray()
+		if err != nil {
+			logger.Error("start xray failed:", err)
+		}
+	}()
 
 	copyZipFile := func(zipName string, fileName string) error {
 		zipFile, err := reader.Open(zipName)

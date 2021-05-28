@@ -374,6 +374,23 @@ class QuicStreamSettings extends XrayCommonClass {
     }
 }
 
+class GrpcStreamSettings extends XrayCommonClass {
+    constructor(serviceName="") {
+        super();
+        this.serviceName = serviceName;
+    }
+
+    static fromJson(json={}) {
+        return new GrpcStreamSettings(json.serviceName);
+    }
+
+    toJson() {
+        return {
+            serviceName: this.serviceName,
+        }
+    }
+}
+
 class TlsStreamSettings extends XrayCommonClass {
     constructor(serverName='',
                 certificates=[new TlsStreamSettings.Cert()]) {
@@ -459,30 +476,42 @@ class StreamSettings extends XrayCommonClass {
                 wsSettings=new WsStreamSettings(),
                 httpSettings=new HttpStreamSettings(),
                 quicSettings=new QuicStreamSettings(),
+                grpcSettings=new GrpcStreamSettings(),
                 ) {
         super();
         this.network = network;
-        if (security === "xtls") {
-            this.security = "tls";
-            this._is_xtls = true;
-        } else {
-            this.security = security;
-            this._is_xtls = false;
-        }
+        this.security = security;
         this.tls = tlsSettings;
         this.tcp = tcpSettings;
         this.kcp = kcpSettings;
         this.ws = wsSettings;
         this.http = httpSettings;
         this.quic = quicSettings;
+        this.grpc = grpcSettings;
     }
 
-    get is_xtls() {
-        return this.security === "tls" && this.network === "tcp" && this._is_xtls;
+    get isTls() {
+        return this.security === 'tls';
     }
 
-    set is_xtls(is_xtls) {
-        this._is_xtls = is_xtls;
+    set isTls(isTls) {
+        if (isTls) {
+            this.security = 'tls';
+        } else {
+            this.security = 'none';
+        }
+    }
+
+    get isXTls() {
+        return this.security === "xtls";
+    }
+
+    set isXTls(isXTls) {
+        if (isXTls) {
+            this.security = 'xtls';
+        } else {
+            this.security = 'none';
+        }
     }
 
     static fromJson(json={}) {
@@ -501,25 +530,23 @@ class StreamSettings extends XrayCommonClass {
             WsStreamSettings.fromJson(json.wsSettings),
             HttpStreamSettings.fromJson(json.httpSettings),
             QuicStreamSettings.fromJson(json.quicSettings),
+            GrpcStreamSettings.fromJson(json.grpcSettings),
         );
     }
 
     toJson() {
-        let network = this.network;
-        let security = this.security;
-        if (this.is_xtls) {
-            security = "xtls";
-        }
+        const network = this.network;
         return {
             network: network,
-            security: security,
-            tlsSettings: this.security === 'tls' && ['tcp', 'ws', 'http', 'quic'].indexOf(network) >= 0 && !this.is_xtls ? this.tls.toJson() : undefined,
-            xtlsSettings: this.is_xtls ? this.tls.toJson() : undefined,
+            security: this.security,
+            tlsSettings: this.isTls ? this.tls.toJson() : undefined,
+            xtlsSettings: this.isXTls ? this.tls.toJson() : undefined,
             tcpSettings: network === 'tcp' ? this.tcp.toJson() : undefined,
             kcpSettings: network === 'kcp' ? this.kcp.toJson() : undefined,
             wsSettings: network === 'ws' ? this.ws.toJson() : undefined,
             httpSettings: network === 'http' ? this.http.toJson() : undefined,
             quicSettings: network === 'quic' ? this.quic.toJson() : undefined,
+            grpcSettings: network === 'grpc' ? this.grpc.toJson() : undefined,
         };
     }
 }
@@ -547,40 +574,147 @@ class Sniffing extends XrayCommonClass {
 
 class Inbound extends XrayCommonClass {
     constructor(port=RandomUtil.randomIntRange(10000, 60000),
-                listen='0.0.0.0',
+                listen='',
                 protocol=Protocols.VMESS,
                 settings=null,
                 streamSettings=new StreamSettings(),
                 tag='',
                 sniffing=new Sniffing(),
-                remark='',
-                enable=true,
                 ) {
         super();
         this.port = port;
         this.listen = listen;
-        this.protocol = protocol;
+        this._protocol = protocol;
         this.settings = ObjectUtil.isEmpty(settings) ? Inbound.Settings.getSettings(protocol) : settings;
         this.stream = streamSettings;
         this.tag = tag;
         this.sniffing = sniffing;
-        this.remark = remark;
-        this.enable = enable;
+    }
+
+    get protocol() {
+        return this._protocol;
+    }
+
+    set protocol(protocol) {
+        this._protocol = protocol;
+        this.settings = Inbound.Settings.getSettings(protocol);
+        if (protocol === Protocols.TROJAN) {
+            this.tls = true;
+        }
+    }
+
+    get tls() {
+        return this.stream.security === 'tls';
+    }
+
+    set tls(isTls) {
+        if (isTls) {
+            this.stream.security = 'tls';
+        } else {
+            if (this.protocol === Protocols.TROJAN) {
+                this.xtls = true;
+            } else {
+                this.stream.security = 'none';
+            }
+        }
+    }
+
+    get xtls() {
+        return this.stream.security === 'xtls';
+    }
+
+    set xtls(isXTls) {
+        if (isXTls) {
+            this.stream.security = 'xtls';
+        } else {
+            if (this.protocol === Protocols.TROJAN) {
+                this.tls = true;
+            } else {
+                this.stream.security = 'none';
+            }
+        }
+    }
+
+    get network() {
+        return this.stream.network;
+    }
+
+    set network(network) {
+        this.stream.network = network;
+    }
+
+    canEnableTls() {
+        switch (this.protocol) {
+            case Protocols.VMESS:
+            case Protocols.VLESS:
+            case Protocols.TROJAN:
+            case Protocols.SHADOWSOCKS:
+                break;
+            default:
+                return false;
+        }
+
+        switch (this.network) {
+            case "tcp":
+            case "ws":
+            case "http":
+            case "quic":
+            case "grpc":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    canSetTls() {
+        return this.canEnableTls();
+    }
+
+    canEnableXTls() {
+        switch (this.protocol) {
+            case Protocols.VLESS:
+            case Protocols.TROJAN:
+                break;
+            default:
+                return false;
+        }
+        return this.network === "tcp";
+    }
+
+    canEnableStream() {
+        switch (this.protocol) {
+            case Protocols.VMESS:
+            case Protocols.VLESS:
+            case Protocols.SHADOWSOCKS:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    canSniffing() {
+        switch (this.protocol) {
+            case Protocols.VMESS:
+            case Protocols.VLESS:
+            case Protocols.TROJAN:
+            case Protocols.SHADOWSOCKS:
+                return true;
+            default:
+                return false;
+        }
     }
 
     reset() {
         this.port = RandomUtil.randomIntRange(10000, 60000);
-        this.listen = '0.0.0.0';
+        this.listen = '';
         this.protocol = Protocols.VMESS;
         this.settings = Inbound.Settings.getSettings(Protocols.VMESS);
         this.stream = new StreamSettings();
         this.tag = '';
         this.sniffing = new Sniffing();
-        this.remark = '';
-        this.enable = true;
     }
 
-    genVmessLink(address='') {
+    genVmessLink(address='', remark='') {
         if (this.protocol !== Protocols.VMESS) {
             return '';
         }
@@ -618,6 +752,8 @@ class Inbound extends XrayCommonClass {
             type = this.stream.quic.type;
             host = this.stream.quic.security;
             path = this.stream.quic.key;
+        } else if (network === 'grpc') {
+            path = this.stream.grpc.serviceName;
         }
 
         if (this.stream.security === 'tls') {
@@ -628,7 +764,7 @@ class Inbound extends XrayCommonClass {
 
         let obj = {
             v: '2',
-            ps: this.remark,
+            ps: remark,
             add: address,
             port: this.port,
             id: this.settings.vmesses[0].id,
@@ -642,14 +778,14 @@ class Inbound extends XrayCommonClass {
         return 'vmess://' + base64(JSON.stringify(obj, null, 2));
     }
 
-    genVLESSLink(address = '') {
+    genVLESSLink(address = '', remark='') {
         const settings = this.settings;
         const uuid = settings.vlesses[0].id;
         const port = this.port;
         const type = this.stream.network;
         const params = new Map();
         params.set("type", this.stream.network);
-        if (this.stream.is_xtls) {
+        if (this.isXTls) {
             params.set("security", "xtls");
         } else {
             params.set("security", this.stream.security);
@@ -692,6 +828,10 @@ class Inbound extends XrayCommonClass {
                 params.set("key", quic.key);
                 params.set("headerType", quic.type);
                 break;
+            case "grpc":
+                const grpc = this.stream.grpc;
+                params.set("serviceName", grpc.serviceName);
+                break;
         }
 
         if (this.stream.security === 'tls') {
@@ -701,7 +841,7 @@ class Inbound extends XrayCommonClass {
             }
         }
 
-        if (this.stream.is_xtls) {
+        if (this.isXTls) {
             params.set("flow", this.settings.vlesses[0].flow);
         }
 
@@ -722,31 +862,31 @@ class Inbound extends XrayCommonClass {
         for (const [key, value] of params) {
             url.searchParams.set(key, value)
         }
-        url.hash = encodeURIComponent(this.remark);
+        url.hash = encodeURIComponent(remark);
         return url.toString();
     }
 
-    genSSLink(address='') {
+    genSSLink(address='', remark='') {
         let settings = this.settings;
         const server = this.stream.tls.server;
         if (!ObjectUtil.isEmpty(server)) {
             address = server;
         }
         return 'ss://' + safeBase64(settings.method + ':' + settings.password + '@' + address + ':' + this.port)
-            + '#' + encodeURIComponent(this.remark);
+            + '#' + encodeURIComponent(remark);
     }
 
-    genTrojanLink(address='') {
+    genTrojanLink(address='', remark='') {
         let settings = this.settings;
-        return `trojan://${settings.clients[0].password}@${address}:${this.port}#${encodeURIComponent(this.remark)}`;
+        return `trojan://${settings.clients[0].password}@${address}:${this.port}#${encodeURIComponent(remark)}`;
     }
 
-    genLink(address='') {
+    genLink(address='', remark='') {
         switch (this.protocol) {
-            case Protocols.VMESS: return this.genVmessLink(address);
-            case Protocols.VLESS: return this.genVLESSLink(address);
-            case Protocols.SHADOWSOCKS: return this.genSSLink(address);
-            case Protocols.TROJAN: return this.genTrojanLink(address);
+            case Protocols.VMESS: return this.genVmessLink(address, remark);
+            case Protocols.VLESS: return this.genVLESSLink(address, remark);
+            case Protocols.SHADOWSOCKS: return this.genSSLink(address, remark);
+            case Protocols.TROJAN: return this.genTrojanLink(address, remark);
             default: return '';
         }
     }
@@ -760,17 +900,12 @@ class Inbound extends XrayCommonClass {
             StreamSettings.fromJson(json.streamSettings),
             json.tag,
             Sniffing.fromJson(json.sniffing),
-            json.remark,
-            json.enable,
         )
     }
 
     toJson() {
         let streamSettings;
-        if (this.protocol === Protocols.VMESS
-            || this.protocol === Protocols.VLESS
-            || this.protocol === Protocols.TROJAN
-            || this.protocol === Protocols.SHADOWSOCKS) {
+        if (this.canEnableStream() || this.protocol === Protocols.TROJAN) {
             streamSettings = this.stream.toJson();
         }
         return {
@@ -781,8 +916,6 @@ class Inbound extends XrayCommonClass {
             streamSettings: streamSettings,
             tag: this.tag,
             sniffing: this.sniffing.toJson(),
-            remark: this.remark,
-            enable: this.enable,
         };
     }
 }

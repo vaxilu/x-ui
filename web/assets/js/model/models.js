@@ -26,9 +26,10 @@ class DBInbound {
     userId = 0;
     up = 0;
     down = 0;
-    remark = 0;
-    enable = false;
+    remark = "";
+    enable = true;
     expiryTime = 0;
+
     listen = "";
     port = 0;
     protocol = "";
@@ -42,5 +43,49 @@ class DBInbound {
             return;
         }
         ObjectUtil.cloneProps(this, data);
+    }
+
+    toInbound() {
+        let settings = {};
+        if (!ObjectUtil.isEmpty(this.settings)) {
+            settings = JSON.parse(this.settings);
+        }
+
+        let streamSettings = {};
+        if (!ObjectUtil.isEmpty(this.streamSettings)) {
+            streamSettings = JSON.parse(this.streamSettings);
+        }
+
+        let sniffing = {};
+        if (!ObjectUtil.isEmpty(this.sniffing)) {
+            sniffing = JSON.parse(this.sniffing);
+        }
+        const config = {
+            port: this.port,
+            listen: this.listen,
+            protocol: this.protocol,
+            settings: settings,
+            streamSettings: streamSettings,
+            tag: this.tag,
+            sniffing: sniffing,
+        };
+        return Inbound.fromJson(config);
+    }
+
+    hasLink() {
+        switch (this.protocol) {
+            case Protocols.VMESS:
+            case Protocols.VLESS:
+            case Protocols.TROJAN:
+            case Protocols.SHADOWSOCKS:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    genLink(address="") {
+        const inbound = this.toInbound();
+        return inbound.genLink(address, this.remark);
     }
 }

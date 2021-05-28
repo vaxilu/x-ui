@@ -38,4 +38,9 @@ func IsLogin(c *gin.Context) bool {
 func ClearSession(c *gin.Context) {
 	s := sessions.Default(c)
 	s.Clear()
+	s.Options(sessions.Options{
+		Path:   "/",
+		MaxAge: -1,
+	})
+	s.Save()
 }
