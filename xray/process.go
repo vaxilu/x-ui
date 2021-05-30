@@ -3,17 +3,24 @@ package xray
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/Workiva/go-datastructures/queue"
+	statsservice "github.com/xtls/xray-core/app/stats/command"
+	"google.golang.org/grpc"
 	"io/fs"
 	"os"
 	"os/exec"
+	"regexp"
 	"runtime"
 	"strings"
+	"time"
 	"x-ui/util/common"
 )
+
+var trafficRegex = regexp.MustCompile("(inbound|outbound)>>>([^>]+)>>>traffic>>>(downlink|uplink)")
 
 func GetBinaryName() string {
 	return fmt.Sprintf("xray-%s-%s", runtime.GOOS, runtime.GOARCH)
@@ -53,6 +60,7 @@ type process struct {
 	cmd *exec.Cmd
 
 	version string
+	apiPort int
 
 	xrayConfig *Config
 	lines      *queue.Queue
@@ -94,6 +102,19 @@ func (p *process) GetResult() string {
 
 func (p *process) GetVersion() string {
 	return p.version
+}
+
+func (p *Process) GetAPIPort() int {
+	return p.apiPort
+}
+
+func (p *process) refreshAPIPort() {
+	for _, inbound := range p.xrayConfig.InboundConfigs {
+		if inbound.Tag == "api" {
+			p.apiPort = inbound.Port
+			break
+		}
+	}
 }
 
 func (p *process) refreshVersion() {
@@ -182,6 +203,7 @@ func (p *process) Start() error {
 	}()
 
 	p.refreshVersion()
+	p.refreshAPIPort()
 
 	return nil
 }
@@ -191,4 +213,53 @@ func (p *process) Stop() error {
 		return errors.New("xray is not running")
 	}
 	return p.cmd.Process.Kill()
+}
+
+func (p *process) GetTraffic(reset bool) ([]*Traffic, error) {
+	if p.apiPort == 0 {
+		return nil, common.NewError("xray api port wrong:", p.apiPort)
+	}
+	conn, err := grpc.Dial(fmt.Sprintf("127.0.0.1:%v", p.apiPort), grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := statsservice.NewStatsServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+	request := &statsservice.QueryStatsRequest{
+		Reset_: reset,
+	}
+	resp, err := client.QueryStats(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+	tagTrafficMap := map[string]*Traffic{}
+	traffics := make([]*Traffic, 0)
+	for _, stat := range resp.GetStat() {
+		matchs := trafficRegex.FindStringSubmatch(stat.Name)
+		isInbound := matchs[1] == "inbound"
+		tag := matchs[2]
+		isDown := matchs[3] == "downlink"
+		if tag == "api" {
+			continue
+		}
+		traffic, ok := tagTrafficMap[tag]
+		if !ok {
+			traffic = &Traffic{
+				IsInbound: isInbound,
+				Tag:       tag,
+			}
+			tagTrafficMap[tag] = traffic
+			traffics = append(traffics, traffic)
+		}
+		if isDown {
+			traffic.Down = stat.Value
+		} else {
+			traffic.Up = stat.Value
+		}
+	}
+
+	return traffics, nil
 }

@@ -3,11 +3,12 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"x-ui/util/common"
+	"sync"
 	"x-ui/xray"
 )
 
 var p *xray.Process
+var lock sync.Mutex
 var result string
 
 type XrayService struct {
@@ -64,15 +65,27 @@ func (s *XrayService) GetXrayConfig() (*xray.Config, error) {
 		return nil, err
 	}
 	for _, inbound := range inbounds {
+		if !inbound.Enable {
+			continue
+		}
 		inboundConfig := inbound.GenXrayInboundConfig()
 		xrayConfig.InboundConfigs = append(xrayConfig.InboundConfigs, *inboundConfig)
 	}
 	return xrayConfig, nil
 }
 
-func (s *XrayService) StartXray() error {
-	if s.IsXrayRunning() {
-		return nil
+func (s *XrayService) GetXrayTraffic() ([]*xray.Traffic, error) {
+	if !s.IsXrayRunning() {
+		return nil, errors.New("xray is not running")
+	}
+	return p.GetTraffic(true)
+}
+
+func (s *XrayService) RestartXray() error {
+	lock.Lock()
+	defer lock.Unlock()
+	if p != nil {
+		p.Stop()
 	}
 
 	xrayConfig, err := s.GetXrayConfig()
@@ -81,20 +94,15 @@ func (s *XrayService) StartXray() error {
 	}
 
 	p = xray.NewProcess(xrayConfig)
-	err = p.Start()
 	result = ""
-	return err
+	return p.Start()
 }
 
 func (s *XrayService) StopXray() error {
+	lock.Lock()
+	defer lock.Unlock()
 	if s.IsXrayRunning() {
 		return p.Stop()
 	}
 	return errors.New("xray is not running")
-}
-
-func (s *XrayService) RestartXray() error {
-	err1 := s.StopXray()
-	err2 := s.StartXray()
-	return common.Combine(err1, err2)
 }

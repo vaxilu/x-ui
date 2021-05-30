@@ -43,7 +43,7 @@ type Inbound struct {
 
 func (i *Inbound) GenXrayInboundConfig() *xray.InboundConfig {
 	return &xray.InboundConfig{
-		Listen:         i.Listen,
+		Listen:         json.RawMessage(i.Listen),
 		Port:           i.Port,
 		Protocol:       string(i.Protocol),
 		Settings:       json.RawMessage(i.Settings),

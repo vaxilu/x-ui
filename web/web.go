@@ -18,8 +18,10 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 	"x-ui/config"
 	"x-ui/logger"
+	"x-ui/util"
 	"x-ui/util/common"
 	"x-ui/web/controller"
 	"x-ui/web/service"
@@ -51,6 +53,7 @@ type Server struct {
 
 	xrayService    service.XrayService
 	settingService service.SettingService
+	inboundService service.InboundService
 
 	cron *cron.Cron
 
@@ -236,19 +239,43 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 }
 
 func (s *Server) startTask() {
-	err := s.xrayService.StartXray()
+	err := s.xrayService.RestartXray()
 	if err != nil {
 		logger.Warning("start xray failed:", err)
 	}
+	var checkTime = 0
 	s.cron.AddFunc("@every 30s", func() {
 		if s.xrayService.IsXrayRunning() {
+			checkTime = 0
 			return
 		}
-		err := s.xrayService.StartXray()
+		checkTime++
+		if checkTime < 2 {
+			return
+		}
+		err := s.xrayService.RestartXray()
 		if err != nil {
 			logger.Warning("start xray failed:", err)
 		}
 	})
+	go func() {
+		time.Sleep(time.Second * 5)
+		// 与重启 xray 的时间错开
+		s.cron.AddFunc("@every 10s", func() {
+			if !s.xrayService.IsXrayRunning() {
+				return
+			}
+			traffics, err := s.xrayService.GetXrayTraffic()
+			if err != nil {
+				logger.Warning("get xray traffic failed:", err)
+				return
+			}
+			err = s.inboundService.AddTraffic(traffics)
+			if err != nil {
+				logger.Warning("add traffic failed:", err)
+			}
+		})
+	}()
 }
 
 func (s *Server) Start() (err error) {
@@ -318,6 +345,10 @@ func (s *Server) Start() (err error) {
 }
 
 func (s *Server) Stop() error {
+	if util.IsDone(s.ctx) {
+		// 防止 gc 后调用第二次 Stop
+		s.xrayService.StopXray()
+	}
 	s.cancel()
 	if s.cron != nil {
 		s.cron.Stop()

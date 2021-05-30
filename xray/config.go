@@ -1,6 +1,9 @@
 package xray
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"x-ui/util/json_util"
+)
 
 type Config struct {
 	LogConfig       json.RawMessage `json:"log"`
@@ -14,4 +17,8 @@ type Config struct {
 	Stats           json.RawMessage `json:"stats"`
 	Reverse         json.RawMessage `json:"reverse"`
 	FakeDNS         json.RawMessage `json:"fakeDns"`
+}
+
+func (c *Config) MarshalJSON() ([]byte, error) {
+	return json_util.MarshalJSON(c)
 }

@@ -265,7 +265,7 @@ func (s *ServerService) UpdateXray(version string) error {
 
 	s.xrayService.StopXray()
 	defer func() {
-		err := s.xrayService.StartXray()
+		err := s.xrayService.RestartXray()
 		if err != nil {
 			logger.Error("start xray failed:", err)
 		}

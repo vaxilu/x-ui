@@ -60,6 +60,10 @@
                             <template slot="protocol" slot-scope="text, dbInbound">
                                 <a-tag color="blue">[[ dbInbound.protocol ]]</a-tag>
                             </template>
+                            <template slot="traffic" slot-scope="text, dbInbound">
+                                <a-tag color="blue">[[ sizeFormat(dbInbound.up) ]]</a-tag>
+                                <a-tag color="green">[[ sizeFormat(dbInbound.down) ]]</a-tag>
+                            </template>
                             <template slot="settings" slot-scope="text, dbInbound">
                                 <a-button type="link">查看</a-button>
                             </template>
@@ -67,8 +71,7 @@
                                 <a-button type="link">查看</a-button>
                             </template>
                             <template slot="enable" slot-scope="text, dbInbound">
-                                <a-tag v-if="dbInbound.enable" color="green">启用</a-tag>
-                                <a-tag v-else color="red">禁用</a-tag>
+                                <a-switch v-model="dbInbound.enable" @change="switchEnable(dbInbound)"></a-switch>
                             </template>
                             <template slot="expiryTime" slot-scope="text, dbInbound">
                                 <span v-if="dbInbound.expiryTime > 0" color="red">[[ DateUtil.formatMillis(dbInbound.expiryTime) ]]</span>
@@ -104,6 +107,11 @@
         align: 'center',
         dataIndex: "port",
         width: 60,
+    }, {
+        title: "traffic",
+        align: 'center',
+        width: 60,
+        scopedSlots: { customRender: 'traffic' },
     }, {
         title: "settings",
         align: 'center',
@@ -146,7 +154,7 @@
             },
             async getDBInbounds() {
                 this.loading();
-                const msg = await HttpUtil.post('/xui/inbounds');
+                const msg = await HttpUtil.post('/xui/inbound/list');
                 this.loading(false);
                 if (!msg.success) {
                     return;
@@ -247,9 +255,19 @@
             resetAllTraffic() {
                 this.submit('/xui/reset_all_traffic');
             },
-            setEnable(inbound, enable) {
-                let data = {enable: enable};
-                this.submit(`/xui/inbound/update/${inbound.id}`, data);
+            switchEnable(dbInbound) {
+                const data = {
+                    remark: dbInbound.remark,
+                    enable: dbInbound.enable,
+
+                    listen: dbInbound.listen,
+                    port: dbInbound.port,
+                    protocol: dbInbound.protocol,
+                    settings: dbInbound.settings,
+                    stream_settings: dbInbound.stream,
+                    sniffing: dbInbound.sniffing,
+                };
+                this.submit(`/xui/inbound/update/${dbInbound.id}`, data);
             },
             async submit(url, data, modal) {
                 const msg = await HttpUtil.postWithModal(url, data, modal);
