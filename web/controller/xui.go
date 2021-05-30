@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"x-ui/database/model"
 	"x-ui/logger"
+	"x-ui/web/entity"
 	"x-ui/web/global"
 	"x-ui/web/service"
 	"x-ui/web/session"
@@ -17,6 +18,7 @@ type XUIController struct {
 
 	inboundService service.InboundService
 	xrayService    service.XrayService
+	settingService service.SettingService
 
 	isNeedXrayRestart atomic.Bool
 }
@@ -39,6 +41,8 @@ func (a *XUIController) initRouter(g *gin.RouterGroup) {
 	g.POST("/inbound/del/:id", a.delInbound)
 	g.POST("/inbound/update/:id", a.updateInbound)
 	g.GET("/setting", a.setting)
+	g.POST("/setting/all", a.getAllSetting)
+	g.POST("/setting/update", a.updateSetting)
 }
 
 func (a *XUIController) startTask() {
@@ -127,4 +131,24 @@ func (a *XUIController) updateInbound(c *gin.Context) {
 	if err == nil {
 		a.isNeedXrayRestart.Store(true)
 	}
+}
+
+func (a *XUIController) getAllSetting(c *gin.Context) {
+	allSetting, err := a.settingService.GetAllSetting()
+	if err != nil {
+		jsonMsg(c, "获取设置", err)
+		return
+	}
+	jsonObj(c, allSetting, nil)
+}
+
+func (a *XUIController) updateSetting(c *gin.Context) {
+	allSetting := &entity.AllSetting{}
+	err := c.ShouldBind(allSetting)
+	if err != nil {
+		jsonMsg(c, "修改设置", err)
+		return
+	}
+	err = a.settingService.UpdateAllSetting(allSetting)
+	jsonMsg(c, "修改设置", err)
 }

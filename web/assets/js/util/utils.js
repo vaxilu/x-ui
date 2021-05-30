@@ -270,4 +270,18 @@ class ObjectUtil {
         return obj;
     }
 
+    static equals(a, b) {
+        for (const key in a) {
+            if (!a.hasOwnProperty(key)) {
+                continue;
+            }
+            if (!b.hasOwnProperty(key)) {
+                return false;
+            } else if (a[key] !== b[key]) {
+                return false;
+            }
+        }
+        return true
+    }
+
 }

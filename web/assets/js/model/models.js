@@ -89,3 +89,26 @@ class DBInbound {
         return inbound.genLink(address, this.remark);
     }
 }
+
+class AllSetting {
+    webListen = "";
+    webPort = 65432;
+    webCertFile = "";
+    webKeyFile = "";
+    webBasePath = "/";
+
+    xrayTemplateConfig = "";
+
+    timeLocation = "Asia/Shanghai";
+
+    constructor(data) {
+        if (data == null) {
+            return
+        }
+        ObjectUtil.cloneProps(this, data);
+    }
+
+    equals(other) {
+        return ObjectUtil.equals(this, other);
+    }
+}

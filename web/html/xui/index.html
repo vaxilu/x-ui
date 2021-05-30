@@ -2,8 +2,10 @@
 <html lang="en">
 {{template "head" .}}
 <style>
-    .ant-layout-content {
-        margin: 24px 16px;
+    @media (min-width: 769px) {
+        .ant-layout-content {
+            margin: 24px 16px;
+        }
     }
 
     .ant-col-sm-24 {
@@ -273,6 +275,7 @@
         delimiters: ['[[', ']]'],
         el: '#app',
         data: {
+            siderDrawer,
             status: new Status(),
             versionModal,
             spinning: false,
