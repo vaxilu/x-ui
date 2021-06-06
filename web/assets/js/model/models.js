@@ -84,7 +84,7 @@ class DBInbound {
         }
     }
 
-    genLink(address="") {
+    genLink(address = "") {
         const inbound = this.toInbound();
         return inbound.genLink(address, this.remark);
     }
@@ -92,7 +92,7 @@ class DBInbound {
 
 class AllSetting {
     webListen = "";
-    webPort = 65432;
+    webPort = 54321;
     webCertFile = "";
     webKeyFile = "";
     webBasePath = "/";

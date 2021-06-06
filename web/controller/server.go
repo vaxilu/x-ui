@@ -38,28 +38,19 @@ func (a *ServerController) initRouter(g *gin.RouterGroup) {
 }
 
 func (a *ServerController) refreshStatus() {
-	status := a.serverService.GetStatus(a.lastStatus)
-	a.lastStatus = status
+	a.lastStatus = a.serverService.GetStatus(a.lastStatus)
 }
 
 func (a *ServerController) startTask() {
 	webServer := global.GetWebServer()
-	ctx := webServer.GetCtx()
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-			}
-			now := time.Now()
-			if now.Sub(a.lastGetStatusTime) > time.Minute*3 {
-				time.Sleep(time.Second * 2)
-				continue
-			}
-			a.refreshStatus()
+	c := webServer.GetCron()
+	c.AddFunc("@every 2s", func() {
+		now := time.Now()
+		if now.Sub(a.lastGetStatusTime) > time.Minute*3 {
+			return
 		}
-	}()
+		a.refreshStatus()
+	})
 }
 
 func (a *ServerController) status(c *gin.Context) {

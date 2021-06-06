@@ -253,10 +253,7 @@ func (s *Server) startTask() {
 		if checkTime < 2 {
 			return
 		}
-		err := s.xrayService.RestartXray()
-		if err != nil {
-			logger.Warning("start xray failed:", err)
-		}
+		s.xrayService.SetIsNeedRestart(true)
 	})
 	go func() {
 		time.Sleep(time.Second * 5)
@@ -316,7 +313,8 @@ func (s *Server) Start() (err error) {
 	listenAddr := net.JoinHostPort(listen, strconv.Itoa(port))
 	var listener net.Listener
 	if certFile != "" || keyFile != "" {
-		cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+		var cert tls.Certificate
+		cert, err = tls.LoadX509KeyPair(certFile, keyFile)
 		if err != nil {
 			return err
 		}

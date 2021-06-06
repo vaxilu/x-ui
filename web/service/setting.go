@@ -23,7 +23,7 @@ var xrayTemplateConfig string
 var defaultValueMap = map[string]string{
 	"xrayTemplateConfig": xrayTemplateConfig,
 	"webListen":          "",
-	"webPort":            "65432",
+	"webPort":            "54321",
 	"webCertFile":        "",
 	"webKeyFile":         "",
 	"secret":             random.Seq(32),
@@ -109,7 +109,7 @@ func (s *SettingService) GetAllSetting() (*entity.AllSetting, error) {
 
 func (s *SettingService) ResetSettings() error {
 	db := database.GetDB()
-	return db.Delete(model.Setting{}).Error
+	return db.Where("1 = 1").Delete(model.Setting{}).Error
 }
 
 func (s *SettingService) getSetting(key string) (*model.Setting, error) {
@@ -152,12 +152,20 @@ func (s *SettingService) getString(key string) (string, error) {
 	return setting.Value, nil
 }
 
+func (s *SettingService) setString(key string, value string) error {
+	return s.saveSetting(key, value)
+}
+
 func (s *SettingService) getInt(key string) (int, error) {
 	str, err := s.getString(key)
 	if err != nil {
 		return 0, err
 	}
 	return strconv.Atoi(str)
+}
+
+func (s *SettingService) setInt(key string, value int) error {
+	return s.setString(key, strconv.Itoa(value))
 }
 
 func (s *SettingService) GetXrayConfigTemplate() (string, error) {
@@ -170,6 +178,10 @@ func (s *SettingService) GetListen() (string, error) {
 
 func (s *SettingService) GetPort() (int, error) {
 	return s.getInt("webPort")
+}
+
+func (s *SettingService) SetPort(port int) error {
+	return s.setInt("webPort", port)
 }
 
 func (s *SettingService) GetCertFile() (string, error) {

@@ -12,7 +12,7 @@
                 <a-input type="number" :value="value" @input="$emit('input', $event.target.value)"></a-input>
             </template>
             <template v-else-if="type === 'textarea'">
-                <a-textarea :value="value" @input="$emit('input', $event.target.value)" :auto-size="{ minRows: 6, maxRows: 6 }"></a-textarea>
+                <a-textarea :value="value" @input="$emit('input', $event.target.value)" :auto-size="{ minRows: 10, maxRows: 10 }"></a-textarea>
             </template>
         </a-col>
     </a-row>

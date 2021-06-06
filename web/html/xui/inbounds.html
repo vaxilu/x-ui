@@ -19,7 +19,7 @@
         <a-layout-content>
             <a-spin :spinning="spinning" :delay="500" tip="loading">
                 <transition name="list" appear>
-                    <a-tag v-if="true" color="red" style="margin-bottom: 10px">
+                    <a-tag v-if="false" color="red" style="margin-bottom: 10px">
                         Please go to the panel settings as soon as possible to modify the username and password, otherwise there may be a risk of leaking account information
                     </a-tag>
                 </transition>
@@ -32,11 +32,7 @@
                             </a-col>
                             <a-col :xs="24" :sm="24" :lg="12">
                                 total traffic：
-                                <a-popconfirm title="Are you sure you want to reset all traffic to 0? It\'s unrecoverable"
-                                              @confirm="resetAllTraffic()"
-                                              ok-text="confirm" cancel-text="cancel">
-                                    <a-tag color="green">[[ sizeFormat(total.up + total.down) ]]</a-tag>
-                                </a-popconfirm>
+                                <a-tag color="green">[[ sizeFormat(total.up + total.down) ]]</a-tag>
                             </a-col>
                             <a-col :xs="24" :sm="24" :lg="12">
                                 number of accounts：
@@ -112,26 +108,21 @@
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'traffic' },
-    }, {
-        title: "settings",
-        align: 'center',
-        width: 60,
-        scopedSlots: { customRender: 'settings' },
-    }, {
-        title: "streamSettings",
-        align: 'center',
-        width: 60,
-        scopedSlots: { customRender: 'streamSettings' },
+    // }, {
+    //     title: "settings",
+    //     align: 'center',
+    //     width: 60,
+    //     scopedSlots: { customRender: 'settings' },
+    // }, {
+    //     title: "streamSettings",
+    //     align: 'center',
+    //     width: 60,
+    //     scopedSlots: { customRender: 'streamSettings' },
     }, {
         title: "enable",
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'enable' },
-    }, {
-        title: "expiryTime",
-        align: 'center',
-        width: 60,
-        scopedSlots: { customRender: 'expiryTime' },
     }, {
         title: "action",
         align: 'center',
@@ -213,7 +204,7 @@
                     port: inbound.port,
                     protocol: inbound.protocol,
                     settings: inbound.settings.toString(),
-                    stream_settings: inbound.stream.toString(),
+                    streamSettings: inbound.stream.toString(),
                     sniffing: inbound.canSniffing() ? inbound.sniffing.toString() : '{}',
                 };
                 await this.submit('/xui/inbound/add', data, inModal);
@@ -227,7 +218,7 @@
                     port: inbound.port,
                     protocol: inbound.protocol,
                     settings: inbound.settings.toString(),
-                    stream_settings: inbound.stream.toString(),
+                    streamSettings: inbound.stream.toString(),
                     sniffing: inbound.canSniffing() ? inbound.sniffing.toString() : '{}',
                 };
                 await this.submit(`/xui/inbound/update/${dbInbound.id}`, data, inModal);
@@ -249,30 +240,13 @@
                 const link = dbInbound.genLink(address);
                 qrModal.show('二维码', link);
             },
-            resetTraffic(inbound) {
-                this.submit(`/xui/reset_traffic/${inbound.id}`);
-            },
-            resetAllTraffic() {
-                this.submit('/xui/reset_all_traffic');
-            },
             switchEnable(dbInbound) {
-                const data = {
-                    remark: dbInbound.remark,
-                    enable: dbInbound.enable,
-
-                    listen: dbInbound.listen,
-                    port: dbInbound.port,
-                    protocol: dbInbound.protocol,
-                    settings: dbInbound.settings,
-                    stream_settings: dbInbound.stream,
-                    sniffing: dbInbound.sniffing,
-                };
-                this.submit(`/xui/inbound/update/${dbInbound.id}`, data);
+                this.submit(`/xui/inbound/update/${dbInbound.id}`, dbInbound);
             },
             async submit(url, data, modal) {
                 const msg = await HttpUtil.postWithModal(url, data, modal);
                 if (msg.success) {
-                    this.getDBInbounds();
+                    await this.getDBInbounds();
                 }
             },
         },

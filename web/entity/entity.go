@@ -58,10 +58,10 @@ func (s *AllSetting) CheckValid() error {
 	}
 
 	if !strings.HasPrefix(s.WebBasePath, "/") {
-		return common.NewErrorf("web base path must start with '/' : <%v>", s.WebBasePath)
+		s.WebBasePath = "/" + s.WebBasePath
 	}
 	if !strings.HasSuffix(s.WebBasePath, "/") {
-		return common.NewErrorf("web base path must end with '/' : <%v>", s.WebBasePath)
+		s.WebBasePath += "/"
 	}
 
 	xrayConfig := &xray.Config{}

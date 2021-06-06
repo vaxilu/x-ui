@@ -223,6 +223,9 @@ class ObjectUtil {
     }
 
     static cloneProps(dest, src, ...ignoreProps) {
+        if (dest == null || src == null) {
+            return;
+        }
         const ignoreEmpty = this.isArrEmpty(ignoreProps);
         for (const key of Object.keys(src)) {
             if (!src.hasOwnProperty(key)) {

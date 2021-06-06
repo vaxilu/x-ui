@@ -1,7 +1,8 @@
 package model
 
 import (
-	"encoding/json"
+	"fmt"
+	"x-ui/util/json_util"
 	"x-ui/xray"
 )
 
@@ -24,32 +25,32 @@ type User struct {
 
 type Inbound struct {
 	Id         int    `json:"id" form:"id" gorm:"primaryKey;autoIncrement"`
-	UserId     int    `json:"user_id" form:"user_id"`
-	Up         int64  `json:"up" form:"up"`
-	Down       int64  `json:"down" form:"down"`
+	UserId     int    `json:"-"`
+	Up         int64  `json:"up"`
+	Down       int64  `json:"down"`
 	Remark     string `json:"remark" form:"remark"`
 	Enable     bool   `json:"enable" form:"enable"`
-	ExpiryTime int64  `json:"expiry_time" form:"expiry_time"`
+	ExpiryTime int64  `json:"expiryTime" form:"expiryTime"`
 
 	// config part
 	Listen         string   `json:"listen" form:"listen"`
-	Port           int      `json:"port" form:"port"`
+	Port           int      `json:"port" form:"port" gorm:"unique"`
 	Protocol       Protocol `json:"protocol" form:"protocol"`
 	Settings       string   `json:"settings" form:"settings"`
-	StreamSettings string   `json:"stream_settings" form:"stream_settings"`
-	Tag            string   `json:"tag" form:"tag"`
+	StreamSettings string   `json:"streamSettings" form:"streamSettings"`
+	Tag            string   `json:"tag" form:"tag" gorm:"unique"`
 	Sniffing       string   `json:"sniffing" form:"sniffing"`
 }
 
 func (i *Inbound) GenXrayInboundConfig() *xray.InboundConfig {
 	return &xray.InboundConfig{
-		Listen:         json.RawMessage(i.Listen),
+		Listen:         json_util.RawMessage(fmt.Sprintf("\"%s\"", i.Listen)),
 		Port:           i.Port,
 		Protocol:       string(i.Protocol),
-		Settings:       json.RawMessage(i.Settings),
-		StreamSettings: json.RawMessage(i.StreamSettings),
+		Settings:       json_util.RawMessage(i.Settings),
+		StreamSettings: json_util.RawMessage(i.StreamSettings),
 		Tag:            i.Tag,
-		Sniffing:       json.RawMessage(i.Sniffing),
+		Sniffing:       json_util.RawMessage(i.Sniffing),
 	}
 }
 

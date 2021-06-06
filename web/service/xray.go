@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"errors"
+	"go.uber.org/atomic"
 	"sync"
 	"x-ui/xray"
 )
@@ -14,6 +15,8 @@ var result string
 type XrayService struct {
 	inboundService InboundService
 	settingService SettingService
+
+	isNeedXrayRestart atomic.Bool
 }
 
 func (s *XrayService) IsXrayRunning() bool {
@@ -84,13 +87,17 @@ func (s *XrayService) GetXrayTraffic() ([]*xray.Traffic, error) {
 func (s *XrayService) RestartXray() error {
 	lock.Lock()
 	defer lock.Unlock()
-	if p != nil {
-		p.Stop()
-	}
 
 	xrayConfig, err := s.GetXrayConfig()
 	if err != nil {
 		return err
+	}
+
+	if p != nil {
+		if p.GetConfig().Equals(xrayConfig) {
+			return nil
+		}
+		p.Stop()
 	}
 
 	p = xray.NewProcess(xrayConfig)
@@ -105,4 +112,12 @@ func (s *XrayService) StopXray() error {
 		return p.Stop()
 	}
 	return errors.New("xray is not running")
+}
+
+func (s *XrayService) SetIsNeedRestart(needRestart bool) {
+	s.isNeedXrayRestart.Store(needRestart)
+}
+
+func (s *XrayService) IsNeedRestart() bool {
+	return s.isNeedXrayRestart.Load()
 }

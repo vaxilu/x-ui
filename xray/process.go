@@ -62,16 +62,16 @@ type process struct {
 	version string
 	apiPort int
 
-	xrayConfig *Config
-	lines      *queue.Queue
-	exitErr    error
+	config  *Config
+	lines   *queue.Queue
+	exitErr error
 }
 
-func newProcess(xrayConfig *Config) *process {
+func newProcess(config *Config) *process {
 	return &process{
-		version:    "Unknown",
-		xrayConfig: xrayConfig,
-		lines:      queue.New(100),
+		version: "Unknown",
+		config:  config,
+		lines:   queue.New(100),
 	}
 }
 
@@ -90,6 +90,9 @@ func (p *process) GetErr() error {
 }
 
 func (p *process) GetResult() string {
+	if p.lines.Empty() && p.exitErr != nil {
+		return p.exitErr.Error()
+	}
 	items, _ := p.lines.TakeUntil(func(item interface{}) bool {
 		return true
 	})
@@ -108,8 +111,12 @@ func (p *Process) GetAPIPort() int {
 	return p.apiPort
 }
 
+func (p *Process) GetConfig() *Config {
+	return p.config
+}
+
 func (p *process) refreshAPIPort() {
-	for _, inbound := range p.xrayConfig.InboundConfigs {
+	for _, inbound := range p.config.InboundConfigs {
 		if inbound.Tag == "api" {
 			p.apiPort = inbound.Port
 			break
@@ -132,19 +139,25 @@ func (p *process) refreshVersion() {
 	}
 }
 
-func (p *process) Start() error {
+func (p *process) Start() (err error) {
 	if p.IsRunning() {
 		return errors.New("xray is already running")
 	}
 
-	data, err := json.MarshalIndent(p.xrayConfig, "", "  ")
+	defer func() {
+		if err != nil {
+			p.exitErr = err
+		}
+	}()
+
+	data, err := json.MarshalIndent(p.config, "", "  ")
 	if err != nil {
-		return err
+		return common.NewErrorf("生成 xray 配置文件失败: %v", err)
 	}
 	configPath := GetConfigPath()
 	err = os.WriteFile(configPath, data, fs.ModePerm)
 	if err != nil {
-		return err
+		return common.NewErrorf("写入配置文件失败: %v", err)
 	}
 
 	cmd := exec.Command(GetBinaryPath(), "-c", configPath)

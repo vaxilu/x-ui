@@ -51,9 +51,9 @@ func InitDB(dbPath string) error {
 	var gormLogger logger.Interface
 
 	if config.IsDebug() {
-		gormLogger = logger.Discard
-	} else {
 		gormLogger = logger.Default
+	} else {
+		gormLogger = logger.Discard
 	}
 
 	c := &gorm.Config{

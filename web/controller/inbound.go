@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/atomic"
 	"strconv"
 	"x-ui/database/model"
 	"x-ui/logger"
@@ -15,8 +14,6 @@ import (
 type InboundController struct {
 	inboundService service.InboundService
 	xrayService    service.XrayService
-
-	isNeedXrayRestart atomic.Bool
 }
 
 func NewInboundController(g *gin.RouterGroup) *InboundController {
@@ -39,12 +36,12 @@ func (a *InboundController) startTask() {
 	webServer := global.GetWebServer()
 	c := webServer.GetCron()
 	c.AddFunc("@every 10s", func() {
-		if a.isNeedXrayRestart.Load() {
+		if a.xrayService.IsNeedRestart() {
+			a.xrayService.SetIsNeedRestart(false)
 			err := a.xrayService.RestartXray()
 			if err != nil {
 				logger.Error("restart xray failed:", err)
 			}
-			a.isNeedXrayRestart.Store(false)
 		}
 	})
 }
@@ -73,7 +70,7 @@ func (a *InboundController) addInbound(c *gin.Context) {
 	err = a.inboundService.AddInbound(inbound)
 	jsonMsg(c, "添加", err)
 	if err == nil {
-		a.isNeedXrayRestart.Store(true)
+		a.xrayService.SetIsNeedRestart(true)
 	}
 }
 
@@ -86,7 +83,7 @@ func (a *InboundController) delInbound(c *gin.Context) {
 	err = a.inboundService.DelInbound(id)
 	jsonMsg(c, "删除", err)
 	if err == nil {
-		a.isNeedXrayRestart.Store(true)
+		a.xrayService.SetIsNeedRestart(true)
 	}
 }
 
@@ -107,6 +104,6 @@ func (a *InboundController) updateInbound(c *gin.Context) {
 	err = a.inboundService.UpdateInbound(inbound)
 	jsonMsg(c, "修改", err)
 	if err == nil {
-		a.isNeedXrayRestart.Store(true)
+		a.xrayService.SetIsNeedRestart(true)
 	}
 }

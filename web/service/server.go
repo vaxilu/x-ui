@@ -77,7 +77,7 @@ func (s *ServerService) GetStatus(lastStatus *Status) *Status {
 		T: now,
 	}
 
-	percents, err := cpu.Percent(time.Second*2, false)
+	percents, err := cpu.Percent(0, false)
 	if err != nil {
 		logger.Warning("get cpu percent failed:", err)
 	} else {
