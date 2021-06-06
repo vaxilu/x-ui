@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"x-ui/util/json_util"
 	"x-ui/xray"
 )
@@ -44,7 +43,7 @@ type Inbound struct {
 
 func (i *Inbound) GenXrayInboundConfig() *xray.InboundConfig {
 	return &xray.InboundConfig{
-		Listen:         json_util.RawMessage(fmt.Sprintf("\"%s\"", i.Listen)),
+		Listen:         json_util.RawMessage(i.Listen),
 		Port:           i.Port,
 		Protocol:       string(i.Protocol),
 		Settings:       json_util.RawMessage(i.Settings),
