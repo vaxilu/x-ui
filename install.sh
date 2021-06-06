@@ -112,7 +112,7 @@ install_x-ui() {
     tar zxvf x-ui-linux-${arch}.tar.gz
     rm x-ui-linux-${arch}.tar.gz -f
     cd x-ui
-    chmod +x x-ui bin/xray-x-ui-linux-${arch}
+    chmod +x x-ui bin/xray-linux-${arch}
     cp -f x-ui.service /etc/systemd/system/
     systemctl daemon-reload
     systemctl enable x-ui
