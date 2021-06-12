@@ -14,7 +14,7 @@
 # 安装&升级
 ## 测试版
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/sprov065/x-ui/master/install.sh) 0.0.1
+bash <(curl -Ls https://raw.githubusercontent.com/sprov065/x-ui/master/install.sh) 0.0.2
 ```
 
 ## 建议系统
