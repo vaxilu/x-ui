@@ -13,8 +13,7 @@ type WebServer interface {
 	GetCtx() context.Context
 }
 
-//go:linkname setWebServer main.setWebServer
-func setWebServer(s WebServer) {
+func SetWebServer(s WebServer) {
 	webServer = s
 }
 

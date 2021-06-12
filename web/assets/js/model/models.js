@@ -26,6 +26,7 @@ class DBInbound {
     userId = 0;
     up = 0;
     down = 0;
+    total = 0;
     remark = "";
     enable = true;
     expiryTime = 0;
@@ -43,6 +44,14 @@ class DBInbound {
             return;
         }
         ObjectUtil.cloneProps(this, data);
+    }
+
+    get totalGB() {
+        return toFixed(this.total / ONE_GB, 2);
+    }
+
+    set totalGB(gb) {
+        this.total = toFixed(gb * ONE_GB, 0);
     }
 
     toInbound() {

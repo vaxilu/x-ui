@@ -27,15 +27,15 @@
                     <a-card hoverable style="margin-bottom: 20px;">
                         <a-row>
                             <a-col :xs="24" :sm="24" :lg="12">
-                                upload / download：
+                                总上传 / 下载：
                                 <a-tag color="green">[[ sizeFormat(total.up) ]] / [[ sizeFormat(total.down) ]]</a-tag>
                             </a-col>
                             <a-col :xs="24" :sm="24" :lg="12">
-                                total traffic：
+                                总用量：
                                 <a-tag color="green">[[ sizeFormat(total.up + total.down) ]]</a-tag>
                             </a-col>
                             <a-col :xs="24" :sm="24" :lg="12">
-                                number of accounts：
+                                入站数量：
                                 <a-tag color="green">[[ dbInbounds.length ]]</a-tag>
                             </a-col>
                         </a-row>
@@ -59,6 +59,8 @@
                             <template slot="traffic" slot-scope="text, dbInbound">
                                 <a-tag color="blue">[[ sizeFormat(dbInbound.up) ]]</a-tag>
                                 <a-tag color="green">[[ sizeFormat(dbInbound.down) ]]</a-tag>
+                                <a-tag v-if="dbInbound.total > 0" color="cyan">[[ sizeFormat(dbInbound.total) ]]</a-tag>
+                                <a-tag v-else color="cyan">无限制</a-tag>
                             </template>
                             <template slot="settings" slot-scope="text, dbInbound">
                                 <a-button type="link">查看</a-button>
@@ -76,6 +78,7 @@
                             <template slot="action" slot-scope="text, dbInbound">
                                 <a-button v-if="dbInbound.hasLink()" type="primary" icon="qrcode" @click="showQrcode(dbInbound)"></a-button>
                                 <a-button type="primary" icon="edit" @click="openEditInbound(dbInbound)"></a-button>
+                                <a-button icon="retweet" @click="resetTraffic(dbInbound)"></a-button>
                                 <a-button type="danger" icon="delete" @click="delInbound(dbInbound)"></a-button>
                             </template>
                         </a-table>
@@ -94,17 +97,17 @@
         dataIndex: "id",
         width: 60,
     }, {
-        title: "protocol",
+        title: "协议",
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'protocol' },
     }, {
-        title: "port",
+        title: "端口",
         align: 'center',
         dataIndex: "port",
         width: 60,
     }, {
-        title: "traffic",
+        title: "流量↑|↓",
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'traffic' },
@@ -119,7 +122,7 @@
     //     width: 60,
     //     scopedSlots: { customRender: 'streamSettings' },
     }, {
-        title: "enable",
+        title: "启用",
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'enable' },
@@ -172,8 +175,8 @@
             },
             openAddInbound() {
                 inModal.show({
-                    title: 'add account',
-                    okText: 'add',
+                    title: '添加入站',
+                    okText: '添加',
                     confirm: async (inbound, dbInbound) => {
                         inModal.loading();
                         await this.addInbound(inbound, dbInbound);
@@ -184,8 +187,8 @@
             openEditInbound(dbInbound) {
                 const inbound = dbInbound.toInbound();
                 inModal.show({
-                    title: 'update account',
-                    okText: 'update',
+                    title: '修改入站',
+                    okText: '修改',
                     inbound: inbound,
                     dbInbound: dbInbound,
                     confirm: async (inbound, dbInbound) => {
@@ -197,6 +200,9 @@
             },
             async addInbound(inbound, dbInbound) {
                 const data = {
+                    up: dbInbound.up,
+                    down: dbInbound.down,
+                    total: dbInbound.total,
                     remark: dbInbound.remark,
                     enable: dbInbound.enable,
 
@@ -211,6 +217,9 @@
             },
             async updateInbound(inbound, dbInbound) {
                 const data = {
+                    up: dbInbound.up,
+                    down: dbInbound.down,
+                    total: dbInbound.total,
                     remark: dbInbound.remark,
                     enable: dbInbound.enable,
 
@@ -223,18 +232,32 @@
                 };
                 await this.submit(`/xui/inbound/update/${dbInbound.id}`, data, inModal);
             },
+            resetTraffic(dbInbound) {
+                this.$confirm({
+                    title: '重置流量',
+                    content: '确定要重置流量吗?',
+                    okText: '重置',
+                    cancelText: '取消',
+                    onOk: () => {
+                        const inbound = dbInbound.toInbound();
+                        dbInbound.up = 0;
+                        dbInbound.down = 0;
+                        this.updateInbound(inbound, dbInbound);
+                    },
+                });
+            },
             delInbound(dbInbound) {
                 this.$confirm({
-                    title: 'delete account',
-                    content: 'Cannot be restored after deletion, confirm deletion?',
-                    okText: 'delete',
-                    cancelText: 'cancel',
+                    title: '删除入站',
+                    content: '确定要删除入站吗?',
+                    okText: '删除',
+                    cancelText: '取消',
                     onOk: () => this.submit('/xui/inbound/del/' + dbInbound.id),
                 });
             },
             showQrcode(dbInbound) {
                 let address = location.hostname;
-                if (!ObjectUtil.isEmpty(dbInbound.listen) || dbInbound.listen !== "0.0.0.0") {
+                if (!ObjectUtil.isEmpty(dbInbound.listen) && dbInbound.listen !== "0.0.0.0") {
                     address = dbInbound.listen;
                 }
                 const link = dbInbound.genLink(address);

@@ -1,9 +1,17 @@
 package config
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
+	"strings"
 )
+
+//go:embed version
+var version string
+
+//go:embed name
+var name string
 
 type LogLevel string
 
@@ -15,11 +23,11 @@ const (
 )
 
 func GetVersion() string {
-	return "0.0.1"
+	return strings.TrimSpace(version)
 }
 
 func GetName() string {
-	return "x-ui"
+	return strings.TrimSpace(name)
 }
 
 func GetLogLevel() LogLevel {

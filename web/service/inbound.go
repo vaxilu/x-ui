@@ -56,6 +56,9 @@ func (s *InboundService) UpdateInbound(inbound *model.Inbound) error {
 	if err != nil {
 		return err
 	}
+	oldInbound.Up = inbound.Up
+	oldInbound.Down = inbound.Down
+	oldInbound.Total = inbound.Total
 	oldInbound.Remark = inbound.Remark
 	oldInbound.Enable = inbound.Enable
 	oldInbound.ExpiryTime = inbound.ExpiryTime
@@ -97,4 +100,14 @@ func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
 		}
 	}
 	return
+}
+
+func (s *InboundService) DisableInvalidInbounds() (bool, error) {
+	db := database.GetDB()
+	result := db.Model(model.Inbound{}).
+		Where("up + down >= total and total > 0 and enable = ?", true).
+		Update("enable", false)
+	err := result.Error
+	count := result.RowsAffected
+	return count > 0, err
 }

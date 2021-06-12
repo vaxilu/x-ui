@@ -284,7 +284,7 @@ class ObjectUtil {
                 return false;
             }
         }
-        return true
+        return true;
     }
 
 }

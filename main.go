@@ -18,9 +18,6 @@ import (
 	"x-ui/web/service"
 )
 
-// this function call global.setWebServer
-func setWebServer(server global.WebServer)
-
 func runWebServer() {
 	log.Printf("%v %v", config.GetName(), config.GetVersion())
 
@@ -45,7 +42,7 @@ func runWebServer() {
 	var server *web.Server
 
 	server = web.NewServer()
-	setWebServer(server)
+	global.SetWebServer(server)
 	err = server.Start()
 	if err != nil {
 		log.Println(err)
@@ -60,7 +57,7 @@ func runWebServer() {
 		if sig == syscall.SIGHUP {
 			server.Stop()
 			server = web.NewServer()
-			setWebServer(server)
+			global.SetWebServer(server)
 			err = server.Start()
 			if err != nil {
 				log.Println(err)

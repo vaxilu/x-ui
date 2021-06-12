@@ -21,7 +21,6 @@ import (
 	"time"
 	"x-ui/config"
 	"x-ui/logger"
-	"x-ui/util"
 	"x-ui/util/common"
 	"x-ui/web/controller"
 	"x-ui/web/service"
@@ -244,6 +243,7 @@ func (s *Server) startTask() {
 		logger.Warning("start xray failed:", err)
 	}
 	var checkTime = 0
+	// 每 30 秒检查一次 xray 是否在运行
 	s.cron.AddFunc("@every 30s", func() {
 		if s.xrayService.IsXrayRunning() {
 			checkTime = 0
@@ -255,9 +255,10 @@ func (s *Server) startTask() {
 		}
 		s.xrayService.SetIsNeedRestart(true)
 	})
+
 	go func() {
 		time.Sleep(time.Second * 5)
-		// 与重启 xray 的时间错开
+		// 每 10 秒统计一次流量，首次启动延迟 5 秒，与重启 xray 的时间错开
 		s.cron.AddFunc("@every 10s", func() {
 			if !s.xrayService.IsXrayRunning() {
 				return
@@ -273,6 +274,16 @@ func (s *Server) startTask() {
 			}
 		})
 	}()
+
+	// 每分钟检查一次 inbound 流量超出情况
+	s.cron.AddFunc("@every 1m", func() {
+		needRestart, err := s.inboundService.DisableInvalidInbounds()
+		if err != nil {
+			logger.Warning("disable invalid inbounds err:", err)
+		} else if needRestart {
+			s.xrayService.SetIsNeedRestart(true)
+		}
+	})
 }
 
 func (s *Server) Start() (err error) {
@@ -343,11 +354,8 @@ func (s *Server) Start() (err error) {
 }
 
 func (s *Server) Stop() error {
-	if util.IsDone(s.ctx) {
-		// 防止 gc 后调用第二次 Stop
-		s.xrayService.StopXray()
-	}
 	s.cancel()
+	s.xrayService.StopXray()
 	if s.cron != nil {
 		s.cron.Stop()
 	}

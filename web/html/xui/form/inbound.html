@@ -27,6 +27,18 @@
     <a-form-item label="端口">
         <a-input type="number" v-model.number="inbound.port"></a-input>
     </a-form-item>
+    <a-form-item>
+        <span slot="label">
+            总流量(GB)
+            <a-tooltip>
+                <template slot="title">
+                    0 表示不限制
+                </template>
+                <a-icon type="question-circle" theme="filled"></a-icon>
+            </a-tooltip>
+        </span>
+        <a-input-number v-model="dbInbound.totalGB" :min="0"></a-input-number>
+    </a-form-item>
 </a-form>
 
 <!-- vmess settings -->

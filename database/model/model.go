@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"x-ui/util/json_util"
 	"x-ui/xray"
 )
@@ -25,8 +26,9 @@ type User struct {
 type Inbound struct {
 	Id         int    `json:"id" form:"id" gorm:"primaryKey;autoIncrement"`
 	UserId     int    `json:"-"`
-	Up         int64  `json:"up"`
-	Down       int64  `json:"down"`
+	Up         int64  `json:"up" form:"up"`
+	Down       int64  `json:"down" form:"down"`
+	Total      int64  `json:"total" form:"total"`
 	Remark     string `json:"remark" form:"remark"`
 	Enable     bool   `json:"enable" form:"enable"`
 	ExpiryTime int64  `json:"expiryTime" form:"expiryTime"`
@@ -42,8 +44,12 @@ type Inbound struct {
 }
 
 func (i *Inbound) GenXrayInboundConfig() *xray.InboundConfig {
+	listen := i.Listen
+	if listen != "" {
+		listen = fmt.Sprintf("\"%v\"", listen)
+	}
 	return &xray.InboundConfig{
-		Listen:         json_util.RawMessage(i.Listen),
+		Listen:         json_util.RawMessage(listen),
 		Port:           i.Port,
 		Protocol:       string(i.Protocol),
 		Settings:       json_util.RawMessage(i.Settings),
