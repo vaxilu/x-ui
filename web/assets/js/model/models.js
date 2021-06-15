@@ -54,6 +54,38 @@ class DBInbound {
         this.total = toFixed(gb * ONE_GB, 0);
     }
 
+    get isVMess() {
+        return this.protocol === Protocols.VMESS;
+    }
+
+    get isVLess() {
+        return this.protocol === Protocols.VLESS;
+    }
+
+    get isTrojan() {
+        return this.protocol === Protocols.TROJAN;
+    }
+
+    get isSS() {
+        return this.protocol === Protocols.SHADOWSOCKS;
+    }
+
+    get isSocks() {
+        return this.protocol === Protocols.SOCKS;
+    }
+
+    get isHTTP() {
+        return this.protocol === Protocols.HTTP;
+    }
+
+    get address() {
+        let address = location.hostname;
+        if (!ObjectUtil.isEmpty(this.listen) && this.listen !== "0.0.0.0") {
+            address = this.listen;
+        }
+        return address;
+    }
+
     toInbound() {
         let settings = {};
         if (!ObjectUtil.isEmpty(this.settings)) {
@@ -93,9 +125,9 @@ class DBInbound {
         }
     }
 
-    genLink(address = "") {
+    genLink() {
         const inbound = this.toInbound();
-        return inbound.genLink(address, this.remark);
+        return inbound.genLink(this.address, this.remark);
     }
 }
 

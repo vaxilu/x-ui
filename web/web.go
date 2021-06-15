@@ -44,7 +44,8 @@ func (f *wrapAssetsFS) Open(name string) (fs.File, error) {
 }
 
 type Server struct {
-	listener net.Listener
+	httpServer *http.Server
+	listener   net.Listener
 
 	index  *controller.IndexController
 	server *controller.ServerController
@@ -253,7 +254,7 @@ func (s *Server) startTask() {
 		if checkTime < 2 {
 			return
 		}
-		s.xrayService.SetIsNeedRestart(true)
+		s.xrayService.SetToNeedRestart()
 	})
 
 	go func() {
@@ -275,13 +276,14 @@ func (s *Server) startTask() {
 		})
 	}()
 
-	// 每分钟检查一次 inbound 流量超出情况
-	s.cron.AddFunc("@every 1m", func() {
-		needRestart, err := s.inboundService.DisableInvalidInbounds()
+	// 每 30 秒检查一次 inbound 流量超出情况
+	s.cron.AddFunc("@every 30s", func() {
+		count, err := s.inboundService.DisableInvalidInbounds()
 		if err != nil {
 			logger.Warning("disable invalid inbounds err:", err)
-		} else if needRestart {
-			s.xrayService.SetIsNeedRestart(true)
+		} else if count > 0 {
+			logger.Debugf("disabled %v inbounds", count)
+			s.xrayService.SetToNeedRestart()
 		}
 	})
 }
@@ -348,7 +350,11 @@ func (s *Server) Start() (err error) {
 
 	s.startTask()
 
-	go engine.RunListener(listener)
+	s.httpServer = &http.Server{
+		Handler: engine,
+	}
+
+	go s.httpServer.Serve(listener)
 
 	return nil
 }
@@ -359,10 +365,15 @@ func (s *Server) Stop() error {
 	if s.cron != nil {
 		s.cron.Stop()
 	}
-	if s.listener != nil {
-		return s.listener.Close()
+	var err1 error
+	var err2 error
+	if s.httpServer != nil {
+		err1 = s.httpServer.Shutdown(s.ctx)
 	}
-	return nil
+	if s.listener != nil {
+		err2 = s.listener.Close()
+	}
+	return common.Combine(err1, err2)
 }
 
 func (s *Server) GetCtx() context.Context {

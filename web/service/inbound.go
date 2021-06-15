@@ -102,12 +102,12 @@ func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
 	return
 }
 
-func (s *InboundService) DisableInvalidInbounds() (bool, error) {
+func (s *InboundService) DisableInvalidInbounds() (int64, error) {
 	db := database.GetDB()
 	result := db.Model(model.Inbound{}).
 		Where("up + down >= total and total > 0 and enable = ?", true).
 		Update("enable", false)
 	err := result.Error
 	count := result.RowsAffected
-	return count > 0, err
+	return count, err
 }

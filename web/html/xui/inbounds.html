@@ -63,10 +63,15 @@
                                 <a-tag v-else color="cyan">无限制</a-tag>
                             </template>
                             <template slot="settings" slot-scope="text, dbInbound">
-                                <a-button type="link">查看</a-button>
+                                <a-button type="link" @click="showInfo(dbInbound)">查看</a-button>
                             </template>
-                            <template slot="streamSettings" slot-scope="text, dbInbound">
-                                <a-button type="link">查看</a-button>
+                            <template slot="stream" slot-scope="text, dbInbound, index">
+                                <template v-if="dbInbound.isVMess || dbInbound.isVLess || dbInbound.isTrojan || dbInbound.isSS">
+                                    <a-tag color="green">[[ inbounds[index].stream.network ]]</a-tag>
+                                    <a-tag v-if="inbounds[index].stream.isTls" color="blue">tls</a-tag>
+                                    <a-tag v-if="inbounds[index].stream.isXTls" color="blue">xtls</a-tag>
+                                </template>
+                                <template v-else>无</template>
                             </template>
                             <template slot="enable" slot-scope="text, dbInbound">
                                 <a-switch v-model="dbInbound.enable" @change="switchEnable(dbInbound)"></a-switch>
@@ -109,25 +114,25 @@
     }, {
         title: "流量↑|↓",
         align: 'center',
-        width: 60,
+        width: 80,
         scopedSlots: { customRender: 'traffic' },
-    // }, {
-    //     title: "settings",
-    //     align: 'center',
-    //     width: 60,
-    //     scopedSlots: { customRender: 'settings' },
-    // }, {
-    //     title: "streamSettings",
-    //     align: 'center',
-    //     width: 60,
-    //     scopedSlots: { customRender: 'streamSettings' },
+    }, {
+        title: "详细信息",
+        align: 'center',
+        width: 60,
+        scopedSlots: { customRender: 'settings' },
+    }, {
+        title: "传输配置",
+        align: 'center',
+        width: 60,
+        scopedSlots: { customRender: 'stream' },
     }, {
         title: "启用",
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'enable' },
     }, {
-        title: "action",
+        title: "操作",
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'action' },
@@ -139,6 +144,7 @@
         data: {
             siderDrawer,
             spinning: false,
+            inbounds: [],
             dbInbounds: [],
             searchKey: '',
         },
@@ -156,9 +162,12 @@
                 this.setInbounds(msg.obj);
             },
             setInbounds(dbInbounds) {
+                this.inbounds.splice(0);
                 this.dbInbounds.splice(0);
                 for (const inbound of dbInbounds) {
-                    this.dbInbounds.push(new DBInbound(inbound));
+                    const dbInbound = new DBInbound(inbound);
+                    this.inbounds.push(dbInbound.toInbound());
+                    this.dbInbounds.push(dbInbound);
                 }
             },
             searchInbounds(key) {
@@ -256,12 +265,11 @@
                 });
             },
             showQrcode(dbInbound) {
-                let address = location.hostname;
-                if (!ObjectUtil.isEmpty(dbInbound.listen) && dbInbound.listen !== "0.0.0.0") {
-                    address = dbInbound.listen;
-                }
-                const link = dbInbound.genLink(address);
+                const link = dbInbound.genLink();
                 qrModal.show('二维码', link);
+            },
+            showInfo(dbInbound) {
+                infoModal.show(dbInbound);
             },
             switchEnable(dbInbound) {
                 this.submit(`/xui/inbound/update/${dbInbound.id}`, dbInbound);
@@ -301,5 +309,6 @@
 {{template "promptModal"}}
 {{template "qrcodeModal"}}
 {{template "textModal"}}
+{{template "inboundInfoModal"}}
 </body>
 </html>

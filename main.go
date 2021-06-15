@@ -55,7 +55,10 @@ func runWebServer() {
 		sig := <-sigCh
 
 		if sig == syscall.SIGHUP {
-			server.Stop()
+			err := server.Stop()
+			if err != nil {
+				logger.Warning("stop server err:", err)
+			}
 			server = web.NewServer()
 			global.SetWebServer(server)
 			err = server.Start()

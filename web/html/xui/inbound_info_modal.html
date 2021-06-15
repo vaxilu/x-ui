@@ -1,0 +1,42 @@
+{{define "inboundInfoModal"}}
+{{template "component/inboundInfo"}}
+<a-modal id="inbound-info-modal" v-model="infoModal.visible" title="详细信息" @ok="infoModal.ok"
+         :closable="true" :mask-closable="true"
+         ok-text="复制链接" cancel-text='{{ i18n "close" }}'>
+    <inbound-info :db-inbound="dbInbound" :inbound="inbound"></inbound-info>
+</a-modal>
+<script>
+
+    const infoModal = {
+        visible: false,
+        inbound: new Inbound(),
+        dbInbound: new DBInbound(),
+        ok() {
+
+        },
+        show(dbInbound) {
+            this.inbound = dbInbound.toInbound();
+            this.dbInbound = new DBInbound(dbInbound);
+            this.visible = true;
+        },
+        close() {
+            infoModal.visible = false;
+        },
+    };
+
+    new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#inbound-info-modal',
+        data: {
+            infoModal,
+            get dbInbound() {
+                return this.infoModal.dbInbound;
+            },
+            get inbound() {
+                return this.infoModal.inbound;
+            }
+        },
+    });
+
+</script>
+{{end}}

@@ -36,8 +36,7 @@ func (a *InboundController) startTask() {
 	webServer := global.GetWebServer()
 	c := webServer.GetCron()
 	c.AddFunc("@every 10s", func() {
-		if a.xrayService.IsNeedRestart() {
-			a.xrayService.SetIsNeedRestart(false)
+		if a.xrayService.IsNeedRestartAndSetFalse() {
 			err := a.xrayService.RestartXray()
 			if err != nil {
 				logger.Error("restart xray failed:", err)
@@ -70,7 +69,7 @@ func (a *InboundController) addInbound(c *gin.Context) {
 	err = a.inboundService.AddInbound(inbound)
 	jsonMsg(c, "添加", err)
 	if err == nil {
-		a.xrayService.SetIsNeedRestart(true)
+		a.xrayService.SetToNeedRestart()
 	}
 }
 
@@ -83,7 +82,7 @@ func (a *InboundController) delInbound(c *gin.Context) {
 	err = a.inboundService.DelInbound(id)
 	jsonMsg(c, "删除", err)
 	if err == nil {
-		a.xrayService.SetIsNeedRestart(true)
+		a.xrayService.SetToNeedRestart()
 	}
 }
 
@@ -104,6 +103,6 @@ func (a *InboundController) updateInbound(c *gin.Context) {
 	err = a.inboundService.UpdateInbound(inbound)
 	jsonMsg(c, "修改", err)
 	if err == nil {
-		a.xrayService.SetIsNeedRestart(true)
+		a.xrayService.SetToNeedRestart()
 	}
 }

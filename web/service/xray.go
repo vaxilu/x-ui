@@ -5,18 +5,18 @@ import (
 	"errors"
 	"go.uber.org/atomic"
 	"sync"
+	"x-ui/logger"
 	"x-ui/xray"
 )
 
 var p *xray.Process
 var lock sync.Mutex
+var isNeedXrayRestart atomic.Bool
 var result string
 
 type XrayService struct {
 	inboundService InboundService
 	settingService SettingService
-
-	isNeedXrayRestart atomic.Bool
 }
 
 func (s *XrayService) IsXrayRunning() bool {
@@ -87,6 +87,7 @@ func (s *XrayService) GetXrayTraffic() ([]*xray.Traffic, error) {
 func (s *XrayService) RestartXray() error {
 	lock.Lock()
 	defer lock.Unlock()
+	logger.Debug("restart xray")
 
 	xrayConfig, err := s.GetXrayConfig()
 	if err != nil {
@@ -108,16 +109,17 @@ func (s *XrayService) RestartXray() error {
 func (s *XrayService) StopXray() error {
 	lock.Lock()
 	defer lock.Unlock()
+	logger.Debug("stop xray")
 	if s.IsXrayRunning() {
 		return p.Stop()
 	}
 	return errors.New("xray is not running")
 }
 
-func (s *XrayService) SetIsNeedRestart(needRestart bool) {
-	s.isNeedXrayRestart.Store(needRestart)
+func (s *XrayService) SetToNeedRestart() {
+	isNeedXrayRestart.Store(true)
 }
 
-func (s *XrayService) IsNeedRestart() bool {
-	return s.isNeedXrayRestart.Load()
+func (s *XrayService) IsNeedRestartAndSetFalse() bool {
+	return isNeedXrayRestart.CAS(true, false)
 }

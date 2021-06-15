@@ -643,6 +643,81 @@ class Inbound extends XrayCommonClass {
         this.stream.network = network;
     }
 
+    // VMess & VLess
+    get uuid() {
+        switch (this.protocol) {
+            case Protocols.VMESS:
+                return this.settings.vmesses[0].id;
+            case Protocols.VLESS:
+                return this.settings.vlesses[0].id;
+            default:
+                return "";
+        }
+    }
+
+    // VLess
+    get flow() {
+        switch (this.protocol) {
+            case Protocols.VLESS:
+                return this.settings.vlesses[0].flow;
+            default:
+                return "";
+        }
+    }
+
+    // VMess
+    get alterId() {
+        switch (this.protocol) {
+            case Protocols.VMESS:
+                return this.settings.vmesses[0].alterId;
+            default:
+                return "";
+        }
+    }
+
+    // Socks & HTTP
+    get username() {
+        switch (this.protocol) {
+            case Protocols.SOCKS:
+            case Protocols.HTTP:
+                return this.settings.accounts[0].user;
+            default:
+                return "";
+        }
+    }
+
+    // Trojan & Shadowsocks & Socks & HTTP
+    get password() {
+        switch (this.protocol) {
+            case Protocols.TROJAN:
+                return this.settings.clients[0].password;
+            case Protocols.SHADOWSOCKS:
+                return this.settings.password;
+            case Protocols.SOCKS:
+            case Protocols.HTTP:
+                return this.settings.accounts[0].pass;
+            default:
+                return "";
+        }
+    }
+
+    // Shadowsocks
+    get method() {
+        switch (this.protocol) {
+            case Protocols.SHADOWSOCKS:
+                return this.settings.method;
+            default:
+                return "";
+        }
+    }
+
+    get serverName() {
+        if (this.stream.isTls || this.stream.isXTls) {
+            return this.stream.tls.server;
+        }
+        return "";
+    }
+
     canEnableTls() {
         switch (this.protocol) {
             case Protocols.VMESS:
@@ -785,7 +860,7 @@ class Inbound extends XrayCommonClass {
         const type = this.stream.network;
         const params = new Map();
         params.set("type", this.stream.network);
-        if (this.isXTls) {
+        if (this.xtls) {
             params.set("security", "xtls");
         } else {
             params.set("security", this.stream.security);
@@ -841,7 +916,7 @@ class Inbound extends XrayCommonClass {
             }
         }
 
-        if (this.isXTls) {
+        if (this.xtls) {
             params.set("flow", this.settings.vlesses[0].flow);
         }
 
