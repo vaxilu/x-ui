@@ -487,7 +487,7 @@ if [[ $# > 0 ]]; then
         ;;
         "log") check_install 0 && show_log 0
         ;;
-        "log") check_install 0 && migrate_v2_ui 0
+        "v2-ui") check_install 0 && migrate_v2_ui 0
         ;;
         "update") check_install 0 && update 0
         ;;
