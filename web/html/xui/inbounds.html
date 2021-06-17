@@ -59,7 +59,10 @@
                             <template slot="traffic" slot-scope="text, dbInbound">
                                 <a-tag color="blue">[[ sizeFormat(dbInbound.up) ]]</a-tag>
                                 <a-tag color="green">[[ sizeFormat(dbInbound.down) ]]</a-tag>
-                                <a-tag v-if="dbInbound.total > 0" color="cyan">[[ sizeFormat(dbInbound.total) ]]</a-tag>
+                                <template v-if="dbInbound.total > 0">
+                                    <a-tag v-if="dbInbound.up + dbInbound.down < dbInbound.total" color="cyan">[[ sizeFormat(dbInbound.total) ]]</a-tag>
+                                    <a-tag v-else color="red">[[ sizeFormat(dbInbound.total) ]]</a-tag>
+                                </template>
                                 <a-tag v-else color="cyan">无限制</a-tag>
                             </template>
                             <template slot="settings" slot-scope="text, dbInbound">
@@ -101,6 +104,11 @@
         align: 'center',
         dataIndex: "id",
         width: 60,
+    }, {
+        title: "备注",
+        align: 'center',
+        width: 60,
+        scopedSlots: { customRender: 'remark' },
     }, {
         title: "协议",
         align: 'center',

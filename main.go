@@ -50,11 +50,12 @@ func runWebServer() {
 	}
 
 	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGHUP)
+	signal.Notify(sigCh, syscall.SIGHUP, syscall.SIGTERM, syscall.SIGKILL)
 	for {
 		sig := <-sigCh
 
-		if sig == syscall.SIGHUP {
+		switch sig {
+		case syscall.SIGHUP:
 			err := server.Stop()
 			if err != nil {
 				logger.Warning("stop server err:", err)
@@ -66,8 +67,9 @@ func runWebServer() {
 				log.Println(err)
 				return
 			}
-		} else {
-			continue
+		default:
+			server.Stop()
+			return
 		}
 	}
 }
@@ -173,7 +175,7 @@ func main() {
 		}
 		err = v2ui.MigrateFromV2UI(dbPath)
 		if err != nil {
-			logger.Error("migrate from v2-ui failed:", err)
+			fmt.Println("migrate from v2-ui failed:", err)
 		}
 	case "setting":
 		err := settingCmd.Parse(os.Args[2:])

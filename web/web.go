@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 	"x-ui/config"
 	"x-ui/logger"
@@ -35,12 +36,42 @@ var htmlFS embed.FS
 //go:embed translation/*
 var i18nFS embed.FS
 
+var startTime = time.Now()
+
 type wrapAssetsFS struct {
 	embed.FS
 }
 
 func (f *wrapAssetsFS) Open(name string) (fs.File, error) {
-	return f.FS.Open("assets/" + name)
+	file, err := f.FS.Open("assets/" + name)
+	if err != nil {
+		return nil, err
+	}
+	return &wrapAssetsFile{
+		File: file,
+	}, nil
+}
+
+type wrapAssetsFile struct {
+	fs.File
+}
+
+func (f *wrapAssetsFile) Stat() (fs.FileInfo, error) {
+	info, err := f.File.Stat()
+	if err != nil {
+		return nil, err
+	}
+	return &wrapAssetsFileInfo{
+		FileInfo: info,
+	}, nil
+}
+
+type wrapAssetsFileInfo struct {
+	fs.FileInfo
+}
+
+func (f *wrapAssetsFileInfo) ModTime() time.Time {
+	return startTime
 }
 
 type Server struct {
@@ -131,11 +162,18 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	if err != nil {
 		return nil, err
 	}
+	assetsBasePath := basePath + "assets/"
 
 	store := cookie.NewStore(secret)
 	engine.Use(sessions.Sessions("session", store))
 	engine.Use(func(c *gin.Context) {
 		c.Set("base_path", basePath)
+	})
+	engine.Use(func(c *gin.Context) {
+		uri := c.Request.RequestURI
+		if strings.HasPrefix(uri, assetsBasePath) {
+			c.Header("Cache-Control", "max-age=31536000")
+		}
 	})
 	err = s.initI18n(engine)
 	if err != nil {

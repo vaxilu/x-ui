@@ -11,6 +11,19 @@ import (
 type UserService struct {
 }
 
+func (s *UserService) GetFirstUser() (*model.User, error) {
+	db := database.GetDB()
+
+	user := &model.User{}
+	err := db.Model(model.User{}).
+		First(user).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
 func (s *UserService) CheckUser(username string, password string) *model.User {
 	db := database.GetDB()
 

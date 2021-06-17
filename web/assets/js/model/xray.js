@@ -168,6 +168,15 @@ TcpStreamSettings.TcpRequest = class extends XrayCommonClass {
         this.headers.push({ name: name, value: value });
     }
 
+    getHeader(name) {
+        for (const header of this.headers) {
+            if (header.name.toLowerCase() === name.toLowerCase()) {
+                return header.value;
+            }
+        }
+        return null;
+    }
+
     removeHeader(index) {
         this.headers.splice(index, 1);
     }
@@ -292,6 +301,15 @@ class WsStreamSettings extends XrayCommonClass {
 
     addHeader(name, value) {
         this.headers.push({ name: name, value: value });
+    }
+
+    getHeader(name) {
+        for (const header of this.headers) {
+            if (header.name.toLowerCase() === name.toLowerCase()) {
+                return header.value;
+            }
+        }
+        return null;
     }
 
     removeHeader(index) {
@@ -643,6 +661,30 @@ class Inbound extends XrayCommonClass {
         this.stream.network = network;
     }
 
+    get isTcp() {
+        return this.network === "tcp";
+    }
+
+    get isWs() {
+        return this.network === "ws";
+    }
+
+    get isKcp() {
+        return this.network === "kcp";
+    }
+
+    get isQuic() {
+        return this.network === "quic"
+    }
+
+    get isGrpc() {
+        return this.network === "grpc";
+    }
+
+    get isH2() {
+        return this.network === "http";
+    }
+
     // VMess & VLess
     get uuid() {
         switch (this.protocol) {
@@ -716,6 +758,52 @@ class Inbound extends XrayCommonClass {
             return this.stream.tls.server;
         }
         return "";
+    }
+
+    get host() {
+        if (this.isTcp) {
+            return this.stream.tcp.request.getHeader("Host");
+        } else if (this.isWs) {
+            return this.stream.ws.getHeader("Host");
+        } else if (this.isH2) {
+            return this.stream.http.host[0];
+        }
+        return null;
+    }
+
+    get path() {
+        if (this.isTcp) {
+            return this.stream.tcp.request.path[0];
+        } else if (this.isWs) {
+            return this.stream.ws.path;
+        } else if (this.isH2) {
+            return this.stream.http.path[0];
+        }
+        return null;
+    }
+
+    get quicSecurity() {
+        return this.stream.quic.security;
+    }
+
+    get quicKey() {
+        return this.stream.quic.key;
+    }
+
+    get quicType() {
+        return this.stream.quic.type;
+    }
+
+    get kcpType() {
+        return this.stream.kcp.type;
+    }
+
+    get kcpSeed() {
+        return this.stream.kcp.seed;
+    }
+
+    get serviceName() {
+        return this.stream.grpc.serviceName;
     }
 
     canEnableTls() {
