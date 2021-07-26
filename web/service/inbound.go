@@ -167,7 +167,7 @@ func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
 
 func (s *InboundService) DisableInvalidInbounds() (int64, error) {
 	db := database.GetDB()
-	now := time.Now()
+	now := time.Now().Unix() * 1000
 	result := db.Model(model.Inbound{}).
 		Where("((total > 0 and up + down >= total) or (expiry_time > 0 and expiry_time <= ?)) and enable = ?", now, true).
 		Update("enable", false)
