@@ -13,7 +13,7 @@
 
 # 安装&升级
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/sprov065/x-ui/master/install.sh) 0.2.0
+bash <(curl -Ls https://raw.githubusercontent.com/sprov065/x-ui/master/install.sh)
 ```
 
 ## 建议系统
