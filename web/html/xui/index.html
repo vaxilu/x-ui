@@ -188,8 +188,6 @@
     Object.freeze(State);
 
     class CurTotal {
-        current = 0
-        total = 0
 
         constructor(current, total) {
             this.current = current;
@@ -216,19 +214,19 @@
     }
 
     class Status {
-        cpu = new CurTotal(0, 0);
-        disk = new CurTotal(0, 0);
-        loads = [0, 0, 0];
-        mem = new CurTotal(0, 0);
-        netIO = {up: 0, down: 0};
-        netTraffic = {sent: 0, recv: 0};
-        swap = new CurTotal(0, 0);
-        tcpCount = 0;
-        udpCount = 0;
-        uptime = 0;
-        xray = {state: State.Stop, errorMsg: "", version: "", color: ""};
-
         constructor(data) {
+            this.cpu = new CurTotal(0, 0);
+            this.disk = new CurTotal(0, 0);
+            this.loads = [0, 0, 0];
+            this.mem = new CurTotal(0, 0);
+            this.netIO = {up: 0, down: 0};
+            this.netTraffic = {sent: 0, recv: 0};
+            this.swap = new CurTotal(0, 0);
+            this.tcpCount = 0;
+            this.udpCount = 0;
+            this.uptime = 0;
+            this.xray = {state: State.Stop, errorMsg: "", version: "", color: ""};
+
             if (data == null) {
                 return;
             }

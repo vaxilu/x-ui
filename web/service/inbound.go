@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"gorm.io/gorm"
+	"time"
 	"x-ui/database"
 	"x-ui/database/model"
 	"x-ui/util/common"
@@ -166,8 +167,9 @@ func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
 
 func (s *InboundService) DisableInvalidInbounds() (int64, error) {
 	db := database.GetDB()
+	now := time.Now()
 	result := db.Model(model.Inbound{}).
-		Where("up + down >= total and total > 0 and enable = ?", true).
+		Where("((total > 0 and up + down >= total) or (expiry_time > 0 and expiry_time <= ?)) and enable = ?", now, true).
 		Update("enable", false)
 	err := result.Error
 	count := result.RowsAffected

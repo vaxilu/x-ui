@@ -1,14 +1,18 @@
 class User {
-    username = "";
-    password = "";
+
+    constructor() {
+        this.username = "";
+        this.password = "";
+    }
 }
 
 class Msg {
-    success = false;
-    msg = "";
-    obj = null;
 
     constructor(success, msg, obj) {
+        this.success = false;
+        this.msg = "";
+        this.obj = null;
+
         if (success != null) {
             this.success = success;
         }
@@ -22,24 +26,25 @@ class Msg {
 }
 
 class DBInbound {
-    id = 0;
-    userId = 0;
-    up = 0;
-    down = 0;
-    total = 0;
-    remark = "";
-    enable = true;
-    expiryTime = 0;
-
-    listen = "";
-    port = 0;
-    protocol = "";
-    settings = "";
-    streamSettings = "";
-    tag = "";
-    sniffing = "";
 
     constructor(data) {
+        this.id = 0;
+        this.userId = 0;
+        this.up = 0;
+        this.down = 0;
+        this.total = 0;
+        this.remark = "";
+        this.enable = true;
+        this.expiryTime = 0;
+
+        this.listen = "";
+        this.port = 0;
+        this.protocol = "";
+        this.settings = "";
+        this.streamSettings = "";
+        this.tag = "";
+        this.sniffing = "";
+
         if (data == null) {
             return;
         }
@@ -84,6 +89,25 @@ class DBInbound {
             address = this.listen;
         }
         return address;
+    }
+
+    get _expiryTime() {
+        if (this.expiryTime === 0) {
+            return null;
+        }
+        return moment(this.expiryTime);
+    }
+
+    set _expiryTime(t) {
+        if (t == null) {
+            this.expiryTime = 0;
+        } else {
+            this.expiryTime = t.valueOf();
+        }
+    }
+
+    get isExpiry() {
+        return this.expiryTime < new Date().getTime();
     }
 
     toInbound() {
@@ -132,17 +156,18 @@ class DBInbound {
 }
 
 class AllSetting {
-    webListen = "";
-    webPort = 54321;
-    webCertFile = "";
-    webKeyFile = "";
-    webBasePath = "/";
-
-    xrayTemplateConfig = "";
-
-    timeLocation = "Asia/Shanghai";
 
     constructor(data) {
+        this.webListen = "";
+        this.webPort = 54321;
+        this.webCertFile = "";
+        this.webKeyFile = "";
+        this.webBasePath = "/";
+
+        this.xrayTemplateConfig = "";
+
+        this.timeLocation = "Asia/Shanghai";
+
         if (data == null) {
             return
         }

@@ -24,6 +24,8 @@ import (
 	"x-ui/logger"
 	"x-ui/util/common"
 	"x-ui/web/controller"
+	"x-ui/web/job"
+	"x-ui/web/network"
 	"x-ui/web/service"
 )
 
@@ -277,53 +279,21 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 }
 
 func (s *Server) startTask() {
-	err := s.xrayService.RestartXray()
+	err := s.xrayService.RestartXray(true)
 	if err != nil {
 		logger.Warning("start xray failed:", err)
 	}
-	var checkTime = 0
 	// 每 30 秒检查一次 xray 是否在运行
-	s.cron.AddFunc("@every 30s", func() {
-		if s.xrayService.IsXrayRunning() {
-			checkTime = 0
-			return
-		}
-		checkTime++
-		if checkTime < 2 {
-			return
-		}
-		s.xrayService.SetToNeedRestart()
-	})
+	s.cron.AddJob("@every 30s", job.NewCheckXrayRunningJob())
 
 	go func() {
 		time.Sleep(time.Second * 5)
 		// 每 10 秒统计一次流量，首次启动延迟 5 秒，与重启 xray 的时间错开
-		s.cron.AddFunc("@every 10s", func() {
-			if !s.xrayService.IsXrayRunning() {
-				return
-			}
-			traffics, err := s.xrayService.GetXrayTraffic()
-			if err != nil {
-				logger.Warning("get xray traffic failed:", err)
-				return
-			}
-			err = s.inboundService.AddTraffic(traffics)
-			if err != nil {
-				logger.Warning("add traffic failed:", err)
-			}
-		})
+		s.cron.AddJob("@every 10s", job.NewXrayTrafficJob())
 	}()
 
-	// 每 30 秒检查一次 inbound 流量超出情况
-	s.cron.AddFunc("@every 30s", func() {
-		count, err := s.inboundService.DisableInvalidInbounds()
-		if err != nil {
-			logger.Warning("disable invalid inbounds err:", err)
-		} else if count > 0 {
-			logger.Debugf("disabled %v inbounds", count)
-			s.xrayService.SetToNeedRestart()
-		}
-	})
+	// 每 30 秒检查一次 inbound 流量超出和到期的情况
+	s.cron.AddJob("@every 30s", job.NewCheckInboundJob())
 }
 
 func (s *Server) Start() (err error) {
@@ -362,22 +332,21 @@ func (s *Server) Start() (err error) {
 		return err
 	}
 	listenAddr := net.JoinHostPort(listen, strconv.Itoa(port))
-	var listener net.Listener
+	listener, err := net.Listen("tcp", listenAddr)
+	if err != nil {
+		return err
+	}
 	if certFile != "" || keyFile != "" {
-		var cert tls.Certificate
-		cert, err = tls.LoadX509KeyPair(certFile, keyFile)
+		cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 		if err != nil {
+			listener.Close()
 			return err
 		}
 		c := &tls.Config{
 			Certificates: []tls.Certificate{cert},
 		}
-		listener, err = tls.Listen("tcp", listenAddr, c)
-	} else {
-		listener, err = net.Listen("tcp", listenAddr)
-	}
-	if err != nil {
-		return err
+		listener = network.NewAutoHttpsListener(listener)
+		listener = tls.NewListener(listener, c)
 	}
 	if certFile != "" || keyFile != "" {
 		logger.Info("web server run https on", listener.Addr())
@@ -392,7 +361,9 @@ func (s *Server) Start() (err error) {
 		Handler: engine,
 	}
 
-	go s.httpServer.Serve(listener)
+	go func() {
+		s.httpServer.Serve(listener)
+	}()
 
 	return nil
 }

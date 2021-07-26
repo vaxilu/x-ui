@@ -46,24 +46,44 @@
                         <div slot="title">
                             <a-button type="primary" icon="plus" @click="openAddInbound"></a-button>
                         </div>
-                        <a-input v-model="searchKey" placeholder="search" autofocus style="max-width: 300px"></a-input>
+<!--                        <a-input v-model="searchKey" placeholder="搜索" autofocus style="max-width: 300px"></a-input>-->
                         <a-table :columns="columns" :row-key="dbInbound => dbInbound.id"
                                  :data-source="dbInbounds"
                                  :loading="spinning" :scroll="{ x: 1500 }"
                                  :pagination="false"
                                  style="margin-top: 20px"
                                  @change="() => getDBInbounds()">
+                            <template slot="action" slot-scope="text, dbInbound">
+                                <a-dropdown :trigger="['click']">
+                                    <a @click="e => e.preventDefault()">操作</a>
+                                    <a-menu slot="overlay" @click="a => clickAction(a, dbInbound)">
+                                        <a-menu-item v-if="dbInbound.hasLink()" key="qrcode">
+                                            <a-icon type="qrcode"></a-icon>二维码
+                                        </a-menu-item>
+                                        <a-menu-item key="edit">
+                                            <a-icon type="edit"></a-icon>编辑
+                                        </a-menu-item>
+                                        <a-menu-item key="resetTraffic">
+                                            <a-icon type="retweet"></a-icon>重置流量
+                                        </a-menu-item>
+                                        <a-menu-item key="delete">
+                                            <span style="color: #FF4D4F">
+                                                <a-icon type="delete"></a-icon>删除
+                                            </span>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </a-dropdown>
+                            </template>
                             <template slot="protocol" slot-scope="text, dbInbound">
                                 <a-tag color="blue">[[ dbInbound.protocol ]]</a-tag>
                             </template>
                             <template slot="traffic" slot-scope="text, dbInbound">
-                                <a-tag color="blue">[[ sizeFormat(dbInbound.up) ]]</a-tag>
-                                <a-tag color="green">[[ sizeFormat(dbInbound.down) ]]</a-tag>
+                                <a-tag color="blue">[[ sizeFormat(dbInbound.up) ]] / [[ sizeFormat(dbInbound.down) ]]</a-tag>
                                 <template v-if="dbInbound.total > 0">
                                     <a-tag v-if="dbInbound.up + dbInbound.down < dbInbound.total" color="cyan">[[ sizeFormat(dbInbound.total) ]]</a-tag>
                                     <a-tag v-else color="red">[[ sizeFormat(dbInbound.total) ]]</a-tag>
                                 </template>
-                                <a-tag v-else color="cyan">无限制</a-tag>
+                                <a-tag v-else color="green">无限制</a-tag>
                             </template>
                             <template slot="settings" slot-scope="text, dbInbound">
                                 <a-button type="link" @click="showInfo(dbInbound)">查看</a-button>
@@ -80,14 +100,15 @@
                                 <a-switch v-model="dbInbound.enable" @change="switchEnable(dbInbound)"></a-switch>
                             </template>
                             <template slot="expiryTime" slot-scope="text, dbInbound">
-                                <span v-if="dbInbound.expiryTime > 0" color="red">[[ DateUtil.formatMillis(dbInbound.expiryTime) ]]</span>
-                                <span v-else>无限期</span>
-                            </template>
-                            <template slot="action" slot-scope="text, dbInbound">
-                                <a-button v-if="dbInbound.hasLink()" type="primary" icon="qrcode" @click="showQrcode(dbInbound)"></a-button>
-                                <a-button type="primary" icon="edit" @click="openEditInbound(dbInbound)"></a-button>
-                                <a-button icon="retweet" @click="resetTraffic(dbInbound)"></a-button>
-                                <a-button type="danger" icon="delete" @click="delInbound(dbInbound)"></a-button>
+                                <template v-if="dbInbound.expiryTime > 0">
+                                    <a-tag v-if="dbInbound.isExpiry" color="red">
+                                        [[ DateUtil.formatMillis(dbInbound.expiryTime) ]]
+                                    </a-tag>
+                                    <a-tag v-else color="blue">
+                                        [[ DateUtil.formatMillis(dbInbound.expiryTime) ]]
+                                    </a-tag>
+                                </template>
+                                <a-tag v-else color="green">无限期</a-tag>
                             </template>
                         </a-table>
                     </a-card>
@@ -100,14 +121,24 @@
 <script>
 
     const columns = [{
+        title: "操作",
+        align: 'center',
+        width: 30,
+        scopedSlots: { customRender: 'action' },
+    }, {
+        title: "启用",
+        align: 'center',
+        width: 40,
+        scopedSlots: { customRender: 'enable' },
+    }, {
         title: "id",
         align: 'center',
         dataIndex: "id",
-        width: 60,
+        width: 30,
     }, {
         title: "备注",
         align: 'center',
-        width: 60,
+        width: 100,
         dataIndex: "remark",
     }, {
         title: "协议",
@@ -122,12 +153,12 @@
     }, {
         title: "流量↑|↓",
         align: 'center',
-        width: 80,
+        width: 150,
         scopedSlots: { customRender: 'traffic' },
     }, {
         title: "详细信息",
         align: 'center',
-        width: 60,
+        width: 40,
         scopedSlots: { customRender: 'settings' },
     }, {
         title: "传输配置",
@@ -135,15 +166,10 @@
         width: 60,
         scopedSlots: { customRender: 'stream' },
     }, {
-        title: "启用",
+        title: "到期时间",
         align: 'center',
-        width: 60,
-        scopedSlots: { customRender: 'enable' },
-    }, {
-        title: "操作",
-        align: 'center',
-        width: 60,
-        scopedSlots: { customRender: 'action' },
+        width: 80,
+        scopedSlots: { customRender: 'expiryTime' },
     }];
 
     const app = new Vue({
@@ -190,6 +216,22 @@
                     });
                 }
             },
+            clickAction(action, dbInbound) {
+                switch (action.key) {
+                    case "qrcode":
+                        this.showQrcode(dbInbound);
+                        break;
+                    case "edit":
+                        this.openEditInbound(dbInbound);
+                        break;
+                    case "resetTraffic":
+                        this.resetTraffic(dbInbound);
+                        break;
+                    case "delete":
+                        this.delInbound(dbInbound);
+                        break;
+                }
+            },
             openAddInbound() {
                 inModal.show({
                     title: '添加入站',
@@ -222,6 +264,7 @@
                     total: dbInbound.total,
                     remark: dbInbound.remark,
                     enable: dbInbound.enable,
+                    expiryTime: dbInbound.expiryTime,
 
                     listen: inbound.listen,
                     port: inbound.port,
@@ -239,6 +282,7 @@
                     total: dbInbound.total,
                     remark: dbInbound.remark,
                     enable: dbInbound.enable,
+                    expiryTime: dbInbound.expiryTime,
 
                     listen: inbound.listen,
                     port: inbound.port,

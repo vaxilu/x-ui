@@ -39,6 +39,19 @@
         </span>
         <a-input-number v-model="dbInbound.totalGB" :min="0"></a-input-number>
     </a-form-item>
+    <a-form-item>
+        <span slot="label">
+            到期时间
+            <a-tooltip>
+                <template slot="title">
+                    留空则永不到期
+                </template>
+                <a-icon type="question-circle" theme="filled"></a-icon>
+            </a-tooltip>
+        </span>
+        <a-date-picker :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm"
+                       v-model="dbInbound._expiryTime" style="width: 300px;"></a-date-picker>
+    </a-form-item>
 </a-form>
 
 <!-- vmess settings -->

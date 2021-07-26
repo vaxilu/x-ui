@@ -77,18 +77,19 @@ class PromiseUtil {
 
 }
 
+const seq = [
+    'a', 'b', 'c', 'd', 'e', 'f', 'g',
+    'h', 'i', 'j', 'k', 'l', 'm', 'n',
+    'o', 'p', 'q', 'r', 's', 't',
+    'u', 'v', 'w', 'x', 'y', 'z',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G',
+    'H', 'I', 'J', 'K', 'L', 'M', 'N',
+    'O', 'P', 'Q', 'R', 'S', 'T',
+    'U', 'V', 'W', 'X', 'Y', 'Z'
+];
+
 class RandomUtil {
-    static seq = [
-        'a', 'b', 'c', 'd', 'e', 'f', 'g',
-        'h', 'i', 'j', 'k', 'l', 'm', 'n',
-        'o', 'p', 'q', 'r', 's', 't',
-        'u', 'v', 'w', 'x', 'y', 'z',
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        'A', 'B', 'C', 'D', 'E', 'F', 'G',
-        'H', 'I', 'J', 'K', 'L', 'M', 'N',
-        'O', 'P', 'Q', 'R', 'S', 'T',
-        'U', 'V', 'W', 'X', 'Y', 'Z'
-    ];
 
     static randomIntRange(min, max) {
         return parseInt(Math.random() * (max - min) + min, 10);
@@ -101,7 +102,7 @@ class RandomUtil {
     static randomSeq(count) {
         let str = '';
         for (let i = 0; i < count; ++i) {
-            str += this.seq[this.randomInt(62)];
+            str += seq[this.randomInt(62)];
         }
         return str;
     }
@@ -109,7 +110,7 @@ class RandomUtil {
     static randomLowerAndNum(count) {
         let str = '';
         for (let i = 0; i < count; ++i) {
-            str += this.seq[this.randomInt(36)];
+            str += seq[this.randomInt(36)];
         }
         return str;
     }
@@ -121,7 +122,7 @@ class RandomUtil {
             if (index <= 9) {
                 str += index;
             } else {
-                str += this.seq[index - 10];
+                str += seq[index - 10];
             }
         }
         return str;

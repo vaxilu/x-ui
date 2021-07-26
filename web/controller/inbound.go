@@ -37,7 +37,7 @@ func (a *InboundController) startTask() {
 	c := webServer.GetCron()
 	c.AddFunc("@every 10s", func() {
 		if a.xrayService.IsNeedRestartAndSetFalse() {
-			err := a.xrayService.RestartXray()
+			err := a.xrayService.RestartXray(false)
 			if err != nil {
 				logger.Error("restart xray failed:", err)
 			}

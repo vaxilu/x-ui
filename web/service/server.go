@@ -18,6 +18,7 @@ import (
 	"runtime"
 	"time"
 	"x-ui/logger"
+	"x-ui/util/sys"
 	"x-ui/xray"
 )
 
@@ -142,18 +143,14 @@ func (s *ServerService) GetStatus(lastStatus *Status) *Status {
 		logger.Warning("can not find io counters")
 	}
 
-	tcpConnStats, err := net.Connections("tcp")
+	status.TcpCount, err = sys.GetTCPCount()
 	if err != nil {
-		logger.Warning("get connections failed:", err)
-	} else {
-		status.TcpCount = len(tcpConnStats)
+		logger.Warning("get tcp connections failed:", err)
 	}
 
-	udpConnStats, err := net.Connections("udp")
+	status.UdpCount, err = sys.GetUDPCount()
 	if err != nil {
-		logger.Warning("get connections failed:", err)
-	} else {
-		status.UdpCount = len(udpConnStats)
+		logger.Warning("get udp connections failed:", err)
 	}
 
 	if s.xrayService.IsXrayRunning() {
@@ -265,7 +262,7 @@ func (s *ServerService) UpdateXray(version string) error {
 
 	s.xrayService.StopXray()
 	defer func() {
-		err := s.xrayService.RestartXray()
+		err := s.xrayService.RestartXray(true)
 		if err != nil {
 			logger.Error("start xray failed:", err)
 		}
