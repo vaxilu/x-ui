@@ -82,9 +82,6 @@ install_base() {
 install_x-ui() {
     systemctl stop x-ui
     cd /usr/local/
-    if [[ -e /usr/local/x-ui/ ]]; then
-        rm /usr/local/x-ui/ -rf
-    fi
 
     if  [ $# == 0 ] ;then
         last_version=$(curl -Ls "https://api.github.com/repos/sprov065/x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
@@ -109,11 +106,16 @@ install_x-ui() {
         fi
     fi
 
+    if [[ -e /usr/local/x-ui/ ]]; then
+        rm /usr/local/x-ui/ -rf
+    fi
+
     tar zxvf x-ui-linux-${arch}.tar.gz
     rm x-ui-linux-${arch}.tar.gz -f
     cd x-ui
-    chmod +x x-ui bin/xray-linux-${arch}
+    chmod +x x-ui bin/xray-linux-${arch} x-ui.sh
     cp -f x-ui.service /etc/systemd/system/
+    cp -f x-ui.sh /usr/bin/x-ui
     systemctl daemon-reload
     systemctl enable x-ui
     systemctl start x-ui
@@ -125,8 +127,6 @@ install_x-ui() {
     echo -e ""
     echo -e "如果是更新面板，则按你之前的方式访问面板"
     echo -e ""
-    curl -o /usr/bin/x-ui -Ls https://raw.githubusercontent.com/sprov065/x-ui/master/x-ui.sh
-    chmod +x /usr/bin/x-ui
     echo -e "x-ui 管理脚本使用方法: "
     echo -e "----------------------------------------------"
     echo -e "x-ui              - 显示管理菜单 (功能更多)"
