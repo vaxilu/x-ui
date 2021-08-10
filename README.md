@@ -13,11 +13,11 @@
 
 # 安装&升级
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/sprov065/x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
 ```
 
 ## 手动安装&升级
-1. 首先从 https://github.com/sprov065/x-ui/releases 下载最新的压缩包，一般选择`amd64`架构
+1. 首先从 https://github.com/vaxilu/x-ui/releases 下载最新的压缩包，一般选择`amd64`架构
 2. 然后将这个压缩包上传到服务器的`/root/`目录下，并使用`root`用户登录服务器
 
 > 如果你的服务器 cpu 架构不是`amd64`，自行将命令中的`amd64`替换为其他架构
@@ -53,11 +53,6 @@ x-ui 可与 v2-ui 并存，数据不互通，不影响对方的运行
 x-ui v2-ui
 ```
 
-# Telegram
-群组：https://t.me/sprov_blog
-
-频道：https://t.me/sprov_channel
-
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/sprov065/x-ui.svg)](https://starchart.cc/sprov065/x-ui)
+[![Stargazers over time](https://starchart.cc/vaxilu/x-ui.svg)](https://starchart.cc/vaxilu/x-ui)
