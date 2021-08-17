@@ -84,20 +84,20 @@ install_x-ui() {
     cd /usr/local/
 
     if  [ $# == 0 ] ;then
-        last_version=$(curl -Ls "https://api.github.com/repos/sprov065/x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        last_version=$(curl -Ls "https://api.github.com/repos/vaxilu/x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$last_version" ]]; then
             echo -e "${red}检测 x-ui 版本失败，可能是超出 Github API 限制，请稍后再试，或手动指定 x-ui 版本安装${plain}"
             exit 1
         fi
         echo -e "检测到 x-ui 最新版本：${last_version}，开始安装"
-        wget -N --no-check-certificate -O /usr/local/x-ui-linux-${arch}.tar.gz https://github.com/sprov065/x-ui/releases/download/${last_version}/x-ui-linux-${arch}.tar.gz
+        wget -N --no-check-certificate -O /usr/local/x-ui-linux-${arch}.tar.gz https://github.com/vaxilu/x-ui/releases/download/${last_version}/x-ui-linux-${arch}.tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 x-ui 失败，请确保你的服务器能够下载 Github 的文件${plain}"
             exit 1
         fi
     else
         last_version=$1
-        url="https://github.com/sprov065/x-ui/releases/download/${last_version}/x-ui-linux-${arch}.tar.gz"
+        url="https://github.com/vaxilu/x-ui/releases/download/${last_version}/x-ui-linux-${arch}.tar.gz"
         echo -e "开始安装 x-ui v$1"
         wget -N --no-check-certificate -O /usr/local/x-ui-linux-${arch}.tar.gz ${url}
         if [[ $? -ne 0 ]]; then
