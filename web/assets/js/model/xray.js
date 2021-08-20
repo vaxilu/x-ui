@@ -1270,14 +1270,26 @@ Inbound.VLESSSettings.Fallback = class extends XrayCommonClass {
 };
 
 Inbound.TrojanSettings = class extends Inbound.Settings {
-    constructor(protocol, clients=[new Inbound.TrojanSettings.Client()]) {
+    constructor(protocol,
+                clients=[new Inbound.TrojanSettings.Client()],
+                fallbacks=[],) {
         super(protocol);
         this.clients = clients;
+        this.fallbacks = fallbacks;
+    }
+
+    addTrojanFallback() {
+        this.fallbacks.push(new Inbound.TrojanSettings.Fallback());
+    }
+
+    delTrojanFallback(index) {
+        this.fallbacks.splice(index, 1);
     }
 
     toJson() {
         return {
             clients: Inbound.TrojanSettings.toJsonArray(this.clients),
+            fallbacks: Inbound.TrojanSettings.toJsonArray(this.fallbacks),
         };
     }
 
@@ -1286,7 +1298,10 @@ Inbound.TrojanSettings = class extends Inbound.Settings {
         for (const c of json.clients) {
             clients.push(Inbound.TrojanSettings.Client.fromJson(c));
         }
-        return new Inbound.TrojanSettings(Protocols.TROJAN, clients);
+        return new Inbound.TrojanSettings(
+            Protocols.TROJAN,
+            clients,
+            Inbound.TrojanSettings.Fallback.fromJson(json.fallbacks),);
     }
 };
 Inbound.TrojanSettings.Client = class extends XrayCommonClass {
@@ -1305,6 +1320,45 @@ Inbound.TrojanSettings.Client = class extends XrayCommonClass {
         return new Inbound.TrojanSettings.Client(json.password);
     }
 
+};
+
+Inbound.TrojanSettings.Fallback = class extends XrayCommonClass {
+    constructor(name="", alpn='', path='', dest='', xver=0) {
+        super();
+        this.name = name;
+        this.alpn = alpn;
+        this.path = path;
+        this.dest = dest;
+        this.xver = xver;
+    }
+
+    toJson() {
+        let xver = this.xver;
+        if (!Number.isInteger(xver)) {
+            xver = 0;
+        }
+        return {
+            name: this.name,
+            alpn: this.alpn,
+            path: this.path,
+            dest: this.dest,
+            xver: xver,
+        }
+    }
+
+    static fromJson(json=[]) {
+        const fallbacks = [];
+        for (let fallback of json) {
+            fallbacks.push(new Inbound.TrojanSettings.Fallback(
+                fallback.name,
+                fallback.alpn,
+                fallback.path,
+                fallback.dest,
+                fallback.xver,
+            ))
+        }
+        return fallbacks;
+    }
 };
 
 Inbound.ShadowsocksSettings = class extends Inbound.Settings {
