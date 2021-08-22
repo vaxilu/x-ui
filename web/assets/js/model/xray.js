@@ -40,7 +40,7 @@ const RULE_DOMAIN = {
     SPEEDTEST: 'geosite:speedtest',
 };
 
-const VLESS_FLOW = {
+const FLOW_CONTROL = {
     ORIGIN: "xtls-rprx-origin",
     DIRECT: "xtls-rprx-direct",
 };
@@ -50,7 +50,7 @@ Object.freeze(VmessMethods);
 Object.freeze(SSMethods);
 Object.freeze(RULE_IP);
 Object.freeze(RULE_DOMAIN);
-Object.freeze(VLESS_FLOW);
+Object.freeze(FLOW_CONTROL);
 
 class XrayCommonClass {
 
@@ -697,11 +697,13 @@ class Inbound extends XrayCommonClass {
         }
     }
 
-    // VLess
+    // VLess & Trojan
     get flow() {
         switch (this.protocol) {
             case Protocols.VLESS:
                 return this.settings.vlesses[0].flow;
+            case Protocols.TROJAN:
+                return this.settings.clients[0].flow;
             default:
                 return "";
         }
@@ -1217,7 +1219,7 @@ Inbound.VLESSSettings = class extends Inbound.Settings {
 };
 Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
 
-    constructor(id=RandomUtil.randomUUID(), flow=VLESS_FLOW.DIRECT) {
+    constructor(id=RandomUtil.randomUUID(), flow=FLOW_CONTROL.DIRECT) {
         super();
         this.id = id;
         this.flow = flow;
@@ -1305,19 +1307,24 @@ Inbound.TrojanSettings = class extends Inbound.Settings {
     }
 };
 Inbound.TrojanSettings.Client = class extends XrayCommonClass {
-    constructor(password=RandomUtil.randomSeq(10)) {
+    constructor(password=RandomUtil.randomSeq(10), flow=FLOW_CONTROL.DIRECT) {
         super();
         this.password = password;
+        this.flow = flow;
     }
 
     toJson() {
         return {
             password: this.password,
+            flow: this.flow,
         };
     }
 
     static fromJson(json={}) {
-        return new Inbound.TrojanSettings.Client(json.password);
+        return new Inbound.TrojanSettings.Client(
+            json.password,
+            json.flow,
+        );
     }
 
 };

@@ -3,6 +3,12 @@
     <a-form-item label="密码">
         <a-input v-model.trim="inbound.settings.clients[0].password"></a-input>
     </a-form-item>
+    <a-form-item v-if="inbound.xtls" label="flow">
+        <a-select v-model="inbound.settings.clients[0].flow" style="width: 150px">
+            <a-select-option value="">无</a-select-option>
+            <a-select-option v-for="key in FLOW_CONTROL" :value="key">[[ key ]]</a-select-option>
+        </a-select>
+    </a-form-item>
 </a-form>
 
 <a-form layout="inline">
