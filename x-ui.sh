@@ -277,7 +277,8 @@ migrate_v2_ui() {
 }
 
 install_bbr() {
-    bash <(curl -L -s https://raw.githubusercontent.com/sprov065/blog/master/bbr.sh)
+    # temporary workaround for installing bbr
+    bash <(curl -L -s https://raw.githubusercontent.com/teddysun/across/master/bbr.sh)
     echo ""
     before_show_menu
 }
