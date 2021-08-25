@@ -1010,18 +1010,6 @@ class Inbound extends XrayCommonClass {
             params.set("flow", this.settings.vlesses[0].flow);
         }
 
-        for (const [key, value] of params) {
-            switch (key) {
-                case "host":
-                case "path":
-                case "seed":
-                case "key":
-                case "alpn":
-                    params.set(key, encodeURIComponent(value));
-                    break;
-            }
-        }
-
         const link = `vless://${uuid}@${address}:${port}`;
         const url = new URL(link);
         for (const [key, value] of params) {

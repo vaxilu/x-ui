@@ -87,7 +87,7 @@ func (s *XrayService) GetXrayTraffic() ([]*xray.Traffic, error) {
 func (s *XrayService) RestartXray(isForce bool) error {
 	lock.Lock()
 	defer lock.Unlock()
-	logger.Debug("restart xray")
+	logger.Debug("restart xray, force:", isForce)
 
 	xrayConfig, err := s.GetXrayConfig()
 	if err != nil {
