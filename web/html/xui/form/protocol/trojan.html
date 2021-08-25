@@ -3,5 +3,47 @@
     <a-form-item label="密码">
         <a-input v-model.trim="inbound.settings.clients[0].password"></a-input>
     </a-form-item>
+    <a-form-item v-if="inbound.xtls" label="flow">
+        <a-select v-model="inbound.settings.clients[0].flow" style="width: 150px">
+            <a-select-option value="">无</a-select-option>
+            <a-select-option v-for="key in FLOW_CONTROL" :value="key">[[ key ]]</a-select-option>
+        </a-select>
+    </a-form-item>
+</a-form>
+
+<a-form layout="inline">
+    <a-form-item label="fallbacks">
+        <a-row>
+            <a-button type="primary" size="small"
+                      @click="inbound.settings.addTrojanFallback()">
+                +
+            </a-button>
+        </a-row>
+    </a-form-item>
+</a-form>
+
+<!-- trojan fallbacks -->
+<a-form v-for="(fallback, index) in inbound.settings.fallbacks" layout="inline">
+    <a-divider>
+        fallback[[ index + 1 ]]
+        <a-icon type="delete" @click="() => inbound.settings.delTrojanFallback(index)"
+                style="color: rgb(255, 77, 79);cursor: pointer;"/>
+    </a-divider>
+    <a-form-item label="name">
+        <a-input v-model="fallback.name"></a-input>
+    </a-form-item>
+    <a-form-item label="alpn">
+        <a-input v-model="fallback.alpn"></a-input>
+    </a-form-item>
+    <a-form-item label="path">
+        <a-input v-model="fallback.path"></a-input>
+    </a-form-item>
+    <a-form-item label="dest">
+        <a-input v-model="fallback.dest"></a-input>
+    </a-form-item>
+    <a-form-item label="xver">
+        <a-input type="number" v-model.number="fallback.xver"></a-input>
+    </a-form-item>
+    <a-divider v-if="inbound.settings.fallbacks.length - 1 === index"/>
 </a-form>
 {{end}}

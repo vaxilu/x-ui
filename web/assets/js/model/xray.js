@@ -40,7 +40,7 @@ const RULE_DOMAIN = {
     SPEEDTEST: 'geosite:speedtest',
 };
 
-const VLESS_FLOW = {
+const FLOW_CONTROL = {
     ORIGIN: "xtls-rprx-origin",
     DIRECT: "xtls-rprx-direct",
 };
@@ -50,7 +50,7 @@ Object.freeze(VmessMethods);
 Object.freeze(SSMethods);
 Object.freeze(RULE_IP);
 Object.freeze(RULE_DOMAIN);
-Object.freeze(VLESS_FLOW);
+Object.freeze(FLOW_CONTROL);
 
 class XrayCommonClass {
 
@@ -697,11 +697,13 @@ class Inbound extends XrayCommonClass {
         }
     }
 
-    // VLess
+    // VLess & Trojan
     get flow() {
         switch (this.protocol) {
             case Protocols.VLESS:
                 return this.settings.vlesses[0].flow;
+            case Protocols.TROJAN:
+                return this.settings.clients[0].flow;
             default:
                 return "";
         }
@@ -1217,7 +1219,7 @@ Inbound.VLESSSettings = class extends Inbound.Settings {
 };
 Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
 
-    constructor(id=RandomUtil.randomUUID(), flow=VLESS_FLOW.DIRECT) {
+    constructor(id=RandomUtil.randomUUID(), flow=FLOW_CONTROL.DIRECT) {
         super();
         this.id = id;
         this.flow = flow;
@@ -1270,14 +1272,26 @@ Inbound.VLESSSettings.Fallback = class extends XrayCommonClass {
 };
 
 Inbound.TrojanSettings = class extends Inbound.Settings {
-    constructor(protocol, clients=[new Inbound.TrojanSettings.Client()]) {
+    constructor(protocol,
+                clients=[new Inbound.TrojanSettings.Client()],
+                fallbacks=[],) {
         super(protocol);
         this.clients = clients;
+        this.fallbacks = fallbacks;
+    }
+
+    addTrojanFallback() {
+        this.fallbacks.push(new Inbound.TrojanSettings.Fallback());
+    }
+
+    delTrojanFallback(index) {
+        this.fallbacks.splice(index, 1);
     }
 
     toJson() {
         return {
             clients: Inbound.TrojanSettings.toJsonArray(this.clients),
+            fallbacks: Inbound.TrojanSettings.toJsonArray(this.fallbacks),
         };
     }
 
@@ -1286,25 +1300,72 @@ Inbound.TrojanSettings = class extends Inbound.Settings {
         for (const c of json.clients) {
             clients.push(Inbound.TrojanSettings.Client.fromJson(c));
         }
-        return new Inbound.TrojanSettings(Protocols.TROJAN, clients);
+        return new Inbound.TrojanSettings(
+            Protocols.TROJAN,
+            clients,
+            Inbound.TrojanSettings.Fallback.fromJson(json.fallbacks),);
     }
 };
 Inbound.TrojanSettings.Client = class extends XrayCommonClass {
-    constructor(password=RandomUtil.randomSeq(10)) {
+    constructor(password=RandomUtil.randomSeq(10), flow=FLOW_CONTROL.DIRECT) {
         super();
         this.password = password;
+        this.flow = flow;
     }
 
     toJson() {
         return {
             password: this.password,
+            flow: this.flow,
         };
     }
 
     static fromJson(json={}) {
-        return new Inbound.TrojanSettings.Client(json.password);
+        return new Inbound.TrojanSettings.Client(
+            json.password,
+            json.flow,
+        );
     }
 
+};
+
+Inbound.TrojanSettings.Fallback = class extends XrayCommonClass {
+    constructor(name="", alpn='', path='', dest='', xver=0) {
+        super();
+        this.name = name;
+        this.alpn = alpn;
+        this.path = path;
+        this.dest = dest;
+        this.xver = xver;
+    }
+
+    toJson() {
+        let xver = this.xver;
+        if (!Number.isInteger(xver)) {
+            xver = 0;
+        }
+        return {
+            name: this.name,
+            alpn: this.alpn,
+            path: this.path,
+            dest: this.dest,
+            xver: xver,
+        }
+    }
+
+    static fromJson(json=[]) {
+        const fallbacks = [];
+        for (let fallback of json) {
+            fallbacks.push(new Inbound.TrojanSettings.Fallback(
+                fallback.name,
+                fallback.alpn,
+                fallback.path,
+                fallback.dest,
+                fallback.xver,
+            ))
+        }
+        return fallbacks;
+    }
 };
 
 Inbound.ShadowsocksSettings = class extends Inbound.Settings {
