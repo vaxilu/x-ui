@@ -1,0 +1,7 @@
+version: '3'
+services: 
+  x-ui:
+    image: faintghost/x-ui
+    container_name: x-ui
+    restart: unless-stopped
+    network_mode: host
