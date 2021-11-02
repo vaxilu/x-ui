@@ -52,3 +52,14 @@ x-ui v2-ui
 ## Stargazers over time
 
 [![Stargazers over time](https://starchart.cc/vaxilu/x-ui.svg)](https://starchart.cc/vaxilu/x-ui)
+
+## 无法进入前端面板
+- 常见的VPS都会打开防火墙，你可以选择每次打开特定端口，或者可以直接关闭防火墙，但这具有风险，例如：
+- ```systemctl stop firewalld```
+## 连接导入客户端后，仍然无法上网
+- 同上，需要打开对应的端口，或者直接关闭防火墙
+- 打开端口方法，例如:
+```bash
+firewall-cmd --zone=public --add-port=45408/tcp --permanent   # --permanent永久生效，没有此参数重启后失效 
+firewall-cmd --reload
+```
