@@ -36,6 +36,9 @@ systemctl restart x-ui
 ```
 
 ## 使用docker安装
+
+> 此 docker 教程与 docker 镜像由[Chasing66](https://github.com/Chasing66)提供
+
 1. 安装docker
 ```shell
 curl -fsSL https://get.docker.com | sh
