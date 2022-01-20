@@ -25,6 +25,9 @@ elif cat /proc/version | grep -Eqi "ubuntu"; then
     release="ubuntu"
 elif cat /proc/version | grep -Eqi "centos|red hat|redhat"; then
     release="centos"
+    if cat /etc/system-release-cpe | grep -Eqi "amazon_linux"; then
+        release="amazon_linux"
+    fi
 else
     echo -e "${red}未检测到系统版本，请联系脚本作者！${plain}\n" && exit 1
 fi
@@ -68,6 +71,10 @@ elif [[ x"${release}" == x"ubuntu" ]]; then
 elif [[ x"${release}" == x"debian" ]]; then
     if [[ ${os_version} -lt 8 ]]; then
         echo -e "${red}请使用 Debian 8 或更高版本的系统！${plain}\n" && exit 1
+    fi
+elif [[ x"${release}" == x"amazon_linux" ]]; then
+    if [[ ${os_version} -lt 2 ]]; then
+        echo -e "${red}请使用 Amazon Linux 2 或更高版本的系统！${plain}\n" && exit 1
     fi
 fi
 
