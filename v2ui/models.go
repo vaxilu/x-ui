@@ -4,7 +4,7 @@ import "x-ui/database/model"
 
 type V2Inbound struct {
 	Id             int `gorm:"primaryKey;autoIncrement"`
-	Port           int `gorm:"unique"`
+	Port           int `gorm:`
 	Listen         string
 	Protocol       string
 	Settings       string
