@@ -4,12 +4,12 @@ import "x-ui/database/model"
 
 type V2Inbound struct {
 	Id             int `gorm:"primaryKey;autoIncrement"`
-	Port           int `gorm:"unique"`
+	Port           int 
 	Listen         string
 	Protocol       string
 	Settings       string
 	StreamSettings string
-	Tag            string `gorm:"unique"`
+	Tag            string 
 	Sniffing       string
 	Remark         string
 	Up             int64
