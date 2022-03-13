@@ -19,8 +19,7 @@ func (c *InboundConfig) Equals(other *InboundConfig) bool {
 	if !bytes.Equal(c.Listen, other.Listen) {
 		return false
 	}
-	if c.Port != other.Port {
-		return false
+	
 	}
 	if c.Protocol != other.Protocol {
 		return false
