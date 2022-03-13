@@ -444,10 +444,10 @@ ssl_cert_issue() {
         export CF_Email=${CF_AccountEmail}
         ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
         if [ $? -ne 0 ]; then
-            LOGDE "证书签发失败,脚本退出"
+            LOGE "证书签发失败,脚本退出"
             exit 1
         else
-            LOGDI "证书签发成功,安装中..."
+            LOGI "证书签发成功,安装中..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
             --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
@@ -456,7 +456,7 @@ ssl_cert_issue() {
             LOGE "证书安装失败,脚本退出"
             exit 1
         else
-            LOGDI "证书安装成功,开启自动更新..."
+            LOGI "证书安装成功,开启自动更新..."
         fi
         ~/.acme.sh/acme.sh --upgrade --auto-upgrade
         if [ $? -ne 0 ]; then
