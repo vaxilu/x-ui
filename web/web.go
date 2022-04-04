@@ -4,13 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"embed"
-	"github.com/BurntSushi/toml"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-gonic/gin"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"github.com/robfig/cron/v3"
-	"golang.org/x/text/language"
+	"fmt"
 	"html/template"
 	"io"
 	"io/fs"
@@ -27,6 +21,14 @@ import (
 	"x-ui/web/job"
 	"x-ui/web/network"
 	"x-ui/web/service"
+
+	"github.com/BurntSushi/toml"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"github.com/robfig/cron/v3"
+	"golang.org/x/text/language"
 )
 
 //go:embed assets/*
@@ -289,14 +291,27 @@ func (s *Server) startTask() {
 	go func() {
 		time.Sleep(time.Second * 5)
 		// 每 10 秒统计一次流量，首次启动延迟 5 秒，与重启 xray 的时间错开
-		s.cron.AddJob("@every 10s", job.NewXrayTrafficJob())
+		s.cron.AddJob("@hourly", job.NewXrayTrafficJob())
 	}()
 
 	// 每 30 秒检查一次 inbound 流量超出和到期的情况
 	s.cron.AddJob("@every 30s", job.NewCheckInboundJob())
+	// 每一天提示一次流量情况,上海时间8点30
+	var entry cron.EntryID
+	isTgbotenabled,err:=s.settingService.GetTgbotenabled()
+	if(( err == nil)&&(isTgbotenabled)) {
+    	entry,err=s.cron.AddJob("@daily", job.NewStatsNotifyJob())
+		if err != nil{
+			fmt.Println("Add NewStatsNotifyJob error")
+			return
+		}
+	}else{
+		s.cron.Remove(entry)
+	}
 }
 
 func (s *Server) Start() (err error) {
+	//这是一个匿名函数，没没有函数名
 	defer func() {
 		if err != nil {
 			s.Stop()
@@ -348,6 +363,7 @@ func (s *Server) Start() (err error) {
 		listener = network.NewAutoHttpsListener(listener)
 		listener = tls.NewListener(listener, c)
 	}
+	
 	if certFile != "" || keyFile != "" {
 		logger.Info("web server run https on", listener.Addr())
 	} else {
@@ -360,7 +376,7 @@ func (s *Server) Start() (err error) {
 	s.httpServer = &http.Server{
 		Handler: engine,
 	}
-
+	
 	go func() {
 		s.httpServer.Serve(listener)
 	}()

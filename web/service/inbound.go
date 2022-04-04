@@ -2,12 +2,13 @@ package service
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"time"
 	"x-ui/database"
 	"x-ui/database/model"
 	"x-ui/util/common"
 	"x-ui/xray"
+
+	"gorm.io/gorm"
 )
 
 type InboundService struct {
