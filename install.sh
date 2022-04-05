@@ -83,11 +83,12 @@ install_base() {
 config_after_install() {
     echo -e "${yellow}出于安全考虑，安装完成后需要强制修改端口与账户密码${plain}"
     read -p "请设置您的账户名:" config_account
-    echo -e "${yellow}您的账户名将设定为:${config_account}${plain}"
     read -p "请设置您的账户密码:" config_password
-    echo -e "${yellow}您的账户密码将设定为:${config_password}${plain}"
     read -p "请设置面板访问端口:" config_port
+    echo -e "${yellow}请确认面板登录信息是否设置正确：${plain}"
     echo -e "${yellow}您的面板访问端口将设定为:${config_port}${plain}"
+    echo -e "${yellow}您设定的账户名为:${config_account}${plain}"
+    echo -e "${yellow}您设定的账户密码为:${config_password}${plain}"
     read -p "确认设定完成？[y/n]": config_confirm
     if [[ x"${config_confirm}" == x"y" || x"${config_confirm}" == x"Y" ]]; then
         echo -e "${yellow}确认设定,设定中${plain}"
