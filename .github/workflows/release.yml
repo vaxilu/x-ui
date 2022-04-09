@@ -33,7 +33,7 @@ jobs:
           go-version: 1.18
       - name: build linux amd64 version
         run: |
-          GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
+          CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
           cp x-ui.service x-ui/x-ui.service
@@ -73,7 +73,9 @@ jobs:
           go-version: 1.18
       - name: build linux arm64 version
         run: |
-          GOOS=linux GOARCH=arm64 go build -o xui-release -v main.go
+          sudo apt-get update
+          sudo apt install gcc-aarch64-linux-gnu
+          CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC=aarch64-linux-gnu-gcc go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
           cp x-ui.service x-ui/x-ui.service
@@ -113,7 +115,9 @@ jobs:
           go-version: 1.18
       - name: build linux s390x version
         run: |
-          GOOS=linux GOARCH=s390x go build -o xui-release -v main.go
+          sudo apt-get update
+          sudo apt install gcc-s390x-linux-gnu -y
+          CGO_ENABLED=1 GOOS=linux GOARCH=s390x CC=s390x-linux-gnu-gcc go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
           cp x-ui.service x-ui/x-ui.service
