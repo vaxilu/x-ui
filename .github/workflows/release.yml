@@ -19,7 +19,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          draft: false
+          draft: true
           prerelease: false
   linuxamd64build:
     name: build x-ui amd64 version
@@ -46,6 +46,9 @@ jobs:
           unzip Xray-linux-64.zip
           rm -f Xray-linux-64.zip
           mv xray xray-linux-amd64
+          rm -f geoip.dat geosite.dat
+          wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+          wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
           cd ..
           cd ..
       - name: package
@@ -84,6 +87,9 @@ jobs:
           unzip Xray-linux-arm64-v8a.zip
           rm -f Xray-linux-arm64-v8a.zip
           mv xray xray-linux-arm64
+          rm -f geoip.dat geosite.dat
+          wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+          wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
           cd ..
           cd ..
       - name: package
@@ -122,6 +128,9 @@ jobs:
           unzip Xray-linux-s390x.zip
           rm -f Xray-linux-s390x.zip
           mv xray xray-linux-s390x
+          rm -f geoip.dat geosite.dat
+          wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+          wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
           cd ..
           cd ..
       - name: package
