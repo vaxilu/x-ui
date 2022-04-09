@@ -20,7 +20,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           draft: true
-          prerelease: false
+          prerelease: true
   linuxamd64build:
     name: build x-ui amd64 version
     needs: release
@@ -42,13 +42,12 @@ jobs:
           mv xui-release x-ui
           mkdir bin
           cd bin
-          wget https://github.com/XTLS/Xray-core/releases/download/v1.5.4/Xray-linux-64.zip
+          wget https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip
           unzip Xray-linux-64.zip
-          rm -f Xray-linux-64.zip
-          mv xray xray-linux-amd64
-          rm -f geoip.dat geosite.dat
+          rm -f Xray-linux-64.zip geoip.dat geosite.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+          mv xray xray-linux-amd64
           cd ..
           cd ..
       - name: package
@@ -83,13 +82,12 @@ jobs:
           mv xui-release x-ui
           mkdir bin
           cd bin
-          wget https://github.com/XTLS/Xray-core/releases/download/v1.5.4/Xray-linux-arm64-v8a.zip
+          wget https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-arm64-v8a.zip
           unzip Xray-linux-arm64-v8a.zip
-          rm -f Xray-linux-arm64-v8a.zip
-          mv xray xray-linux-arm64
-          rm -f geoip.dat geosite.dat
+          rm -f Xray-linux-arm64-v8a.zip geoip.dat geosite.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+          mv xray xray-linux-arm64
           cd ..
           cd ..
       - name: package
@@ -124,13 +122,12 @@ jobs:
           mv xui-release x-ui
           mkdir bin
           cd bin
-          wget https://github.com/XTLS/Xray-core/releases/download/v1.5.4/Xray-linux-s390x.zip
+          wget https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-s390x.zip
           unzip Xray-linux-s390x.zip
-          rm -f Xray-linux-s390x.zip
-          mv xray xray-linux-s390x
-          rm -f geoip.dat geosite.dat
+          rm -f Xray-linux-s390x.zip geoip.dat geosite.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+          mv xray xray-linux-s390x
           cd ..
           cd ..
       - name: package
