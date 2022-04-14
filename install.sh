@@ -152,7 +152,6 @@ install_x-ui() {
     systemctl daemon-reload
     systemctl enable x-ui
     systemctl start x-ui
-    IP=$(curl -sm8 ip.sb -k)
     echo -e "${green}x-ui v${last_version}${plain} 安装完成，面板已启动，"
     echo -e ""
     echo -e "x-ui 管理脚本使用方法: "
@@ -171,11 +170,6 @@ install_x-ui() {
     echo -e "x-ui uninstall    - 卸载 x-ui 面板"
     echo -e "----------------------------------------------"
     echo -e ""
-    if [[ echo $IP | grep ":" ]]; then
-        echo -e "${green}x-ui 面板登录地址：${plain} http://[${IP}]:${config_port}"
-    else
-        echo -e "${green}x-ui 面板登录地址：${plain} http://${IP}:${config_port}"
-    fi
 }
 
 echo -e "${green}开始安装${plain}"
