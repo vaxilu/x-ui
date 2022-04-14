@@ -99,6 +99,7 @@ config_after_install() {
         echo -e "${yellow}面板端口设定完成${plain}"
     else
         echo -e "${red}已取消,所有设置项均为默认设置,请及时修改${plain}"
+        config_port=54321
     fi
 }
 
@@ -151,6 +152,7 @@ install_x-ui() {
     systemctl daemon-reload
     systemctl enable x-ui
     systemctl start x-ui
+    IP=$(curl -sm8 ip.sb -k)
     echo -e "${green}x-ui v${last_version}${plain} 安装完成，面板已启动，"
     echo -e ""
     echo -e "x-ui 管理脚本使用方法: "
@@ -168,6 +170,12 @@ install_x-ui() {
     echo -e "x-ui install      - 安装 x-ui 面板"
     echo -e "x-ui uninstall    - 卸载 x-ui 面板"
     echo -e "----------------------------------------------"
+    echo -e ""
+    if [[ echo $IP | grep ":" ]]; then
+        echo -e "${green}x-ui 面板登录地址：${plain} http://[${IP}]:${config_port}"
+    else
+        echo -e "${green}x-ui 面板登录地址：${plain} http://${IP}:${config_port}"
+    fi
 }
 
 echo -e "${green}开始安装${plain}"
