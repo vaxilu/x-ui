@@ -163,7 +163,9 @@ class AllSetting {
         this.webCertFile = "";
         this.webKeyFile = "";
         this.webBasePath = "/";
-
+        this.tgBotToken = "";
+        this.tgBotChatId = 0;
+        this.tgRunTime = "";
         this.xrayTemplateConfig = "";
 
         this.timeLocation = "Asia/Shanghai";

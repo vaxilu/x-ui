@@ -1,11 +1,14 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 	"x-ui/logger"
+	"x-ui/web/job"
 	"x-ui/web/service"
 	"x-ui/web/session"
+
+	"github.com/gin-gonic/gin"
 )
 
 type LoginForm struct {
@@ -59,6 +62,10 @@ func (a *IndexController) login(c *gin.Context) {
 		logger.Infof("wrong username or password: \"%s\" \"%s\"", form.Username, form.Password)
 		pureJsonMsg(c, false, "用户名或密码错误")
 		return
+	} else {
+		timeStr := time.Now().Format("2006-01-02 15:04:05")
+		logger.Infof("%s login success,Ip Address:%s\n", form.Username, getRemoteIp(c))
+		job.NewStatsNotifyJob().UserLoginNotify(form.Username, getRemoteIp(c), timeStr)
 	}
 
 	err = session.SetLoginUser(c, user)

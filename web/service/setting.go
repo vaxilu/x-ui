@@ -29,6 +29,10 @@ var defaultValueMap = map[string]string{
 	"secret":             random.Seq(32),
 	"webBasePath":        "/",
 	"timeLocation":       "Asia/Shanghai",
+	"tgBotEnable":        "false",
+	"tgBotToken":         "",
+	"tgBotChatId":        "0",
+	"tgRunTime":          "",
 }
 
 type SettingService struct {
@@ -156,6 +160,18 @@ func (s *SettingService) setString(key string, value string) error {
 	return s.saveSetting(key, value)
 }
 
+func (s *SettingService) getBool(key string) (bool, error) {
+	str, err := s.getString(key)
+	if err != nil {
+		return false, err
+	}
+	return strconv.ParseBool(str)
+}
+
+func (s *SettingService) setBool(key string, value bool) error {
+	return s.setString(key, strconv.FormatBool(value))
+}
+
 func (s *SettingService) getInt(key string) (int, error) {
 	str, err := s.getString(key)
 	if err != nil {
@@ -174,6 +190,38 @@ func (s *SettingService) GetXrayConfigTemplate() (string, error) {
 
 func (s *SettingService) GetListen() (string, error) {
 	return s.getString("webListen")
+}
+
+func (s *SettingService) GetTgBotToken() (string, error) {
+	return s.getString("tgBotToken")
+}
+
+func (s *SettingService) SetTgBotToken(token string) error {
+	return s.setString("tgBotToken", token)
+}
+
+func (s *SettingService) GetTgBotChatId() (int, error) {
+	return s.getInt("tgBotChatId")
+}
+
+func (s *SettingService) SetTgBotChatId(chatId int) error {
+	return s.setInt("tgBotChatId", chatId)
+}
+
+func (s *SettingService) SetTgbotenabled(value bool) error {
+	return s.setBool("tgBotEnable", value)
+}
+
+func (s *SettingService) GetTgbotenabled() (bool, error) {
+	return s.getBool("tgBotEnable")
+}
+
+func (s *SettingService) SetTgbotRuntime(time string) error {
+	return s.setString("tgRunTime", time)
+}
+
+func (s *SettingService) GetTgbotRuntime() (string, error) {
+	return s.getString("tgRunTime")
 }
 
 func (s *SettingService) GetPort() (int, error) {

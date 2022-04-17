@@ -11,7 +11,9 @@
 - 流量统计，限制流量，限制到期时间
 - 可自定义 xray 配置模板
 - 支持 https 访问面板（自备域名 + ssl 证书）
+- 支持一键SSL证书申请且自动续签
 - 更多高级配置项，详见面板
+
 
 # 安装&升级
 ```
@@ -58,6 +60,44 @@ docker run -itd --network=host \
 ```shell
 docker build -t x-ui .
 ```
+## SSL证书申请
+>此功能与教程由[FranzKafkaYu](https://github.com/FranzKafkaYu)提供 
+
+脚本内置SSL证书申请功能，使用该脚本申请证书，需满足以下条件:  
+- 知晓Cloudflare 注册邮箱
+- 知晓Cloudflare Global API Key
+- 域名已通过cloudflare进行解析到当前服务器  
+
+获取Cloudflare Global API Key的方法:
+    ![](media/bda84fbc2ede834deaba1c173a932223.png)
+    ![](media/d13ffd6a73f938d1037d0708e31433bf.png)  
+
+使用时只需输入`域名`, `邮箱`, `API KEY`即可，示意图如下：
+        ![](media/2022-04-04_141259.png)  
+
+注意事项:
+- 该脚本使用DNS API进行证书申请 
+- 默认使用Let'sEncrypt作为CA方
+- 证书安装目录为/root/cert目录 
+- 本脚本申请证书均为泛域名证书
+
+## Tg机器人使用
+>此功能与教程由[FranzKafkaYu](https://github.com/FranzKafkaYu)提供  
+
+X-UI支持通过Tg机器人实现每日流量通知，面板登录提醒等功能，使用Tg机器人，需要自行申请  
+具体申请教程可以参考[博客链接](https://coderfan.net/how-to-use-telegram-bot-to-alarm-you-when-someone-login-into-your-vps.html)  
+使用说明:在面板后台或通过脚本设置机器人相关参数，具体包括  
+- Tg机器人Token
+- Tg机器人ChatId
+- Tg机器人周期运行时间，采用crontab语法
+
+参考示例：  
+  每小时定时通知
+ ![](media/2022-04-17_110907.png)  
+  每分钟的第30s通知
+ ![](media/2022-04-17_111321.png)  
+ 效果示意图：  
+ ![](media/2022-04-17_111705.png)   
 
 ## 建议系统
 - CentOS 7+
