@@ -66,11 +66,11 @@ func (a *SettingController) updateUser(c *gin.Context) {
 	}
 	user := session.GetLoginUser(c)
 	if user.Username != form.OldUsername || user.Password != form.OldPassword {
-		jsonMsg(c, "修改用户", errors.New("原用户名或原密码错误"))
+		jsonMsg(c, "修改用户", errors.New("原用户名或原password错误"))
 		return
 	}
 	if form.NewUsername == "" || form.NewPassword == "" {
-		jsonMsg(c, "修改用户", errors.New("新用户名和新密码不能为空"))
+		jsonMsg(c, "修改用户", errors.New("新用户名和新password不能为空"))
 		return
 	}
 	err = a.userService.UpdateUser(user.Id, form.NewUsername, form.NewPassword)

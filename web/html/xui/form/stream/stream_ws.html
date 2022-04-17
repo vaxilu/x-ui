@@ -12,9 +12,9 @@
         </a-row>
         <a-input-group v-for="(header, index) in inbound.stream.ws.headers">
             <a-input style="width: 50%" v-model.trim="header.name"
-                     addon-before="名称"></a-input>
+                     addon-before="the name of the"></a-input>
             <a-input style="width: 50%" v-model.trim="header.value"
-                     addon-before="值">
+                     addon-before="value">
                 <template slot="addonAfter">
                     <a-button size="small"
                               @click="inbound.stream.ws.removeHeader(index)">

@@ -51,13 +51,13 @@ func (a *IndexController) login(c *gin.Context) {
 		return
 	}
 	if form.Password == "" {
-		pureJsonMsg(c, false, "请输入密码")
+		pureJsonMsg(c, false, "请输入password")
 		return
 	}
 	user := a.userService.CheckUser(form.Username, form.Password)
 	if user == nil {
 		logger.Infof("wrong username or password: \"%s\" \"%s\"", form.Username, form.Password)
-		pureJsonMsg(c, false, "用户名或密码错误")
+		pureJsonMsg(c, false, "用户名或password错误")
 		return
 	}
 
