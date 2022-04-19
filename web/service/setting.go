@@ -83,6 +83,8 @@ func (s *SettingService) GetAllSetting() (*entity.AllSetting, error) {
 			fieldV.SetInt(n)
 		case string:
 			fieldV.SetString(value)
+		case bool:
+			fieldV.SetBool(value == "true")
 		default:
 			return common.NewErrorf("unknown field %v type %v", key, t)
 		}
