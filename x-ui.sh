@@ -18,7 +18,7 @@ function LOGI() {
     echo -e "${green}[INF] $* ${plain}"
 }
 # check root
-[[ $EUID -ne 0 ]] && LOGE "错误:  必须使用root用户运行此脚本！\n" && exit 1
+[[ $EUID -ne 0 ]] && LOGE "错误:  必须使用root用户运行此脚本!\n" && exit 1
 
 # check os
 if [[ -f /etc/redhat-release ]]; then
@@ -121,7 +121,7 @@ update() {
 }
 
 uninstall() {
-    confirm "确定要卸载面板吗，xray 也会卸载?" "n"
+    confirm "确定要卸载面板吗,xray 也会卸载?" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
@@ -169,6 +169,15 @@ reset_config() {
     /usr/local/x-ui/x-ui setting -reset
     echo -e "所有面板设置已重置为默认值，现在请重启面板，并使用默认的 ${green}54321${plain} 端口访问面板"
     confirm_restart
+}
+
+check_config() {
+    info=$(/usr/local/x-ui/x-ui setting -show true)
+    if [[ $? != 0 ]]; then
+        LOGE "get current settings error,please check logs"
+        show_menu
+    fi
+    LOGI "${info}"
 }
 
 set_port() {
@@ -399,6 +408,70 @@ show_xray_status() {
     fi
 }
 
+set_telegram_bot() {
+    echo -E ""
+    LOGI "设置Telegram Bot需要知晓Bot的Token与ChatId"
+    LOGI "使用方法请参考博客https://coderfan.net"
+    confirm "我已确认以上内容[y/n]" "y"
+    if [ $? -ne 0 ]; then
+        show_menu
+    else
+        read -p "please input your tg bot token here:" TG_BOT_TOKEN
+        LOGI "你设置的电报机器人Token:$TG_BOT_TOKEN"
+        read -p "please input your tg chat id here:" TG_BOT_CHATID
+        LOGI "你设置的电报机器人ChatId:$TG_BOT_CHATID"
+        read -p "please input your tg bot runtime here:" TG_BOT_RUNTIME
+        LOGI "你设置的电报机器人运行周期:$TG_BOT_RUNTIME"
+        info=$(/usr/local/x-ui/x-ui setting -tgbottoken ${TG_BOT_TOKEN} -tgbotchatid ${TG_BOT_CHATID} -tgbotRuntime "$TG_BOT_RUNTIME")
+        if [ $? != 0 ]; then
+            LOGE "$info"
+            LOGE "设置TelegramBot失败"
+            exit 1
+        else
+            LOGI "设置TelegramBot成功"
+            show_menu
+        fi
+    fi
+}
+
+enable_telegram_bot() {
+    echo -E ""
+    LOGI "该功能会开启Telegram Bot通知"
+    LOGI "通知内容包括:"
+    LOGI "1.流量使用情况"
+    LOGI "2.节点到期提醒,待实现(规划中)"
+    LOGI "3.面板登录提醒,待完善(规划中)"
+    confirm "我已确认以上内容[y/n]" "y"
+    if [ $? -eq 0 ]; then
+        info=$(/usr/local/x-ui/x-ui setting -enabletgbot=true)
+        if [ $? == 0 ]; then
+            LOGI "开启成功,重启X-UI生效,重启中...."
+            restart
+        else
+            LOGE "开启失败,即将退出..."
+            exit 1
+        fi
+    else
+        show_menu
+    fi
+}
+
+disable_telegram_bot() {
+    confirm "确认是否关闭Tgbot[y/n]" "n"
+    if [ $? -eq 0 ]; then
+        info=$(/usr/local/x-ui/x-ui setting -enabletgbot=false)
+        if [ $? == 0 ]; then
+            LOGI "关闭成功,重启X-UI生效,重启中...."
+            restart
+        else
+            LOGE "关闭失败,请检查日志..."
+            exit 1
+        fi
+    else
+        show_menu
+    fi
+}
+
 ssl_cert_issue() {
     echo -E ""
     LOGD "******使用说明******"
@@ -450,8 +523,8 @@ ssl_cert_issue() {
             LOGI "证书签发成功,安装中..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-            --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-            --fullchain-file /root/cert/fullchain.cer
+        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
+        --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
             LOGE "证书安装失败,脚本退出"
             exit 1
@@ -504,21 +577,25 @@ show_menu() {
   ${green}4.${plain} 重置用户名密码
   ${green}5.${plain} 重置面板设置
   ${green}6.${plain} 设置面板端口
+  ${green}7.${plain} 当前面板设置
 ————————————————
-  ${green}7.${plain} 启动 x-ui
-  ${green}8.${plain} 停止 x-ui
-  ${green}9.${plain} 重启 x-ui
- ${green}10.${plain} 查看 x-ui 状态
- ${green}11.${plain} 查看 x-ui 日志
+  ${green}8.${plain} 启动 x-ui
+  ${green}9.${plain} 停止 x-ui
+  ${green}10.${plain} 重启 x-ui
+  ${green}11.${plain} 查看 x-ui 状态
+  ${green}12.${plain} 查看 x-ui 日志
 ————————————————
- ${green}12.${plain} 设置 x-ui 开机自启
- ${green}13.${plain} 取消 x-ui 开机自启
+  ${green}13.${plain} 设置 x-ui 开机自启
+  ${green}14.${plain} 取消 x-ui 开机自启
 ————————————————
- ${green}14.${plain} 一键安装 bbr (最新内核)
- ${green}15.${plain} 一键申请SSL证书(acme申请)
+  ${green}15.${plain} 一键安装 bbr (最新内核)
+  ${green}16.${plain} 一键申请SSL证书(acme申请)
+  ${green}17.${plain} 开启Telegram通知(TgBot)
+  ${green}18.${plain} 关闭Telegram通知(TgBot)
+  ${green}19.${plain} 设置TelegramBot
  "
     show_status
-    echo && read -p "请输入选择 [0-14]: " num
+    echo && read -p "请输入选择 [0-19]: " num
 
     case "${num}" in
     0)
@@ -543,34 +620,46 @@ show_menu() {
         check_install && set_port
         ;;
     7)
-        check_install && start
+        check_install && check_config
         ;;
     8)
-        check_install && stop
+        check_install && start
         ;;
     9)
-        check_install && restart
+        check_install && stop
         ;;
     10)
-        check_install && status
+        check_install && restart
         ;;
     11)
-        check_install && show_log
+        check_install && status
         ;;
     12)
-        check_install && enable
+        check_install && show_log
         ;;
     13)
-        check_install && disable
+        check_install && enable
         ;;
     14)
-        install_bbr
+        check_install && disable
         ;;
     15)
+        install_bbr
+        ;;
+    16)
         ssl_cert_issue
         ;;
+    17)
+        enable_telegram_bot
+        ;;
+    18)
+        disable_telegram_bot
+        ;;
+    19)
+        set_telegram_bot
+        ;;
     *)
-        LOGE "请输入正确的数字 [0-14]"
+        LOGE "请输入正确的数字 [0-19]"
         ;;
     esac
 }
