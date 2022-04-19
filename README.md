@@ -79,7 +79,7 @@ docker build -t x-ui .
 - 证书安装目录为/root/cert目录 
 - 本脚本申请证书均为泛域名证书
 
-## Tg机器人使用
+## Tg机器人使用（开发中，暂不可使用）
 >此功能与教程由[FranzKafkaYu](https://github.com/FranzKafkaYu)提供  
 
 X-UI支持通过Tg机器人实现每日流量通知，面板登录提醒等功能，使用Tg机器人，需要自行申请  
