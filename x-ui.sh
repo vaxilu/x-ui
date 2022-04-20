@@ -408,70 +408,6 @@ show_xray_status() {
     fi
 }
 
-set_telegram_bot() {
-    echo -E ""
-    LOGI "设置Telegram Bot需要知晓Bot的Token与ChatId"
-    LOGI "使用方法请参考博客https://coderfan.net"
-    confirm "我已确认以上内容[y/n]" "y"
-    if [ $? -ne 0 ]; then
-        show_menu
-    else
-        read -p "please input your tg bot token here:" TG_BOT_TOKEN
-        LOGI "你设置的电报机器人Token:$TG_BOT_TOKEN"
-        read -p "please input your tg chat id here:" TG_BOT_CHATID
-        LOGI "你设置的电报机器人ChatId:$TG_BOT_CHATID"
-        read -p "please input your tg bot runtime here:" TG_BOT_RUNTIME
-        LOGI "你设置的电报机器人运行周期:$TG_BOT_RUNTIME"
-        info=$(/usr/local/x-ui/x-ui setting -tgbottoken ${TG_BOT_TOKEN} -tgbotchatid ${TG_BOT_CHATID} -tgbotRuntime "$TG_BOT_RUNTIME")
-        if [ $? != 0 ]; then
-            LOGE "$info"
-            LOGE "设置TelegramBot失败"
-            exit 1
-        else
-            LOGI "设置TelegramBot成功"
-            show_menu
-        fi
-    fi
-}
-
-enable_telegram_bot() {
-    echo -E ""
-    LOGI "该功能会开启Telegram Bot通知"
-    LOGI "通知内容包括:"
-    LOGI "1.流量使用情况"
-    LOGI "2.节点到期提醒,待实现(规划中)"
-    LOGI "3.面板登录提醒,待完善(规划中)"
-    confirm "我已确认以上内容[y/n]" "y"
-    if [ $? -eq 0 ]; then
-        info=$(/usr/local/x-ui/x-ui setting -enabletgbot=true)
-        if [ $? == 0 ]; then
-            LOGI "开启成功,重启X-UI生效,重启中...."
-            restart
-        else
-            LOGE "开启失败,即将退出..."
-            exit 1
-        fi
-    else
-        show_menu
-    fi
-}
-
-disable_telegram_bot() {
-    confirm "确认是否关闭Tgbot[y/n]" "n"
-    if [ $? -eq 0 ]; then
-        info=$(/usr/local/x-ui/x-ui setting -enabletgbot=false)
-        if [ $? == 0 ]; then
-            LOGI "关闭成功,重启X-UI生效,重启中...."
-            restart
-        else
-            LOGE "关闭失败,请检查日志..."
-            exit 1
-        fi
-    else
-        show_menu
-    fi
-}
-
 ssl_cert_issue() {
     echo -E ""
     LOGD "******使用说明******"
@@ -577,7 +513,7 @@ show_menu() {
   ${green}4.${plain} 重置用户名密码
   ${green}5.${plain} 重置面板设置
   ${green}6.${plain} 设置面板端口
-  ${green}7.${plain} 当前面板设置
+  ${green}7.${plain} 查看当前面板设置
 ————————————————
   ${green}8.${plain} 启动 x-ui
   ${green}9.${plain} 停止 x-ui
@@ -590,12 +526,9 @@ show_menu() {
 ————————————————
   ${green}15.${plain} 一键安装 bbr (最新内核)
   ${green}16.${plain} 一键申请SSL证书(acme申请)
-  ${green}17.${plain} 开启Telegram通知(TgBot)
-  ${green}18.${plain} 关闭Telegram通知(TgBot)
-  ${green}19.${plain} 设置TelegramBot
  "
     show_status
-    echo && read -p "请输入选择 [0-19]: " num
+    echo && read -p "请输入选择 [0-16]: " num
 
     case "${num}" in
     0)
@@ -649,17 +582,8 @@ show_menu() {
     16)
         ssl_cert_issue
         ;;
-    17)
-        enable_telegram_bot
-        ;;
-    18)
-        disable_telegram_bot
-        ;;
-    19)
-        set_telegram_bot
-        ;;
     *)
-        LOGE "请输入正确的数字 [0-19]"
+        LOGE "请输入正确的数字 [0-16]"
         ;;
     esac
 }
