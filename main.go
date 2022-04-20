@@ -287,7 +287,6 @@ func main() {
 		if show {
 			showSetting(show)
 		}
-		updateTgbotEnableSts(enabletgbot)
 		if (tgbottoken != "") || (tgbotchatid != 0) || (tgbotRuntime != "") {
 			updateTgbotSetting(tgbottoken, tgbotchatid, tgbotRuntime)
 		}
