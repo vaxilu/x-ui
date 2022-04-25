@@ -76,7 +76,7 @@ func (s *SettingService) GetAllSetting() (*entity.AllSetting, error) {
 		fieldV := v.FieldByName(field.Name)
 		switch t := fieldV.Interface().(type) {
 		case int:
-			n, err := strconv.ParseInt(value, 10, 32)
+			n, err := strconv.ParseInt(value, 10, 64)
 			if err != nil {
 				return err
 			}
