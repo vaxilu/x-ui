@@ -1,5 +1,10 @@
 {{define "form/streamWS"}}
 <a-form layout="inline">
+    <a-form-item label="acceptProxyProtocol">
+        <a-switch v-model="inbound.stream.ws.acceptProxyProtocol"></a-switch>
+    </a-form-item>
+</a-form>
+<a-form layout="inline">
     <a-form-item label="路径">
         <a-input v-model.trim="inbound.stream.ws.path"></a-input>
     </a-form-item>
