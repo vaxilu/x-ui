@@ -417,10 +417,11 @@ class GrpcStreamSettings extends XrayCommonClass {
 
 class TlsStreamSettings extends XrayCommonClass {
     constructor(serverName='',
-                certificates=[new TlsStreamSettings.Cert()]) {
+                certificates=[new TlsStreamSettings.Cert()], alpn=[]) {
         super();
         this.server = serverName;
         this.certs = certificates;
+        this.alpn = alpn;
     }
 
     addCert(cert) {
@@ -436,9 +437,11 @@ class TlsStreamSettings extends XrayCommonClass {
         if (!ObjectUtil.isEmpty(json.certificates)) {
             certs = json.certificates.map(cert => TlsStreamSettings.Cert.fromJson(cert));
         }
+
         return new TlsStreamSettings(
             json.serverName,
             certs,
+            json.alpn
         );
     }
 
@@ -446,6 +449,7 @@ class TlsStreamSettings extends XrayCommonClass {
         return {
             serverName: this.server,
             certificates: TlsStreamSettings.toJsonArray(this.certs),
+            alpn: this.alpn
         };
     }
 }
