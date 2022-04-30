@@ -84,7 +84,7 @@ install_base() {
 #This function will be called when user installed x-ui out of sercurity
 config_after_install() {
     echo -e "${yellow}出于安全考虑，安装/更新完成后需要强制修改端口与账户密码${plain}"
-    read -p "确认是否继续?[y/n]": config_confirm
+    read -p "确认是否继续,如选择n则跳过本次端口与账户密码设定[y/n]": config_confirm
     if [[ x"${config_confirm}" == x"y" || x"${config_confirm}" == x"Y" ]]; then
         read -p "请设置您的账户名:" config_account
         echo -e "${yellow}您的账户名将设定为:${config_account}${plain}"
@@ -98,7 +98,9 @@ config_after_install() {
         /usr/local/x-ui/x-ui setting -port ${config_port}
         echo -e "${yellow}面板端口设定完成${plain}"
     else
-        echo -e "${red}已取消,所有设置项均为默认设置,请及时修改${plain}"
+        echo -e "${red}已取消设定...${plain}"
+        echo -e "${red}如果是全新安装，默认网页端口为 ${green}54321${plain}，用户名与密码均为 ${green}admin${plain}"
+        echo -e "${red}如属于版本升级,则保留之前设置项${plain}"
     fi
 }
 

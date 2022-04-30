@@ -75,7 +75,7 @@ docker build -t x-ui .
 
 - 知晓Cloudflare 注册邮箱
 - 知晓Cloudflare Global API Key
-- 域名已通过cloudflare进行解析到当前服务器
+- 域名已通过Cloudflare进行解析到当前服务器
 
 获取Cloudflare Global API Key的方法:
     ![](media/bda84fbc2ede834deaba1c173a932223.png)
@@ -89,7 +89,9 @@ docker build -t x-ui .
 - 该脚本使用DNS API进行证书申请
 - 默认使用Let'sEncrypt作为CA方
 - 证书安装目录为/root/cert目录
+- 输入域名时请使用二级域名,请不要添加`www`
 - 本脚本申请证书均为泛域名证书
+- 受限于Cloudflare策略限制,不支持免费域名
 
 ## Tg机器人使用（开发中，暂不可使用）
 
@@ -112,6 +114,7 @@ X-UI支持通过Tg机器人实现每日流量通知，面板登录提醒等功�
 TG通知内容：
 - 节点流量使用
 - 面板登录提醒
+- SSH登录提醒  
 - 节点到期提醒
 - 流量预警提醒  
 
