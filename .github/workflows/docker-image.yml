@@ -39,7 +39,7 @@ jobs:
       - uses: docker/metadata-action@v3
         id: meta
         with:
-          images: techfever/xui
+          images: techfever/x-ui
           flavor: |
             latest=auto
           tags: |
