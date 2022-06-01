@@ -13,33 +13,33 @@
 <!-- tls settings -->
 <a-form v-if="inbound.tls || inbound.xtls"
         layout="inline">
-    <a-form-item label="域名">
+    <a-form-item label="Nome do domínio">
         <a-input v-model.trim="inbound.stream.tls.server"></a-input>
     </a-form-item>
     <a-form-item label="alpn" placeholder="http/1.1,h2">
         <a-input v-model.trim="inbound.stream.tls.alpn"></a-input>
     </a-form-item>
-    <a-form-item label="证书">
+    <a-form-item label="Certificado">
         <a-radio-group v-model="inbound.stream.tls.certs[0].useFile"
                        button-style="solid">
-            <a-radio-button :value="true">certificate file path</a-radio-button>
-            <a-radio-button :value="false">certificate file content</a-radio-button>
+            <a-radio-button :value="true">Caminho do arquivo de certificado</a-radio-button>
+            <a-radio-button :value="false">Conteúdo do arquivo de certificado</a-radio-button>
         </a-radio-group>
     </a-form-item>
     <template v-if="inbound.stream.tls.certs[0].useFile">
-        <a-form-item label="公钥文件路径">
+        <a-form-item label="Caminho do arquivo de chave pública">
             <a-input v-model.trim="inbound.stream.tls.certs[0].certFile"></a-input>
         </a-form-item>
-        <a-form-item label="密钥文件路径">
+        <a-form-item label="Caminho do arquivo de chave">
             <a-input v-model.trim="inbound.stream.tls.certs[0].keyFile"></a-input>
         </a-form-item>
     </template>
     <template v-else>
-        <a-form-item label="公钥内容">
+        <a-form-item label="Conteúdo de chave pública">
             <a-input type="textarea" :rows="2"
                      v-model="inbound.stream.tls.certs[0].cert"></a-input>
         </a-form-item>
-        <a-form-item label="密钥内容">
+        <a-form-item label="Conteúdo chave">
             <a-input type="textarea" :rows="2"
                      v-model="inbound.stream.tls.certs[0].key"></a-input>
         </a-form-item>
