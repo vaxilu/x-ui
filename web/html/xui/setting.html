@@ -36,7 +36,7 @@
                         <a-button type="danger" :disabled="!saveBtnDisable" @click="restartPanel">Reinicie o painel</a-button>
                     </a-space>
                     <a-tabs default-active-key="1">
-                        <a-tab-pane key="1" tab="面板配置">
+                        <a-tab-pane key="1" tab="Configuração do painel">
                             <a-list item-layout="horizontal" style="background: white">
                                 <setting-list-item type="text" title="IP de escuta do painel" desc="Deixe em branco por padrão para monitorar todos os IPs, reinicie o painel para entrar em vigor" v-model="allSetting.webListen"></setting-list-item>
                                 <setting-list-item type="number" title="Porta de escuta do painel" desc="Reinicie o painel para entrar em vigor" v-model.number="allSetting.webPort"></setting-list-item>
@@ -45,7 +45,7 @@
                                 <setting-list-item type="text" title="Caminho da raiz do URL do painel" desc="Deve começar com '/' e terminar com '/', reinicie o painel para ter efeito" v-model="allSetting.webBasePath"></setting-list-item>
                             </a-list>
                         </a-tab-pane>
-                        <a-tab-pane key="2" tab="用户设置">
+                        <a-tab-pane key="2" tab="Configurações do Usuário">
                             <a-form style="background: white; padding: 20px">
                                 <a-form-item label="Nome de usuário atual">
                                     <a-input v-model="user.oldUsername" style="max-width: 300px"></a-input>
@@ -66,12 +66,12 @@
                                 </a-form-item>
                             </a-form>
                         </a-tab-pane>
-                        <a-tab-pane key="3" tab="xray 相关设置">
+                        <a-tab-pane key="3" tab="Xray Configurações relacionadas">
                             <a-list item-layout="horizontal" style="background: white">
                                 <setting-list-item type="textarea" title="Modelo de configuração xray" desc="Gere o arquivo de configuração de raio x final com base neste modelo, reinicie o painel para entrar em vigor" v-model="allSetting.xrayTemplateConfig"></setting-list-item>
                             </a-list>
                         </a-tab-pane>
-                        <a-tab-pane key="4" tab="TG提醒相关设置">
+                        <a-tab-pane key="4" tab="Configurações relacionadas ao lembrete TG">
                             <a-list item-layout="horizontal" style="background: white">
                                 <setting-list-item type="switch" title="Ativar bot de Telegram" desc="Reinicie o painel para entrar em vigor"  v-model="allSetting.tgBotEnable"></setting-list-item>
                                 <setting-list-item type="text" title="Telegram Bot TOKEN" desc="Reinicie o painel para entrar em vigor"  v-model="allSetting.tgBotToken"></setting-list-item>
@@ -79,7 +79,7 @@
                                 <setting-list-item type="text" title="Horário de notificação do bot de telegram" desc="Usando o formato de tempo Crontab, reinicie o painel para entrar em vigor"  v-model="allSetting.tgRunTime"></setting-list-item>
                             </a-list>
                         </a-tab-pane>
-                        <a-tab-pane key="5" tab="其他设置">
+                        <a-tab-pane key="5" tab="Outros ajustes">
                             <a-list item-layout="horizontal" style="background: white">
                                 <setting-list-item type="text" title="Fuso horário" desc="A tarefa agendada é executada de acordo com o horário no fuso horário e reinicia o painel para entrar em vigor" v-model="allSetting.timeLocation"></setting-list-item>
                             </a-list>
