@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+{{template "head" .}}
+<body>
+<a-layout id="app" v-cloak>
+        <a-layout-content>
+      <!-- loader Start -->
+      <div id="loading">
+         <div id="loading-center">
+            <div class="loader">
+               <div class="cube">
+                  <div class="sides">
+                     <div class="top"></div>
+                     <div class="right"></div>
+                     <div class="bottom"></div>
+                     <div class="left"></div>
+                     <div class="front"></div>
+                     <div class="back"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- loader END -->
+        <!-- Sign in Start -->
+        <section class="sign-in-page bg-white" style="max-width: 100%">
+            <div class="container-fluid p-0">
+                <div class="row no-gutters">
+                    <div class="col-sm-6 align-self-center">
+                        <div class="sign-in-from">
+                            <h1 class="mb-0">Đăng Nhập</h1>
+                            <p>Nhập tài khoản mật khẩu của bạn của bạn để đăng nhập X-UI.</p>
+                            <form class="mt-4">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Tài khoản</label>
+				    <a-input v-model.trim="user.username" id="exampleInputEmail1" class="form-control mb-0" placeholder='Tài khoản' @keydown.enter.native="login" autofocus> </a-input>
+				</div>
+                                <div class="form-group">
+                                    <label for="exampleInputPassword1">Mật khẩu</label>
+				    <a-input type="password" v-model.trim="user.password" id="exampleInputPassword1" class="form-control mb-0" placeholder='Mật khẩu' @keydown.enter.native="login"> </a-input>
+                                </div>
+                                <div class="d-inline-block w-100">
+				     <div class="custom-control d-inline-block mt-2 pt-1">
+                                         <label class="custom-control-label" >Đăng nhập hệ thống.</label>
+                                     </div>
+				     <button @click="login" class="btn btn-primary float-right">Đăng Nhập</button>
+                                </div>
+                                <div class="sign-info">
+				     <span class="dark-color d-inline-block line-height-2">Nếu bạn muốn xem qua dự án <a href="https://github.com/dopaemon/x-ui.git">Github</a></span>
+                                    <ul class="iq-social-media">
+                                        <li><a href="https://facebook.com/KernelPanix"><i class="ri-facebook-box-line"></i></a></li>
+					<li><a href="https://t.me/KernelPanix"><i class="fa-brands fa-telegram"></i></a></li>
+					<li><a href="https://zalo.me/KernelPanix"><i data-icon="arcticons:zalo" class="iconify"></i></a></li>
+					<li><a href="https://github.com/dopaemon"><i data-icon="akar-icons:github-fill" class="iconify"></i></a></li>
+                                    </ul>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 text-center">
+                        <div class="sign-in-detail text-white" style="background: url({{ .base_path }}assets/images/login/2.jpg) no-repeat 0 0; background-size: cover;">
+                            <a class="sign-in-logo mb-5" href="#"><img src="{{ .base_path }}assets/images/logo-white.png" class="img-fluid" alt="logo"></a>
+                            <div class="owl-carousel" data-autoplay="true" data-loop="true" data-nav="false" data-dots="true" data-items="1" data-items-laptop="1" data-items-tab="1" data-items-mobile="1" data-items-mobile-sm="1" data-margin="0">
+                                <div class="item">
+                                    <img src="{{ .base_path }}assets/images/login/1.png" class="img-fluid mb-4" alt="logo">
+                                    <h4 class="mb-1 text-white">An Toàn Bảo Mật</h4>
+                                    <p>Sử dụng VPN để tăng tính bảo mật khi truy cập Internet.</p>
+                                </div>
+                                <div class="item">
+                                    <img src="{{ .base_path }}assets/images/login/1.png" class="img-fluid mb-4" alt="logo">
+                                    <h4 class="mb-1 text-white">Tăng tốc truy cập</h4>
+                                    <p>Tăng tốc độ truy cập mạng thông qua server khu vực bạn sử dụng.</p>
+                                </div>
+                                <div class="item">
+                                    <img src="{{ .base_path }}assets/images/login/1.png" class="img-fluid mb-4" alt="logo">
+                                    <h4 class="mb-1 text-white">Giao thức SNI giúp bảo nhật hơn</h4>
+                                    <p>SNI giúp bạn tiết kiệm tiền vì bạn không phải mua nhiều địa chỉ IP.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </a-layout-content>
+</a-layout>
+
+      <!-- Footer END -->
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="{{ .base_path }}assets/js/jquery.min.js"></script>
+      <script src="{{ .base_path }}assets/js/popper.min.js"></script>
+      <script src="{{ .base_path }}assets/js/bootstrap.min.js"></script>
+      <!-- Appear JavaScript -->
+      <script src="{{ .base_path }}assets/js/jquery.appear.js"></script>
+      <!-- Countdown JavaScript -->
+      <script src="{{ .base_path }}assets/js/countdown.min.js"></script>
+      <!-- Counterup JavaScript -->
+      <script src="{{ .base_path }}assets/js/waypoints.min.js"></script>
+      <script src="{{ .base_path }}assets/js/jquery.counterup.min.js"></script>
+      <!-- Wow JavaScript -->
+      <script src="{{ .base_path }}assets/js/wow.min.js"></script>
+      <!-- Apexcharts JavaScript -->
+      <script src="{{ .base_path }}assets/js/apexcharts.js"></script>
+      <!-- Slick JavaScript -->
+      <script src="{{ .base_path }}assets/js/slick.min.js"></script>
+      <!-- Select2 JavaScript -->
+      <script src="{{ .base_path }}assets/js/select2.min.js"></script>
+      <!-- Owl Carousel JavaScript -->
+      <script src="{{ .base_path }}assets/js/owl.carousel.min.js"></script>
+      <!-- Magnific Popup JavaScript -->
+      <script src="{{ .base_path }}assets/js/jquery.magnific-popup.min.js"></script>
+      <!-- Smooth Scrollbar JavaScript -->
+      <script src="{{ .base_path }}assets/js/smooth-scrollbar.js"></script>
+      <!-- lottie JavaScript -->
+      <script src="{{ .base_path }}assets/js/lottie.js"></script>
+      <!-- Chart Custom JavaScript -->
+      <script src="{{ .base_path }}assets/js/chart-custom.js"></script>
+      <!-- Custom JavaScript -->
+      <script src="{{ .base_path }}assets/js/custom.js"></script>
+      <!-- iconify -->
+      <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
+
+{{template "js" .}}
+<script>
+    const app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            loading: false,
+            user: new User(),
+        },
+        methods: {
+            async login() {
+                this.loading = true;
+                const msg = await HttpUtil.post('/login', this.user);
+                this.loading = false;
+                if (msg.success) {
+                    location.href = basePath + 'xui/';
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>

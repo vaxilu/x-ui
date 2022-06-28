@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi">
+{{template "head" .}}
+<style>
+    @media (min-width: 769px) {
+        .ant-layout-content {
+            margin: 24px 16px;
+        }
+    }
+
+    .ant-col-sm-24 {
+        margin-top: 10px;
+    }
+</style>
+<body>
+<a-layout id="app" v-cloak>
+    {{ template "commonSider" . }}
+    <a-layout id="content-layout">
+        <a-layout-content>
+	    <h1>Hello World</h1>
+	</a-layout-content>
+    </a-layout>
+</a-layout>
+{{template "js" .}}
+<script>
+</script>
+</body>
+</html>

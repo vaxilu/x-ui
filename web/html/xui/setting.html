@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="vi">
+{{template "head" .}}
+<style>
+    @media (min-width: 769px) {
+        .ant-layout-content {
+	    margin-left: 0px;
+	    margin-right:0px; 
+	    margin-top:0px;
+        }
+    }
+
+    .ant-col-sm-24 {
+        margin-top: 10px;
+    }
+
+    .ant-tabs-bar {
+        margin: 0;
+    }
+
+    .ant-list-item {
+        display: block;
+    }
+
+    .ant-tabs-top-bar {
+        background: white;
+    }
+</style>
+<body>
+<a-layout id="app" v-cloak>
+    {{ template "commonSider" . }}
+    <a-layout id="content-layout">
+        <a-layout-content>
+            <a-spin :spinning="spinning" :delay="500" tip="loading">
+
+      <!-- loader Start -->
+      <div id="loading">
+         <div id="loading-center">
+            <div class="loader">
+               <div class="cube">
+                  <div class="sides">
+                     <div class="top"></div>
+                     <div class="right"></div>
+                     <div class="bottom"></div>
+                     <div class="left"></div>
+                     <div class="front"></div>
+                     <div class="back"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- loader END -->
+      <!-- Wrapper Start -->
+      <div class="wrapper">
+         <!-- Sidebar  -->
+         <div class="iq-sidebar">
+            <div class="iq-sidebar-logo d-flex justify-content-between">
+               <a href="{{ .base_path }}xui">
+                <img src="{{ .base_path }}assets/images/logo.png" class="img-fluid" alt="">
+               </a>
+               <div class="iq-menu-bt align-self-center">
+                  <div class="wrapper-menu">
+                     <div class="line-menu half start"></div>
+                     <div class="line-menu"></div>
+                     <div class="line-menu half end"></div>
+                  </div>
+               </div>
+            </div>
+            <div id="sidebar-scrollbar">
+               <nav class="iq-sidebar-menu">
+                  <ul id="iq-sidebar-toggle" class="iq-menu">
+                     <li class="iq-menu-title"><i class="ri-separator"></i><span>X-UI Unofficial</span></li>
+                     <li class="active">
+                        <a href="#dashboard" class="iq-waves-effect collapsed"  data-toggle="collapse" aria-expanded="false"><i class="ri-home-4-line"></i><span>Dashboard</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                        <ul id="dashboard" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                           <li><a href="{{ .base_path }}xui">Trang Chủ</a></li>
+                           <li><a href="{{ .base_path }}xui/inbounds">Danh Sách VPN</a></li>
+	  		   <li class="active"><a href="{{ .base_path }}xui/setting">Cài Đặt</a></li>
+			   <li><a href="{{ .base_path }}logout">Đăng xuất</a></li>
+                        </ul>
+                     </li>
+                  </ul>
+               </nav>
+               <div class="p-3"></div>
+            </div>
+         </div>
+         <!-- TOP Nav Bar -->
+         <div class="iq-top-navbar">
+            <div class="iq-navbar-custom">
+               <div class="iq-sidebar-logo">
+                  <div class="top-logo">
+                     <a href="{{ .base_path }}xui" class="logo">
+                     <img src="{{ .base_path }}assets/images/logo.png" class="img-fluid" alt="">
+                     <span></span>
+                     </a>
+                  </div>
+               </div>
+               <div class="navbar-breadcrumb">
+                  <h5 class="mb-0">X-UI Unofficial</h5>
+                  <nav aria-label="breadcrumb">
+                     <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ .base_path }}xui">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Cài Đặt</li>
+                     </ul>
+                  </nav>
+               </div>
+               <nav class="navbar navbar-expand-lg navbar-light p-0">
+                  <div class="iq-menu-bt align-self-center" style="right: 1%; top: 15px">
+                     <div class="wrapper-menu">
+                        <div class="line-menu half start"></div>
+                        <div class="line-menu"></div>
+                        <div class="line-menu half end"></div>
+                     </div>
+                  </div>
+               </nav>
+            </div>
+         </div>
+         <!-- TOP Nav Bar END -->
+         <div id="content-page" class="content-page">
+            <div class="container-fluid">
+		<nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a href="{{ .base_path }}xui"><i class="ri-home-4-line mr-1 float-left"></i>Dashboard</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Cài Đặt</li>
+                        </ol>
+                     </nav>
+		     <div class="iq-card">
+                        <div class="iq-card-header d-flex justify-content-between">
+                           <div class="iq-header-title">
+                              <h4 class="card-title">Cài đặt hệ thống</h4>
+                           </div>
+                        </div>
+                        <div class="iq-card-body">
+                           <p>Cài đặt liên quan tới menu tại đây cần phải <code>Khởi động lại hệ thống X-UI</code> để áp dụng các thay đổi.</p>
+                           <div class="row">
+                              <div class="col-sm-3">
+                                 <div class="nav flex-column nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    <a class="nav-link active" id="v-pills-dashboard-tab" data-toggle="pill" href="#v-pills-dashboard" role="tab" aria-controls="v-pills-dashboard" aria-selected="true">Thiết lập Dashboard</a>
+                                    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Thiết lập tài khoản</a>
+                                    <a class="nav-link" id="v-pills-xray-tab" data-toggle="pill" href="#v-pills-xray" role="tab" aria-controls="v-pills-xray" aria-selected="false">Thiết lập Xray</a>
+                                    <a class="nav-link" id="v-pills-telegram-tab" data-toggle="pill" href="#v-pills-telegram" role="tab" aria-controls="v-pills-telegram" aria-selected="false">Thiết lập bot Telegram</a>
+                                 </div>
+                              </div>
+                              <div class="col-sm-9">
+                                 <div class="tab-content mt-0" id="v-pills-tabContent">
+                                    <div class="tab-pane fade show active" id="v-pills-dashboard" role="tabpanel" aria-labelledby="v-pills-dashboard-tab">
+				       <a-list item-layout="horizontal" style="background: white">
+                                         <setting-list-item type="text" title="Giám sát bảng điều khiển IP" desc="Để trống theo mặc định để nghe tất cả IP，Khởi động lại bảng điều khiển để có hiệu lực" v-model="allSetting.webListen"></setting-list-item>
+                                         <setting-list-item type="number" title="Port truy cập bảng điều khiển" desc="Khởi động lại bảng điều khiển để có hiệu lực" v-model.number="allSetting.webPort"></setting-list-item>
+                                         <setting-list-item type="text" title="Đường dẫn tệp khóa công khai của chứng chỉ bảng điều khiển" desc="Điền vào một '/' Đường dẫn tuyệt đối ở đầu，Khởi động lại bảng điều khiển để có hiệu lực" v-model="allSetting.webCertFile"></setting-list-item>
+                                         <setting-list-item type="text" title="Đường dẫn tệp khóa chứng chỉ bảng điều khiển" desc="Điền vào một '/' Đường dẫn tuyệt đối ở đầu，Khởi động lại bảng điều khiển để có hiệu lực" v-model="allSetting.webKeyFile"></setting-list-item>
+                                         <setting-list-item type="text" title="bảng điều khiển url Đường dẫn gốc" desc="Phải bắt đầu với '/' Bắt đầu ， với '/' kết thúc ， Khởi động lại bảng điều khiển để có hiệu lực" v-model="allSetting.webBasePath"></setting-list-item>
+					 <setting-list-item type="text" title="Múi giờ" desc="Các tác vụ đã lên lịch chạy theo thời gian trong múi giờ，Khởi động lại bảng điều khiển để có hiệu lực" v-model="allSetting.timeLocation"></setting-list-item>
+                                       </a-list>
+                                    </div>
+                                    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+				       <a-list item-layout="horizontal" style="background: white">
+			               <a-form style="background: white; padding: 20px">
+                                       <a-form-item label="Tài khoản cũ">
+                                         <a-input v-model="user.oldUsername" style="max-width: 300px"></a-input>
+                                       </a-form-item>
+                                       <a-form-item label="Mật khẩu cũ">
+                                         <a-input type="password" v-model="user.oldPassword" style="max-width: 300px"></a-input>
+                                       </a-form-item>
+                                       <a-form-item label="Tài khoản mới">
+                                         <a-input v-model="user.newUsername" style="max-width: 300px"></a-input>
+                                       </a-form-item>
+                                       <a-form-item label="Mật khẩu mới">
+                                         <a-input type="password" v-model="user.newPassword" style="max-width: 300px"></a-input>
+                                       </a-form-item>
+                                       <a-form-item>
+                                         <a-button type="primary" @click="updateUser">Xác Nhận</a-button>
+                                       </a-form-item>
+                                       </a-form>
+                                       </a-list>
+                                    </div>
+                                    <div class="tab-pane fade" id="v-pills-xray" role="tabpanel" aria-labelledby="v-pills-xray-tab">
+				       <a-list item-layout="horizontal" style="background: white">
+                                         <setting-list-item type="textarea" title="Mẫu cấu hình xray" desc="Tạo tệp cấu hình xray cuối cùng dựa trên mẫu này ，Khởi động lại bảng điều khiển để có hiệu lực" v-model="allSetting.xrayTemplateConfig"></setting-list-item>
+                                       </a-list>
+                                    </div>
+                                    <div class="tab-pane fade" id="v-pills-telegram" role="tabpanel" aria-labelledby="v-pills-telegram-tab">
+				       <a-list item-layout="horizontal" style="background: white">
+				         <setting-list-item type="switch" title="Bật bot Telegram" desc="Khởi động lại bảng điều khiển để có hiệu lực"  v-model="allSetting.tgBotEnable"></setting-list-item>
+                                         <setting-list-item type="text" title="TOKEN Bot" desc="Khởi động lại bảng điều khiển để có hiệu lực"  v-model="allSetting.tgBotToken"></setting-list-item>
+                                         <setting-list-item type="number" title="ChatId Telegram" desc="Khởi động lại bảng điều khiển để có hiệu lực"  v-model.number="allSetting.tgBotChatId"></setting-list-item>
+                                         <setting-list-item type="text" title="Thời gian thông báo Telegram" desc="Cách sử dụng: &#13;&#10; - @ hourly : để thông báo hàng giờ &#13;&#10; - 30 * * * * * : ₫ể thông báo sau mỗi 30 phút &#13;&#10; - @ every 1h30m : thông báo sau 1 giờ và 30 phút"  v-model="allSetting.tgRunTime"></setting-list-item>
+                                       </a-list>
+                                    </div>
+                                 </div>
+                              </div>
+                   	      <button @click="updateAllSetting" class="btn btn-primary mb-3">Lưu cài đặt</button>
+			      <button @click="restartPanel" class="btn btn-success mb-3">Khởi động lại X-UI</button>
+			   </div>
+                        </div>
+                     </div>
+            </div>
+         </div>
+      </div>
+      <!-- Wrapper END -->
+      <!-- Footer -->
+      <footer class="bg-white iq-footer">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-lg-6">
+                  <ul class="list-inline mb-0">
+                     <li class="list-inline-item"><a href="https://github.com/vaxilu/x-ui.git">X-UI Official</a></li>
+                     <li class="list-inline-item"><a href="https://github.com/dopaemon/x-ui.git">X-UI Unofficial</a></li>
+                  </ul>
+               </div>
+               <div class="col-lg-6 text-right">
+                  Copyright 2022 <a href="https://github.com/dopaemon/x-ui">X-UI Unofficial</a> All Rights Reserved.
+               </div>
+            </div>
+         </div>
+      </footer>
+
+        </a-layout-content>
+    </a-layout>
+</a-layout>
+
+      <!-- Footer END -->
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="{{ .base_path }}assets/js/jquery.min.js"></script>
+      <script src="{{ .base_path }}assets/js/popper.min.js"></script>
+      <script src="{{ .base_path }}assets/js/bootstrap.min.js"></script>
+      <!-- Appear JavaScript -->
+      <script src="{{ .base_path }}assets/js/jquery.appear.js"></script>
+      <!-- Countdown JavaScript -->
+      <script src="{{ .base_path }}assets/js/countdown.min.js"></script>
+      <!-- Counterup JavaScript -->
+      <script src="{{ .base_path }}assets/js/waypoints.min.js"></script>
+      <script src="{{ .base_path }}assets/js/jquery.counterup.min.js"></script>
+      <!-- Wow JavaScript -->
+      <script src="{{ .base_path }}assets/js/wow.min.js"></script>
+      <!-- Apexcharts JavaScript -->
+      <script src="{{ .base_path }}assets/js/apexcharts.js"></script>
+      <!-- Slick JavaScript -->
+      <script src="{{ .base_path }}assets/js/slick.min.js"></script>
+      <!-- Select2 JavaScript -->
+      <script src="{{ .base_path }}assets/js/select2.min.js"></script>
+      <!-- Owl Carousel JavaScript -->
+      <script src="{{ .base_path }}assets/js/owl.carousel.min.js"></script>
+      <!-- Magnific Popup JavaScript -->
+      <script src="{{ .base_path }}assets/js/jquery.magnific-popup.min.js"></script>
+      <!-- Smooth Scrollbar JavaScript -->
+      <script src="{{ .base_path }}assets/js/smooth-scrollbar.js"></script>
+      <!-- lottie JavaScript -->
+      <script src="{{ .base_path }}assets/js/lottie.js"></script>
+      <!-- Chart Custom JavaScript -->
+      <script src="{{ .base_path }}assets/js/chart-custom.js"></script>
+      <!-- Custom JavaScript -->
+      <script src="{{ .base_path }}assets/js/custom.js"></script>
+
+{{template "js" .}}
+{{template "component/setting"}}
+
+<script>
+
+    const app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            siderDrawer,
+            spinning: false,
+            oldAllSetting: new AllSetting(),
+            allSetting: new AllSetting(),
+            saveBtnDisable: true,
+            user: {},
+        },
+        methods: {
+            loading(spinning = true) {
+                this.spinning = spinning;
+            },
+            async getAllSetting() {
+                this.loading(true);
+                const msg = await HttpUtil.post("/xui/setting/all");
+                this.loading(false);
+                if (msg.success) {
+                    this.oldAllSetting = new AllSetting(msg.obj);
+                    this.allSetting = new AllSetting(msg.obj);
+                    this.saveBtnDisable = true;
+                }
+            },
+            async updateAllSetting() {
+                this.loading(true);
+                const msg = await HttpUtil.post("/xui/setting/update", this.allSetting);
+                this.loading(false);
+                if (msg.success) {
+                    await this.getAllSetting();
+                }
+            },
+            async updateUser() {
+                this.loading(true);
+                const msg = await HttpUtil.post("/xui/setting/updateUser", this.user);
+                this.loading(false);
+                if (msg.success) {
+                    this.user = {};
+                }
+            },
+            async restartPanel() {
+                await new Promise(resolve => {
+                    this.$confirm({
+                        title: 'Khởi động lại Dashboard',
+                        content: 'Bạn có chắc chắn muốn khởi động lại bảng điều khiển không? Nhấn OK để khởi động lại sau 3 giây. Nếu bạn không thể truy cập bảng điều khiển sau khi khởi động lại, vui lòng truy cập máy chủ để xem thông tin nhật ký bảng điều khiển',
+                        okText: 'Đồng ý',
+                        cancelText: 'Hủy bỏ',
+                        onOk: () => resolve(),
+                    });
+                });
+                this.loading(true);
+                const msg = await HttpUtil.post("/xui/setting/restartPanel");
+                this.loading(false);
+                if (msg.success) {
+                    this.loading(true);
+                    await PromiseUtil.sleep(5000);
+                    location.reload();
+                }
+            }
+        },
+        async mounted() {
+            await this.getAllSetting();
+            while (true) {
+                await PromiseUtil.sleep(1000);
+                this.saveBtnDisable = this.oldAllSetting.equals(this.allSetting);
+            }
+        },
+    });
+
+</script>
+</body>
+</html>

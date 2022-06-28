@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="vi">
+{{template "head" .}}
+<style>
+    @media (min-width: 769px) {
+        .ant-layout-content {
+            margin-left: 0px;
+	    margin-right:0px; 
+	    margin-top:0px;
+        }
+    }
+
+    .ant-col-sm-24 {
+        margin-top: 10px;
+    }
+</style>
+<body onload="showTime()">
+<a-layout id="app" v-cloak>
+    {{ template "commonSider" . }}
+    <a-layout id="content-layout">
+        <a-layout-content>
+            <a-spin :spinning="spinning" :delay="200" :tip="loadingTip"/>
+
+      <!-- loader Start -->
+      <div id="loading">
+         <div id="loading-center">
+            <div class="loader">
+               <div class="cube">
+                  <div class="sides">
+                     <div class="top"></div>
+                     <div class="right"></div>
+                     <div class="bottom"></div>
+                     <div class="left"></div>
+                     <div class="front"></div>
+                     <div class="back"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- loader END -->
+      <!-- Wrapper Start -->
+      <div class="wrapper">
+         <!-- Sidebar  -->
+         <div class="iq-sidebar">
+            <div class="iq-sidebar-logo d-flex justify-content-between">
+               <a href="{{ .base_path }}xui">
+                <img src="{{ .base_path }}assets/images/logo.png" class="img-fluid" alt="">
+               </a>
+               <div class="iq-menu-bt align-self-center">
+                  <div class="wrapper-menu">
+                     <div class="line-menu half start"></div>
+                     <div class="line-menu"></div>
+                     <div class="line-menu half end"></div>
+                  </div>
+               </div>
+            </div>
+            <div id="sidebar-scrollbar">
+               <nav class="iq-sidebar-menu">
+                  <ul id="iq-sidebar-toggle" class="iq-menu">
+                     <li class="iq-menu-title"><i class="ri-separator"></i><span>X-UI Unofficial</span></li>
+                     <li class="active">
+                        <a href="#dashboard" class="iq-waves-effect collapsed"  data-toggle="collapse" aria-expanded="false"><i class="ri-home-4-line"></i><span>Dashboard</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                        <ul id="dashboard" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                           <li class="active"><a href="{{ .base_path }}xui">Trang Chủ</a></li>
+                           <li><a href="{{ .base_path }}xui/inbounds">Danh Sách VPN</a></li>
+	  		   <li><a href="{{ .base_path }}xui/setting">Cài Đặt</a></li>
+			   <li><a href="{{ .base_path }}logout">Đăng xuất</a></li>
+                        </ul>
+                     </li>
+                  </ul>
+               </nav>
+               <div class="p-3"></div>
+            </div>
+         </div>
+         <!-- TOP Nav Bar -->
+         <div class="iq-top-navbar">
+            <div class="iq-navbar-custom">
+               <div class="iq-sidebar-logo">
+                  <div class="top-logo">
+                     <a href="{{ .base_path }}xui" class="logo">
+                     <img src="{{ .base_path }}assets/images/logo.png" class="img-fluid" alt="">
+                     <span></span>
+                     </a>
+                  </div>
+               </div>
+               <div class="navbar-breadcrumb">
+                  <h5 class="mb-0">X-UI Unofficial</h5>
+                  <nav aria-label="breadcrumb">
+                     <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ .base_path }}xui">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Trang Chủ</li>
+                     </ul>
+                  </nav>
+               </div>
+               <nav class="navbar navbar-expand-lg navbar-light p-0">
+                  <div class="iq-menu-bt align-self-center" style="right: 1%; top: 15px">
+                     <div class="wrapper-menu">
+                        <div class="line-menu half start"></div>
+                        <div class="line-menu"></div>
+                        <div class="line-menu half end"></div>
+                     </div>
+                  </div>
+               </nav>
+            </div>
+         </div>
+         <!-- TOP Nav Bar END -->
+         <!-- Page Content  -->
+         <div id="content-page" class="content-page">
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-lg-12">
+		     <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a href="{{ .base_path }}xui"><i class="ri-home-4-line mr-1 float-left"></i>Dashboard</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Trang Chủ</li>
+                        </ol>
+                     </nav>
+                     <div class="iq-card">
+                        <div class="iq-card-header d-flex justify-content-between">
+                           <div class="iq-header-title">
+                              <h5 class="card-title">Thông Tin Hệ Thống</h4>
+                           </div>
+                           <div class="iq-card-header-toolbar d-flex align-items-center">
+                              <div class="dropdown">
+                                 <span class="dropdown-toggle text-primary" id="dropdownMenuButton3" data-toggle="dropdown">
+                                     <i class="ri-more-2-fill"></i>
+                                 </span>
+                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                    <a-tag class="dropdown-item" @click="openSelectV2rayVersion" href="#">Cập nhật Xray Core</a-tag>
+                                  </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="mb-4 iq-card-body">
+                           <h4 class="small font-weight-bold">CPU <span class="float-right"> [[ status.cpu.percent ]]% / 100% </span></h4>
+                           <div>
+                              <template>
+			              <a-progress :percent="status.cpu.percent" style="width: 95%" status="active" size="big"/>
+                              </template>
+                           </div> </br>
+                           <h4 class="small font-weight-bold">RAM <span class="float-right"> [[ sizeFormat(status.mem.current) ]] / [[ sizeFormat(status.mem.total) ]] </span></h4>
+                             <div>
+                                <template>
+                                        <a-progress :percent="status.mem.percent" style="width: 95%" status="active" size="big"/>
+                                </template>
+                             </div> </br>
+                           <h4 class="small font-weight-bold">SWAP <span class="float-right"> [[ sizeFormat(status.swap.current) ]] / [[ sizeFormat(status.swap.total) ]] </span></h4>
+                             <div>
+                                <template>
+                                        <a-progress :percent="status.swap.percent" style="width: 95%" status="active" size="big"/>
+                                </template>
+                             </div> </br>
+                           <h4 class="small font-weight-bold">DISK <span class="float-right"> [[ sizeFormat(status.disk.current) ]] / [[ sizeFormat(status.disk.total) ]] </span></h4>
+                             <div>
+                                <template>
+                                        <a-progress :percent="status.disk.percent" style="width: 95%" status="active" size="big"/>
+                                </template>
+                             </div>
+			</div>
+                     </div>
+                  </div>
+		  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-danger"><i class="ri-shopping-cart-line"></i></div>
+                           <span class="float-right line-height-6">Xray-Core Infomation</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+			     <div class="h5 mb-0 font-weight-bold text-gray-800">
+                               <a-tag :color="status.xray.color">[[ status.xray.state ]]</a-tag>
+                               <a-tooltip v-if="status.xray.state === State.Error">
+                                       <template slot="title">
+                                              <p v-for="line in status.xray.errorMsg.split('\n')">[[ line ]]</p>
+                                       </template>
+                                       <a-icon type="question-circle" theme="filled"></a-icon>
+                               </a-tooltip>
+                               <a-tag color="green" @click="openSelectV2rayVersion">[[ status.xray.version ]]</a-tag>
+                               </br>
+                               <a-tag color="blue" @click="openSelectV2rayVersion">Chuyển đổi phiên bản</a-tag>
+                             </div>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-primary"><i class="fas fa-clock"></i></div>
+                           <span class="float-right line-height-6">Thời Gian</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0"><div id="myClockDisplay" class="clock"></div></h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-warning"><i class="ri-bar-chart-grouped-line"></i></div>
+                           <span class="float-right line-height-6">Hôm Nay</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0"><div id="myDateDisplay"> </div></h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-success"><i class="ri-group-line"></i></div>
+                           <span class="float-right line-height-6">Thời gian hoạt động</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0"> [[ formatSecond(status.uptime) ]] </h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-danger"><i class="ri-shopping-cart-line"></i></div>
+                           <span class="float-right line-height-6">System Loader</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0"> [[ status.loads[0] ]] | [[ status.loads[1] ]] | [[ status.loads[2] ]] </h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+
+	          <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-primary"><i class="ri-exchange-dollar-fill"></i></div>
+                           <span class="float-right line-height-6">Số kết nối TCP/UDP</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0"> TCP: [[ status.tcpCount ]] </br> UPD: [[ status.udpCount ]] </h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-warning"><i class="ri-bar-chart-grouped-line"></i></div>
+                           <span class="float-right line-height-6">Tốc Độ Tải Lên | Xuống</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0">Upload: [[ sizeFormat(status.netIO.up) ]] / S </br>Download: [[ sizeFormat(status.netIO.down) ]] / S</h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-success"><i class="ri-group-line"></i></div>
+                           <span class="float-right line-height-6">Tổng lưu lượng hệ thống từ khi bật</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0">Upload: [[ sizeFormat(status.netTraffic.sent) ]] </br> Download: [[ sizeFormat(status.netTraffic.recv) ]]</h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-lg-6">
+                     <div class="row">
+                        <div class="col-lg-12">
+                           <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+                              <div class="iq-card-header d-flex justify-content-between">
+                                 <div class="iq-header-title">
+                                    <h5 class="card-title">Developer</h4>
+                                 </div>
+                              </div>
+                              <div class="iq-card-body">
+                                 <div class="media-support">
+                                    <div class="media-support-header mb-2">
+                                       <div class="media-support-user-img mr-3">
+                                          <img class="rounded-circle" src="https://avatars.githubusercontent.com/u/47310637?v=4" alt="">
+                                       </div>
+                                       <div class="media-support-info mt-2">
+                                          <h6 class="mb-0"><a href="https://github.com/vaxilu" class="">Vaxilu ( sprov065 )</a></h6>
+                                          <small>China</small>
+                                       </div>
+                                       <div class="mt-3">
+                                          <span class="badge badge-success">Người Sáng Lập</span>
+                                       </div>
+                                    </div>
+                                    <div class="media-support-body">
+                                       <p class="mb-0">Vaxilu đã tạo ra X-UI ( GoLang ) để thay thế cho V2-UI ( PyThon ).</p>
+                                    </div>
+                                 </div>
+                                 <hr class="mt-4 mb-4">
+                                 <div class="media-support">
+                                    <div class="media-support-header mb-2">
+                                       <div class="media-support-user-img mr-3">
+                                          <img class="rounded-circle" src="https://avatars.githubusercontent.com/u/38254177?v=4" alt="">
+                                       </div>
+                                       <div class="media-support-info mt-2">
+                                          <h6 class="mb-0"><a href="https://github.com/FranzKafkaYu" class="">Yu FranzKafka</a></h6>
+                                          <small>China</small>
+                                       </div>
+                                       <div class="mt-3">
+                                          <span class="badge badge-warning text-white">Maintainer</span>
+                                       </div>
+                                    </div>
+                                    <div class="media-support-body">
+                                       <p class="mb-0">Cập nhật & tối ưu hệ thống Bot Telegram tự làm - Official X-UI</p>
+                                    </div>
+                                 </div>
+                                 <hr class="mt-4 mb-4">
+                                 <div class="media-support">
+                                    <div class="media-support-header mb-2">
+                                       <div class="media-support-user-img mr-3">
+                                          <img class="rounded-circle" src="https://avatars.githubusercontent.com/u/43093213?v=4" alt="">
+                                       </div>
+                                       <div class="media-support-info mt-2">
+                                          <h6 class="mb-0"><a href="https://github.com/dopaemon" class="">dopaemon ( KernelPanix )</a></h6>
+                                          <small>Việt Nam</small>
+                                       </div>
+                                       <div class="mt-3">
+                                          <span class="badge badge-primary">Maintainer X-UI Unofficial</span>
+                                       </div>
+                                    </div>
+                                    <div class="media-support-body">
+                                       <p class="mb-0">Tối ưu, Dịch, Cập nhật Giao Diện mới cho X-UI, Merge Pull, Cherry Pick commit từ các nguồn X-UI khác. Giúp người Việt Nam tiếp cận với X-UI đơn giản nhất.</p>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+		  <div class="col-lg-6">
+                     <div class="row">
+                        <div class="col-lg-12">
+                           <div class="iq-card iq-card-block iq-card-stretch iq-card-height">
+                              <div class="iq-card-header d-flex justify-content-between">
+                                 <div class="iq-header-title">
+                                    <h5 class="card-title">X-UI Unofficial Commited</h4>
+                                 </div>
+                              </div>
+                              <div class="iq-card-body">
+				<iframe src="{{ .base_path }}xui/infome" width="100%" height="444" frameBorder="0">Browser not compatible.</iframe>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <a-modal id="version-modal" v-model="versionModal.visible" title="Chuyển Phiên Bản" :closable="true" @ok="() => versionModal.visible = false" ok-text="Đồng ý" cancel-text="Hủy bỏ">
+        <h2>Nhấp vào phiên bản bạn muốn chuyển đổi</h2>
+        <h2>Vui lòng chọn cẩn thận, phiên bản cũ có thể không tương thích với cấu hình</h2>
+        <template v-for="version, index in versionModal.versions">
+          <a-tag :color="index % 2 == 0 ? 'blue' : 'green'" style="margin: 10px" @click="switchV2rayVersion(version)">
+             [[ version ]]
+          </a-tag>
+        </template>
+      </a-modal>
+
+      <!-- Wrapper END -->
+      <!-- Footer -->
+      <footer class="bg-white iq-footer">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-lg-6">
+                  <ul class="list-inline mb-0">
+                     <li class="list-inline-item"><a href="https://github.com/vaxilu/x-ui.git">X-UI Official</a></li>
+                     <li class="list-inline-item"><a href="https://github.com/dopaemon/x-ui.git">X-UI Unofficial</a></li>
+                  </ul>
+               </div>
+               <div class="col-lg-6 text-right">
+                  Copyright 2022 <a href="https://github.com/dopaemon/x-ui">X-UI Unofficial</a> All Rights Reserved.
+               </div>
+            </div>
+         </div>
+      </footer>
+
+        </a-layout-content>
+    </a-layout>
+</a-layout>
+
+      <!-- Footer END -->
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="{{ .base_path }}assets/js/jquery.min.js"></script>
+      <script src="{{ .base_path }}assets/js/popper.min.js"></script>
+      <script src="{{ .base_path }}assets/js/bootstrap.min.js"></script>
+      <!-- Appear JavaScript -->
+      <script src="{{ .base_path }}assets/js/jquery.appear.js"></script>
+      <!-- Countdown JavaScript -->
+      <script src="{{ .base_path }}assets/js/countdown.min.js"></script>
+      <!-- Counterup JavaScript -->
+      <script src="{{ .base_path }}assets/js/waypoints.min.js"></script>
+      <script src="{{ .base_path }}assets/js/jquery.counterup.min.js"></script>
+      <!-- Wow JavaScript -->
+      <script src="{{ .base_path }}assets/js/wow.min.js"></script>
+      <!-- Apexcharts JavaScript -->
+      <script src="{{ .base_path }}assets/js/apexcharts.js"></script>
+      <!-- Slick JavaScript -->
+      <script src="{{ .base_path }}assets/js/slick.min.js"></script>
+      <!-- Select2 JavaScript -->
+      <script src="{{ .base_path }}assets/js/select2.min.js"></script>
+      <!-- Owl Carousel JavaScript -->
+      <script src="{{ .base_path }}assets/js/owl.carousel.min.js"></script>
+      <!-- Magnific Popup JavaScript -->
+      <script src="{{ .base_path }}assets/js/jquery.magnific-popup.min.js"></script>
+      <!-- Smooth Scrollbar JavaScript -->
+      <script src="{{ .base_path }}assets/js/smooth-scrollbar.js"></script>
+      <!-- lottie JavaScript -->
+      <script src="{{ .base_path }}assets/js/lottie.js"></script>
+      <!-- Chart Custom JavaScript -->
+      <script src="{{ .base_path }}assets/js/chart-custom.js"></script>
+      <!-- Custom JavaScript -->
+      <script src="{{ .base_path }}assets/js/custom.js"></script>
+
+<!-- Date Time JS -->
+<script type="text/javascript">
+    function showTime() {
+        var timediv = document.getElementById("myClockDisplay");
+        var datediv = document.getElementById("myDateDisplay");
+        var dt = new Date();
+        var d = dt.getDate();
+        var m = dt.getMonth() + 1;
+        var y = dt.getFullYear();
+        var hh = dt.getHours();
+        var mm = dt.getMinutes();
+        var ss = dt.getSeconds();
+	var hht = 0;
+        var session = "Sáng";
+        if (hh == 0) {
+            hh = 12;
+        }
+
+        if (hh > 12) {
+            hh = hh - 12;
+	    hht = hh;
+            session = "Chiều";
+        }
+
+        if (hht > 6) {
+	    session = "Tối";
+        }
+
+        d = (d < 10) ? "0" + d : d;
+        m = (m < 10) ? "0" + m : m;
+        hh = (hh < 10) ? "0" + hh : hh;
+        mm = (mm < 10) ? "0" + mm : mm;
+        ss = (ss < 10) ? "0" + ss : ss;
+        timediv.textContent = hh + " Giờ " + mm + " Phút " + ss + " Giây | " + session;
+        datediv.textContent = "Ngày " + d + " Tháng " + m + " Năm " + y;
+        setTimeout(showTime, 1000);
+     }
+</script>
+
+<script type="text/javascript">
+	document.getElementById("CPUInfo").value = Math.trunc(status.cpu.percent);
+        document.getElementById("RAMInfo").value = Math.trunc("status.mem.percent");
+
+	document.getElementById("CPUInfo").style.width = Math.trunc(status.cpu.percent) + "%";
+	document.getElementById("RAMInfo").style.width = Math.trunc("status.mem.percent") + "%";
+
+	alert(Math.trunc(status.cpu.percent) + "%");
+
+</script>
+
+
+{{template "js" .}}
+<script>
+    const State = {
+        Running: "running",
+        Stop: "stop",
+        Error: "error",
+    }
+    Object.freeze(State);
+
+    class CurTotal {
+
+        constructor(current, total) {
+            this.current = current;
+            this.total = total;
+        }
+
+        get percent() {
+            if (this.total === 0) {
+                return 0;
+            }
+            return toFixed(this.current / this.total * 100, 2);
+        }
+
+        get color() {
+            const percent = this.percent;
+            if (percent < 80) {
+                return '#67C23A';
+            } else if (percent < 90) {
+                return '#E6A23C';
+            } else {
+                return '#F56C6C';
+            }
+        }
+    }
+
+    class Status {
+        constructor(data) {
+            this.cpu = new CurTotal(0, 0);
+            this.disk = new CurTotal(0, 0);
+            this.loads = [0, 0, 0];
+            this.mem = new CurTotal(0, 0);
+            this.netIO = {up: 0, down: 0};
+            this.netTraffic = {sent: 0, recv: 0};
+            this.swap = new CurTotal(0, 0);
+            this.tcpCount = 0;
+            this.udpCount = 0;
+            this.uptime = 0;
+            this.xray = {state: State.Stop, errorMsg: "", version: "", color: ""};
+
+            if (data == null) {
+                return;
+            }
+            this.cpu = new CurTotal(data.cpu, 100);
+            this.disk = new CurTotal(data.disk.current, data.disk.total);
+            this.loads = data.loads.map(load => toFixed(load, 2));
+            this.mem = new CurTotal(data.mem.current, data.mem.total);
+            this.netIO = data.netIO;
+            this.netTraffic = data.netTraffic;
+            this.swap = new CurTotal(data.swap.current, data.swap.total);
+            this.tcpCount = data.tcpCount;
+            this.udpCount = data.udpCount;
+            this.uptime = data.uptime;
+            this.xray = data.xray;
+            switch (this.xray.state) {
+                case State.Running:
+                    this.xray.color = "green";
+                    break;
+                case State.Stop:
+                    this.xray.color = "orange";
+                    break;
+                case State.Error:
+                    this.xray.color = "red";
+                    break;
+                default:
+                    this.xray.color = "gray";
+            }
+        }
+    }
+
+    const versionModal = {
+        visible: false,
+        versions: [],
+        show(versions) {
+            this.visible = true;
+            this.versions = versions;
+        },
+        hide() {
+            this.visible = false;
+        },
+    };
+
+    const app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            siderDrawer,
+            status: new Status(),
+            versionModal,
+            spinning: false,
+            loadingTip: 'Đang tải',
+        },
+        methods: {
+            loading(spinning, tip = 'Đang tải') {
+                this.spinning = spinning;
+                this.loadingTip = tip;
+            },
+            async getStatus() {
+                const msg = await HttpUtil.post('/server/status');
+                if (msg.success) {
+                    this.setStatus(msg.obj);
+                }
+            },
+            setStatus(data) {
+                this.status = new Status(data);
+            },
+            async openSelectV2rayVersion() {
+                this.loading(true);
+                const msg = await HttpUtil.post('server/getXrayVersion');
+                this.loading(false);
+                if (!msg.success) {
+                    return;
+                }
+                versionModal.show(msg.obj);
+            },
+            switchV2rayVersion(version) {
+                this.$confirm({
+                    title: 'Chuyển phiên bản xray',
+                    content: 'Có chuyển phiên bản xray sang không' + ` ${version}?`,
+                    okText: 'Đảm bảo',
+                    cancelText: 'Hủy bỏ',
+                    onOk: async () => {
+                        versionModal.hide();
+                        this.loading(true, 'Trong quá trình cài đặt, vui lòng không làm mới trang này');
+                        await HttpUtil.post(`/server/installXray/${version}`);
+                        this.loading(false);
+                    },
+                });
+            },
+        },
+        async mounted() {
+            while (true) {
+                try {
+                    await this.getStatus();
+                } catch (e) {
+                    console.error(e);
+                }
+                await PromiseUtil.sleep(2000);
+            }
+        },
+    });
+</script>
+</body>
+</html>

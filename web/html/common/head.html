@@ -1,0 +1,29 @@
+{{define "head"}}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ .base_path }}assets/ant-design-vue@1.7.2/antd.min.css">
+    <link rel="stylesheet" href="{{ .base_path }}assets/element-ui@2.15.0/theme-chalk/display.css">
+    <link rel="stylesheet" href="{{ .base_path }}assets/css/custom.css?{{ .cur_ver }}">
+    <!-- <link rel="stylesheet" href="{{ .base_path }}assets/css/sb-admin-2.min.css"> -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="{{ .base_path }}assets/vendor/fontawesome-free/css/all.min.css"> -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="{{ .base_path }}assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ .base_path }}assets/css/typography.css" />
+    <link rel="stylesheet" href="{{ .base_path }}assets/css/style.css" />
+    <link rel="stylesheet" href="{{ .base_path }}assets/css/responsive.css" />
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+    <title>{{.title}}</title>
+</head>
+{{end}}

@@ -1,0 +1,78 @@
+{{define "menuItems"}}
+<div class="logo">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ .base_path }}xui/">
+        <div class="sidebar-brand-icon rotate-n-15">
+           <i class="fas fa-laugh-wink"></i>
+        </div>
+      <div class="sidebar-brand-text mx-3">X-UI <sup>Unofficial</sup></div>
+    </a>
+</div>
+<a-menu-item key="{{ .base_path }}xui/">
+    <a-icon type="dashboard"></a-icon>
+    <span class="sidebar-brand-text mx-3">Dashboard</span>
+</a-menu-item>
+<a-menu-item key="{{ .base_path }}xui/inbounds">
+    <a-icon type="laptop"></a-icon>
+    <span>Server Chính</span>
+</a-menu-item>
+<!-- <a-menu-item key="{{ .base_path }}xui/clients">
+    <a-icon type="laptop"></a-icon>
+    <span>Server Khác</span>
+</a-menu-item> -->
+<a-sub-menu>
+    <template slot="title">
+        <a-icon type="link"></a-icon>
+        <span>Liên Lạc</span>
+    </template>
+    <a-menu-item key="https://github.com/dopaemon">
+        <a-icon type="github"></a-icon>
+        <span>dopaemon</span>
+    </a-menu-item>
+    <a-menu-item key="https://fb.me/KernelPanix">
+        <a-icon type="facebook"></a-icon>
+        <span>Trần Nguyễn Tuấn Anh</span>
+    </a-menu-item>
+    <a-menu-item key="https://t.me/KernelPanix">
+        <a-icon type="telegram"></a-icon>
+        <span>KernelPanix</span>
+    </a-menu-item>
+</a-sub-menu>
+{{end}}
+
+
+{{define "commonSider"}}
+<a-layout-sider id="sider" collapsible breakpoint="md" collapsed-width="0" style="max-width: 0px; flex: 0 0 0px; min-width: 0px; width: 0px">
+    <a-menu theme="light" mode="inline" :selected-keys="['{{ .request_uri }}']"
+            @click="({key}) => key.startsWith('http') ? window.open(key) : location.href = key">
+        {{template "menuItems" .}}
+    </a-menu>
+</a-layout-sider>
+<a-drawer id="sider-drawer" placement="left" :closable="false"
+          @close="siderDrawer.close()"
+          :visible="siderDrawer.visible" :wrap-style="{ padding: 0 }"
+	  style="max-width: 0px; flex: 0 0 0px; min-width: 0px; width: 0px">
+    <!-- <div class="drawer-handle" @click="siderDrawer.change()" slot="handle"> -->
+        <a-icon :type="siderDrawer.visible ? 'close' : 'menu-fold'"></a-icon>
+    </div>
+    <a-menu theme="light" mode="inline" :selected-keys="['{{ .request_uri }}']"
+            @click="({key}) => key.startsWith('http') ? window.open(key) : location.href = key">
+        {{template "menuItems" .}}
+    </a-menu>
+</a-drawer>
+<script>
+
+    const siderDrawer = {
+        visible: false,
+        show() {
+            this.visible = true;
+        },
+        close() {
+            this.visible = false;
+        },
+        change() {
+            this.visible = !this.visible;
+        }
+    };
+
+</script>
+{{end}}

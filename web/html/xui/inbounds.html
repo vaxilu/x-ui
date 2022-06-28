@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="vi">
+{{template "head" .}}
+<style>
+    @media (min-width: 769px) {
+        .ant-layout-content {
+	    margin-left: 0px;
+	    margin-right:0px; 
+	    margin-top:0px;
+        }
+    }
+
+    .ant-col-sm-24 {
+        margin-top: 10px;
+    }
+</style>
+<body>
+<a-layout id="app" v-cloak>
+    {{ template "commonSider" . }}
+    <a-layout id="content-layout">
+        <a-layout-content>
+            <a-spin :spinning="spinning" :delay="500" tip="loading">
+
+      <!-- loader Start -->
+      <div id="loading">
+         <div id="loading-center">
+            <div class="loader">
+               <div class="cube">
+                  <div class="sides">
+                     <div class="top"></div>
+                     <div class="right"></div>
+                     <div class="bottom"></div>
+                     <div class="left"></div>
+                     <div class="front"></div>
+                     <div class="back"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- loader END -->
+      <!-- Wrapper Start -->
+      <div class="wrapper">
+         <!-- Sidebar  -->
+         <div class="iq-sidebar">
+            <div class="iq-sidebar-logo d-flex justify-content-between">
+               <a href="{{ .base_path }}xui">
+                <img src="{{ .base_path }}assets/images/logo.png" class="img-fluid" alt="">
+               </a>
+               <div class="iq-menu-bt align-self-center">
+                  <div class="wrapper-menu">
+                     <div class="line-menu half start"></div>
+                     <div class="line-menu"></div>
+                     <div class="line-menu half end"></div>
+                  </div>
+               </div>
+            </div>
+            <div id="sidebar-scrollbar">
+               <nav class="iq-sidebar-menu">
+                  <ul id="iq-sidebar-toggle" class="iq-menu">
+                     <li class="iq-menu-title"><i class="ri-separator"></i><span>X-UI Unofficial</span></li>
+                     <li class="active">
+                        <a href="#dashboard" class="iq-waves-effect collapsed"  data-toggle="collapse" aria-expanded="false"><i class="ri-home-4-line"></i><span>Dashboard</span><i class="ri-arrow-right-s-line iq-arrow-right"></i></a>
+                        <ul id="dashboard" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                           <li><a href="{{ .base_path }}xui">Trang Chủ</a></li>
+                           <li class="active"><a href="{{ .base_path }}xui/inbounds">Danh Sách VPN</a></li>
+	  		   <li><a href="{{ .base_path }}xui/setting">Cài Đặt</a></li>
+			   <li><a href="{{ .base_path }}logout">Đăng xuất</a></li>
+                        </ul>
+                     </li>
+                  </ul>
+               </nav>
+               <div class="p-3"></div>
+            </div>
+         </div>
+         <!-- TOP Nav Bar -->
+         <div class="iq-top-navbar">
+            <div class="iq-navbar-custom">
+               <div class="iq-sidebar-logo">
+                  <div class="top-logo">
+                     <a href="{{ .base_path }}xui" class="logo">
+                     <img src="{{ .base_path }}assets/images/logo.png" class="img-fluid" alt="">
+                     <span></span>
+                     </a>
+                  </div>
+               </div>
+               <div class="navbar-breadcrumb">
+                  <h5 class="mb-0">X-UI Unofficial</h5>
+                  <nav aria-label="breadcrumb">
+                     <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ .base_path }}xui">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Danh Sách VPN</li>
+                     </ul>
+                  </nav>
+               </div>
+               <nav class="navbar navbar-expand-lg navbar-light p-0">
+                  <div class="iq-menu-bt align-self-center" style="right: 1%; top: 15px">
+                     <div class="wrapper-menu">
+                        <div class="line-menu half start"></div>
+                        <div class="line-menu"></div>
+                        <div class="line-menu half end"></div>
+                     </div>
+                  </div>
+               </nav>
+            </div>
+         </div>
+         <!-- TOP Nav Bar END -->
+         <!-- Page Content  -->
+         <div id="content-page" class="content-page">
+            <div class="container-fluid">
+               <div class="row">
+		  <div class="col-lg-12">
+		     <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                          <li class="breadcrumb-item"><a href="{{ .base_path }}xui"><i class="ri-home-4-line mr-1 float-left"></i>Dashboard</a></li>
+                          <li class="breadcrumb-item active" aria-current="page">Danh Sách VPN</li>
+                        </ol>
+                     </nav>
+		  </div>
+		  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-primary"><i class="fas fa-clock"></i></div>
+                           <span class="float-right line-height-6">Tổng Data Qua VPN</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0"> ↑ [[ sizeFormat(total.up) ]] | ↓ [[ sizeFormat(total.down) ]] </h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-warning"><i class="ri-bar-chart-grouped-line"></i></div>
+                           <span class="float-right line-height-6">Tổng Data Đã Dùng</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0"> [[ sizeFormat(total.up + total.down) ]] </h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-success"><i class="ri-group-line"></i></div>
+                           <span class="float-right line-height-6">Tổng Số Server</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0"> [[ dbInbounds.length ]] </h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+                  <div class="col-md-6 col-lg-3">
+                     <div class="iq-card iq-card-block iq-card-stretch iq-card-height overflow-hidden">
+                        <div class="iq-card-body pb-0">
+                           <div class="rounded-circle iq-card-icon iq-bg-danger"><i class="ri-shopping-cart-line"></i></div>
+                           <span class="float-right line-height-6">Xóa Toàn Bộ Data</span>
+                           <div class="clearfix"></div>
+                           <div class="text-center">
+                              <h5 class="mb-0"> <button type="button" @click="resetallTraffic(dbInbounds)" class="btn btn-danger rounded-pill mb-3">Reset Data</button> </h5>
+                           </div>
+                        </div>
+                        </br>
+                     </div>
+                  </div>
+
+                  <div class="col-lg-12">
+                     <div class="iq-card">
+                        <div class="iq-card-header d-flex justify-content-between">
+                           <div class="iq-header-title">
+                              <h5 class="card-title">Danh Sách Server</h4>
+                           </div>
+                           <div class="iq-card-header-toolbar d-flex align-items-center">
+                              <div class="dropdown">
+                                 <span class="dropdown-toggle text-primary" id="dropdownMenuButton3" data-toggle="dropdown">
+                                     <i class="ri-more-2-fill"></i>
+                                 </span>
+                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                    <a-tag class="dropdown-item" @click="openAddInbound" href="#">Tạo server VPN</a-tag>
+				    <a-tag class="dropdown-item" @click="resetallTraffic(dbInbounds)" href="#">Reset Lưu Lượng</a-tag>
+                                  </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="mb-4 iq-card-body">
+		   	<a-table :columns="columns" :row-key="dbInbound => dbInbound.id"
+                                 :data-source="dbInbounds"
+                                 :loading="spinning" :scroll="{ x: 1500 }"
+                                 :pagination="false"
+                                 style="margin-top: 20px"
+                                 @change="() => getDBInbounds()">
+                            <template slot="action" slot-scope="text, dbInbound">
+                                <a-dropdown :trigger="['click']">
+                                    <a @click="e => e.preventDefault()">Menu</a>
+                                    <a-menu slot="overlay" @click="a => clickAction(a, dbInbound)">
+                                        <a-menu-item v-if="dbInbound.hasLink()" key="qrcode">
+                                            <a-icon type="qrcode"></a-icon>Mã QR Scan
+                                        </a-menu-item>
+                                        <a-menu-item key="edit">
+                                            <a-icon type="edit"></a-icon>Chỉnh Sửa
+                                        </a-menu-item>
+                                        <a-menu-item key="resetTraffic">
+                                            <a-icon type="retweet"></a-icon>Đặt Lại Luồng
+                                        </a-menu-item>
+                                        <a-menu-item key="delete">
+                                            <span style="color: #FF4D4F">
+                                                <a-icon type="delete"></a-icon>Xóa Bỏ Server
+                                            </span>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </a-dropdown>
+                            </template>
+                            <template slot="protocol" slot-scope="text, dbInbound">
+                                <a-tag color="blue">[[ dbInbound.protocol ]]</a-tag>
+                            </template>
+                            <template slot="traffic" slot-scope="text, dbInbound">
+                                <a-tag color="blue">[[ sizeFormat(dbInbound.up) ]] / [[ sizeFormat(dbInbound.down) ]]</a-tag>
+                                <template v-if="dbInbound.total > 0">
+                                    <a-tag v-if="dbInbound.up + dbInbound.down < dbInbound.total" color="cyan">[[ sizeFormat(dbInbound.total) ]]</a-tag>
+                                    <a-tag v-else color="red">[[ sizeFormat(dbInbound.total) ]]</a-tag>
+                                </template>
+                                <a-tag v-else color="green">Vô hạn</a-tag>
+                            </template>
+                            <template slot="settings" slot-scope="text, dbInbound">
+                                <a-button type="link" @click="showInfo(dbInbound)">Chi Tiết</a-button>
+                            </template>
+                            <template slot="stream" slot-scope="text, dbInbound, index">
+                                <template v-if="dbInbound.isVMess || dbInbound.isVLess || dbInbound.isTrojan || dbInbound.isSS">
+                                    <a-tag color="green">[[ inbounds[index].stream.network ]]</a-tag>
+                                    <a-tag v-if="inbounds[index].stream.isTls" color="blue">tls</a-tag>
+                                    <a-tag v-if="inbounds[index].stream.isXTls" color="blue">xtls</a-tag>
+                                </template>
+                                <template v-else>không có</template>
+                            </template>
+                            <template slot="enable" slot-scope="text, dbInbound">
+                                <a-switch v-model="dbInbound.enable" @change="switchEnable(dbInbound)"></a-switch>
+                            </template>
+                            <template slot="expiryTime" slot-scope="text, dbInbound">
+                                <template v-if="dbInbound.expiryTime > 0">
+                                    <a-tag v-if="dbInbound.isExpiry" color="red">
+                                        [[ DateUtil.formatMillis(dbInbound.expiryTime) ]]
+                                    </a-tag>
+                                    <a-tag v-else color="blue">
+                                        [[ DateUtil.formatMillis(dbInbound.expiryTime) ]]
+                                    </a-tag>
+                                </template>
+                                <a-tag v-else color="green">Vô thời hạn</a-tag>
+                            </template>
+                        </a-table>
+			</div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Wrapper END -->
+      <!-- Footer -->
+      <footer class="bg-white iq-footer">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-lg-6">
+                  <ul class="list-inline mb-0">
+                     <li class="list-inline-item"><a href="https://github.com/vaxilu/x-ui.git">X-UI Official</a></li>
+                     <li class="list-inline-item"><a href="https://github.com/dopaemon/x-ui.git">X-UI Unofficial</a></li>
+                  </ul>
+               </div>
+               <div class="col-lg-6 text-right">
+                  Copyright 2022 <a href="https://github.com/dopaemon/x-ui">X-UI Unofficial</a> All Rights Reserved.
+               </div>
+            </div>
+         </div>
+      </footer>
+
+        </a-layout-content>
+    </a-layout>
+</a-layout>
+
+      <!-- Footer END -->
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="{{ .base_path }}assets/js/jquery.min.js"></script>
+      <script src="{{ .base_path }}assets/js/popper.min.js"></script>
+      <script src="{{ .base_path }}assets/js/bootstrap.min.js"></script>
+      <!-- Appear JavaScript -->
+      <script src="{{ .base_path }}assets/js/jquery.appear.js"></script>
+      <!-- Countdown JavaScript -->
+      <script src="{{ .base_path }}assets/js/countdown.min.js"></script>
+      <!-- Counterup JavaScript -->
+      <script src="{{ .base_path }}assets/js/waypoints.min.js"></script>
+      <script src="{{ .base_path }}assets/js/jquery.counterup.min.js"></script>
+      <!-- Wow JavaScript -->
+      <script src="{{ .base_path }}assets/js/wow.min.js"></script>
+      <!-- Apexcharts JavaScript -->
+      <script src="{{ .base_path }}assets/js/apexcharts.js"></script>
+      <!-- Slick JavaScript -->
+      <script src="{{ .base_path }}assets/js/slick.min.js"></script>
+      <!-- Select2 JavaScript -->
+      <script src="{{ .base_path }}assets/js/select2.min.js"></script>
+      <!-- Owl Carousel JavaScript -->
+      <script src="{{ .base_path }}assets/js/owl.carousel.min.js"></script>
+      <!-- Magnific Popup JavaScript -->
+      <script src="{{ .base_path }}assets/js/jquery.magnific-popup.min.js"></script>
+      <!-- Smooth Scrollbar JavaScript -->
+      <script src="{{ .base_path }}assets/js/smooth-scrollbar.js"></script>
+      <!-- lottie JavaScript -->
+      <script src="{{ .base_path }}assets/js/lottie.js"></script>
+      <!-- Chart Custom JavaScript -->
+      <script src="{{ .base_path }}assets/js/chart-custom.js"></script>
+      <!-- Custom JavaScript -->
+      <script src="{{ .base_path }}assets/js/custom.js"></script>
+
+{{template "js" .}}
+<script>
+
+    const columns = [{
+	title: "Tùy chọn",
+        align: 'center',
+        width: 35,
+        scopedSlots: { customRender: 'action' },
+    }, {
+	title: "Trạng thái",
+        align: 'center',
+        width: 30,
+        scopedSlots: { customRender: 'enable' },
+    }, {
+	title: "Tên",
+        align: 'center',
+        width: 50,
+        dataIndex: "remark",
+    }, {
+        title: "Giao Thức",
+        align: 'center',
+        width: 35,
+        scopedSlots: { customRender: 'protocol' },
+    }, {
+        title: "Port",
+        align: 'center',
+        dataIndex: "port",
+        width: 35,
+    }, {
+        title: "Lưu Lượng ↑|↓",
+        align: 'center',
+        width: 50,
+        scopedSlots: { customRender: 'traffic' },
+    }, {
+        title: "Thông Tin Chi Tiết",
+        align: 'center',
+        width: 40,
+        scopedSlots: { customRender: 'settings' },
+    }, {
+        title: "Giao Thức Truyền Tải",
+        align: 'center',
+        width: 35,
+        scopedSlots: { customRender: 'stream' },
+    }, {
+        title: "Hạn sử dụng",
+        align: 'center',
+        width: 60,
+        scopedSlots: { customRender: 'expiryTime' },
+    }, {
+        title: "Địa chỉ liên lạc",
+        align: 'center',
+        width: 80,
+        dataIndex: "contact",
+    }];
+
+    const app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            siderDrawer,
+            spinning: false,
+            inbounds: [],
+            dbInbounds: [],
+            searchKey: '',
+        },
+        methods: {
+            loading(spinning=true) {
+                this.spinning = spinning;
+            },
+            async getDBInbounds() {
+                this.loading();
+                const msg = await HttpUtil.post('/xui/inbound/list');
+                this.loading(false);
+                if (!msg.success) {
+                    return;
+                }
+                this.setInbounds(msg.obj);
+            },
+            setInbounds(dbInbounds) {
+                this.inbounds.splice(0);
+                this.dbInbounds.splice(0);
+                for (const inbound of dbInbounds) {
+                    const dbInbound = new DBInbound(inbound);
+                    this.inbounds.push(dbInbound.toInbound());
+                    this.dbInbounds.push(dbInbound);
+                }
+            },
+            searchInbounds(key) {
+                if (ObjectUtil.isEmpty(key)) {
+                    this.searchedInbounds = this.dbInbounds.slice();
+                } else {
+                    this.searchedInbounds.splice(0, this.searchedInbounds.length);
+                    this.dbInbounds.forEach(inbound => {
+                        if (ObjectUtil.deepSearch(inbound, key)) {
+                            this.searchedInbounds.push(inbound);
+                        }
+                    });
+                }
+            },
+            clickAction(action, dbInbound) {
+                switch (action.key) {
+                    case "qrcode":
+                        this.showQrcode(dbInbound);
+                        break;
+                    case "edit":
+                        this.openEditInbound(dbInbound);
+                        break;
+                    case "resetTraffic":
+                        this.resetTraffic(dbInbound);
+                        break;
+                    case "delete":
+                        this.delInbound(dbInbound);
+                        break;
+                }
+            },
+            openAddInbound() {
+                inModal.show({
+                    title: 'Tạo cấu hình VPN mới',
+                    okText: 'Thêm vào',
+                    confirm: async (inbound, dbInbound) => {
+                        inModal.loading();
+                        await this.addInbound(inbound, dbInbound);
+                        inModal.close();
+                    }
+                });
+            },
+            openEditInbound(dbInbound) {
+                const inbound = dbInbound.toInbound();
+                inModal.show({
+                    title: 'Sửa cấu hình VPN',
+                    okText: 'Chấp Nhận',
+                    inbound: inbound,
+                    dbInbound: dbInbound,
+                    confirm: async (inbound, dbInbound) => {
+                        inModal.loading();
+                        await this.updateInbound(inbound, dbInbound);
+                        inModal.close();
+                    }
+                });
+            },
+            async addInbound(inbound, dbInbound) {
+                const data = {
+                    up: dbInbound.up,
+                    down: dbInbound.down,
+                    total: dbInbound.total,
+                    remark: dbInbound.remark,
+                    enable: dbInbound.enable,
+                    expiryTime: dbInbound.expiryTime,
+                    contact: dbInbound.contact,
+
+                    listen: inbound.listen,
+                    port: inbound.port,
+                    protocol: inbound.protocol,
+                    settings: inbound.settings.toString(),
+                    streamSettings: inbound.stream.toString(),
+                    sniffing: inbound.canSniffing() ? inbound.sniffing.toString() : '{}',
+                };
+                await this.submit('/xui/inbound/add', data, inModal);
+            },
+            async updateInbound(inbound, dbInbound) {
+                const data = {
+                    up: dbInbound.up,
+                    down: dbInbound.down,
+                    total: dbInbound.total,
+                    remark: dbInbound.remark,
+                    enable: dbInbound.enable,
+                    expiryTime: dbInbound.expiryTime,
+                    contact: dbInbound.contact,
+
+                    listen: inbound.listen,
+                    port: inbound.port,
+                    protocol: inbound.protocol,
+                    settings: inbound.settings.toString(),
+                    streamSettings: inbound.stream.toString(),
+                    sniffing: inbound.canSniffing() ? inbound.sniffing.toString() : '{}',
+                };
+                await this.submit(`/xui/inbound/update/${dbInbound.id}`, data, inModal);
+            },
+            resetTraffic(dbInbound) {
+                this.$confirm({
+                    title: 'Đặt Lại Luồng',
+                    content: 'Bạn có chắc chắn muốn thiết lập lại quy trình không ???',
+                    okText: 'Cài lại',
+                    cancelText: 'Hủy bỏ',
+                    onOk: () => {
+                        const inbound = dbInbound.toInbound();
+                        dbInbound.up = 0;
+                        dbInbound.down = 0;
+                        this.updateInbound(inbound, dbInbound);
+                    },
+                });
+            },
+            resetallTraffic(dbInbounds) {
+                for (const aInbound of dbInbounds) {
+                    const inbound = aInbound.toInbound();
+                    aInbound.down = 0;
+                    aInbound.up = 0;
+                    this.updateInbound(inbound, aInbound);
+                };
+            },
+            delInbound(dbInbound) {
+                this.$confirm({
+                    title: 'Xóa cấu hình VPN',
+                    content: 'Bạn có chắc chắn muốn xóa cấu hình VPN này không ?',
+                    okText: 'xóa bỏ',
+                    cancelText: 'Hủy bỏ',
+                    onOk: () => this.submit('/xui/inbound/del/' + dbInbound.id),
+                });
+            },
+            showQrcode(dbInbound) {
+                const link = dbInbound.genLink();
+                qrModal.show('Mã QR Scan', link);
+            },
+            showInfo(dbInbound) {
+                infoModal.show(dbInbound);
+            },
+            switchEnable(dbInbound) {
+                this.submit(`/xui/inbound/update/${dbInbound.id}`, dbInbound);
+            },
+            async submit(url, data, modal) {
+                const msg = await HttpUtil.postWithModal(url, data, modal);
+                if (msg.success) {
+                    await this.getDBInbounds();
+                }
+            },
+        },
+        watch: {
+            searchKey(value) {
+                this.searchInbounds(value);
+            }
+        },
+        mounted() {
+            this.getDBInbounds();
+        },
+        computed: {
+            total() {
+                let down = 0, up = 0;
+                for (let i = 0; i < this.dbInbounds.length; ++i) {
+                    down += this.dbInbounds[i].down;
+                    up += this.dbInbounds[i].up;
+                }
+                return {
+                    down: down,
+                    up: up,
+                };
+            }
+        },
+    });
+
+</script>
+{{template "inboundModal"}}
+{{template "promptModal"}}
+{{template "qrcodeModal"}}
+{{template "textModal"}}
+{{template "inboundInfoModal"}}
+</body>
+</html>
