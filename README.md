@@ -1,5 +1,7 @@
-# x-ui
+# X-UI
 CN|[EN](./README_EN.md)  
+> ⚠️ 鉴于某些人喜欢在我的代码基础上添加私货，自此不再提供源码，介意者请勿使用！  
+
 支持多协议多用户的 xray 面板   
 具体使用教程可以参考个人博客文章[链接](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
 欢迎大家使用并反馈意见或提交Pr,帮助项目更好的改善~
