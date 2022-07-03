@@ -1,7 +1,6 @@
 # X-UI
 CN|[EN](./README_EN.md)  
-> ⚠️ 鉴于某些人喜欢在我的代码基础上添加私货，自此不再提供源码，介意者请勿使用！  
-
+  
 支持多协议多用户的 xray 面板   
 具体使用教程可以参考个人博客文章[链接](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
 欢迎大家使用并反馈意见或提交Pr,帮助项目更好的改善~
@@ -75,6 +74,7 @@ xray 状态: 运行
 
 # 变更记录
 
+- 2022.07.03：重构Telegram bot功能，指令控制不再需要键盘输入;增加Trojan底层传输配置
 - 2022.06.19：增加Shadowsocs2022新的Cipher，增加节点搜索、一键清除流量功能
 - 2022.05.14：增加Telegram bot Command控制功能，支持关闭/开启/删除节点等
 - 2022.04.25：增加SSH登录提醒

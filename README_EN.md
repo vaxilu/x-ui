@@ -1,5 +1,4 @@
 # X-UI
-> ⚠️For some reason,the source code is no longer provided, please do not use it if you mind this ~
 
 [CN](./README.md)| EN  
 X-UI is a webUI pannel based on Xray-core which supports multi protocols and multi users  
