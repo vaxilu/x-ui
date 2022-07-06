@@ -20,11 +20,12 @@ CN|[EN](./README_EN.md)
 
 具体使用、配置细节可参考[WIKI](https://github.com/FranzKafkaYu/x-ui/wiki)
 # 安装
-在安装前请确保你的系统支持`bash`和`curl`,且系统网络正常  
+在安装前请确保你的系统支持`bash`环境,且系统网络正常  
+&#x26A1;从原版升级也可使用该命令，数据不会丢失&#x26A1;
 
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
-```
+```  
 
 如果你的系统版本比较老旧，安装后报错：`GLIBC_2.28 not found`，请使用如下命令安装0.3.3.9版本
 
@@ -32,7 +33,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/insta
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh) 0.3.3.9  
 ```
 
-但该版本会在切换xray内核时报错，建议尽快升级系统
+但该版本会在切换xray内核时报错，建议尽快升级系统  
+
 ## 快捷方式
 安装成功后，通过键入`x-ui`进入控制选项菜单，目前菜单内容：
 ```
