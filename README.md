@@ -21,6 +21,7 @@ CN|[EN](./README_EN.md)
 具体使用、配置细节可参考[WIKI](https://github.com/FranzKafkaYu/x-ui/wiki)
 # 安装
 在安装前请确保你的系统支持`bash`环境,且系统网络正常  
+
 &#x26A1;从原版升级也可使用该命令，数据不会丢失&#x26A1;
 
 ```
@@ -79,7 +80,7 @@ xray 状态: 运行
 - 2022.07.03：重构Telegram bot功能，指令控制不再需要键盘输入;增加Trojan底层传输配置
 - 2022.06.19：增加Shadowsocs2022新的Cipher，增加节点搜索、一键清除流量功能
 - 2022.05.14：增加Telegram bot Command控制功能，支持关闭/开启/删除节点等
-- 2022.04.25：增加SSH登录提醒
+- 2022.04.25：增加SSH登录提醒、面板登录提醒
 - 2022.04.23：增加更多Telegram bot提醒功能
 - 2022.04.16：增加面板设置Telegram bot功能
 - 2022.04.12：优化Telegram Bot通知提醒
