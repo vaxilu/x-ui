@@ -1,13 +1,26 @@
 {{define "form/vless"}}
 <a-form layout="inline">
+    <a-form-item label="client">
+        <a-row>
+            <a-button type="primary" size="small" @click="inbound.settings.addVLESS()">
+                +
+            </a-button>
+        </a-row>
+    </a-form-item>
+</a-form>
+<a-form v-for="(vlessobj, index) in inbound.settings.vlesses" layout="inline">
     <a-form-item label="id">
-        <a-input v-model.trim="inbound.settings.vlesses[0].id"></a-input>
+        <a-input v-model.trim="vlessobj.id"></a-input>
     </a-form-item>
     <a-form-item v-if="inbound.xtls" label="flow">
-        <a-select v-model="inbound.settings.vlesses[0].flow" style="width: 150px">
+        <a-select v-model="vlessobj.flow" style="width: 150px">
             <a-select-option value="">无</a-select-option>
             <a-select-option v-for="key in FLOW_CONTROL" :value="key">[[ key ]]</a-select-option>
         </a-select>
+    </a-form-item>
+    <a-form-item  layout="inline">
+        <a-icon v-if="index != 0" type="delete" @click="() => inbound.settings.delVLESS(index)"
+            style="color: rgb(255, 77, 79);cursor: pointer;" />
     </a-form-item>
 </a-form>
 
