@@ -1,7 +1,8 @@
 # X-UI
 CN|[EN](./README_EN.md)  
   
-支持多协议多用户的 xray 面板   
+支持多协议多用户的 xray 面板，究极缝合怪    
+通过内置的Telegram bot方便快捷地进行管理你的代理服务  
 具体使用教程可以参考个人博客文章[链接](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
 欢迎大家使用并反馈意见或提交Pr,帮助项目更好的改善~
 
@@ -19,7 +20,7 @@ CN|[EN](./README_EN.md)
 - 更多高级配置项，详见面板 
 
 具体使用、配置细节可参考[WIKI](https://github.com/FranzKafkaYu/x-ui/wiki)
-# 安装
+# 一键安装
 在安装前请确保你的系统支持`bash`环境,且系统网络正常  
 
 &#x26A1;从原版升级也可使用该命令，数据不会丢失&#x26A1;
@@ -36,7 +37,16 @@ bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/insta
 
 但该版本会在切换xray内核时报错，建议尽快升级系统  
 
-## 快捷方式
+# 效果预览  
+`面板使用`:  
+![image](https://user-images.githubusercontent.com/38254177/178550844-2b77e853-184c-4e23-9d69-6ff53b9857b4.png)
+`Bot使用`:  
+![image](https://user-images.githubusercontent.com/38254177/178551055-893936b7-b75f-4ee8-a773-eee7c6f43f51.png)
+
+
+
+
+# 快捷方式
 安装成功后，通过键入`x-ui`进入控制选项菜单，目前菜单内容：
 ```
   x-ui 面板管理脚本
@@ -77,6 +87,7 @@ xray 状态: 运行
 
 # 变更记录
 
+- 2022.07.11：增加节点到期提醒、流量预警策略，增加Telegram bot节点复制、获取分享链接等
 - 2022.07.03：重构Telegram bot功能，指令控制不再需要键盘输入;增加Trojan底层传输配置
 - 2022.06.19：增加Shadowsocs2022新的Cipher，增加节点搜索、一键清除流量功能
 - 2022.05.14：增加Telegram bot Command控制功能，支持关闭/开启/删除节点等
@@ -87,8 +98,8 @@ xray 状态: 运行
 - 2022.04.06：优化安装/更新流程，增加证书签发功能，添加Telegram bot机器人推送功能
 # Telegram
 
-[CoderfanBaby](https://t.me/CoderfanBaby)  
-[FranzKafka‘sPrivateGroup](https://t.me/franzkafayu)
+[订阅频道](https://t.me/CoderfanBaby)  
+[讨论群组](https://t.me/franzkafayu)
 
 # 致谢
 
