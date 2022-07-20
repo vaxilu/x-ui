@@ -1,6 +1,8 @@
 # X-UI
 CN|[EN](./README_EN.md)  
-  
+
+> ⚠️ 该项目仅作为学习golang的实验性项目，请勿用于生产环境！
+
 支持多协议多用户的 xray 面板，究极缝合怪    
 通过内置的Telegram bot方便快捷地进行管理你的代理服务  
 具体使用教程可以参考个人博客文章[链接](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
