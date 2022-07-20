@@ -39,9 +39,60 @@ bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/insta
 
 # 效果预览  
 `面板使用`:  
+<details>
+<summary><b>点击查看效果预览</b></summary>  
+  
 ![image](https://user-images.githubusercontent.com/38254177/178550844-2b77e853-184c-4e23-9d69-6ff53b9857b4.png)
+ </details>  
+ 
 `Bot使用`:  
-![image](https://user-images.githubusercontent.com/38254177/178551055-893936b7-b75f-4ee8-a773-eee7c6f43f51.png)
+<details>
+<summary><b>点击查看效果预览</b></summary>  
+  
+![image](https://user-images.githubusercontent.com/38254177/178551055-893936b7-b75f-4ee8-a773-eee7c6f43f51.png)  
+ 
+</details>  
+
+`流量提醒`:  
+<details>
+<summary><b>点击查看效果预览</b></summary> 
+  
+![image](https://user-images.githubusercontent.com/38254177/180039760-dc987a30-e21c-49a3-8e03-19666566a822.png)
+
+</details>  
+
+`SSH提醒`:  
+<details>
+<summary><b>点击查看效果预览</b></summary> 
+  
+![image](https://user-images.githubusercontent.com/38254177/180040129-2ec1a7c0-abd3-41dc-aab0-8cd22415c943.png)
+
+</details>  
+
+`限额提醒`:  
+<details>
+<summary><b>点击查看效果预览</b></summary> 
+  
+![image](https://user-images.githubusercontent.com/38254177/180040521-af6e9ef8-d7e5-44e8-834e-25b3b8e3e1b5.png)
+
+</details>  
+
+`到期提醒`:  
+<details>
+<summary><b>点击查看效果预览</b></summary> 
+  
+![image](https://user-images.githubusercontent.com/38254177/180041690-90ca4b1f-3a2d-470b-bc0c-eca9261a739a.png)
+
+</details>  
+
+`登录提醒`:  
+<details>
+<summary><b>点击查看效果预览</b></summary> 
+  
+![image](https://user-images.githubusercontent.com/38254177/180040913-b8bf2fe1-6fc1-43ab-a683-ae23db1866b2.png)  
+![image](https://user-images.githubusercontent.com/38254177/180041179-a5f4cd52-a1ba-4aa9-abb2-b94e36722385.png)
+
+</details>  
 
 
 
@@ -87,6 +138,7 @@ xray 状态: 运行
 
 # 变更记录
 
+- 2022.07.21：增加节点IP接入变化提醒，Web面板增加停止/重启xray功能，优化部分翻译
 - 2022.07.11：增加节点到期提醒、流量预警策略，增加Telegram bot节点复制、获取分享链接等
 - 2022.07.03：重构Telegram bot功能，指令控制不再需要键盘输入;增加Trojan底层传输配置
 - 2022.06.19：增加Shadowsocs2022新的Cipher，增加节点搜索、一键清除流量功能
