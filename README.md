@@ -1,12 +1,13 @@
 # X-UI
 CN|[EN](./README_EN.md)  
 
-> ⚠️ 该项目仅作为学习golang的实验性项目，请勿用于生产环境！
+> 该项目仅作为学习golang的实验性项目，请勿用于生产环境
 
 支持多协议多用户的 xray 面板，究极缝合怪    
 通过内置的Telegram bot方便快捷地进行管理你的代理服务  
 具体使用教程可以参考个人博客文章[链接](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
-欢迎大家使用并反馈意见或提交Pr,帮助项目更好的改善~
+欢迎大家使用并反馈意见或提交Pr,帮助项目更好的改善  
+如果您觉得本项目对您有所帮助,不妨给个star:star2:支持我~
 
 # 功能介绍
 
@@ -21,7 +22,7 @@ CN|[EN](./README_EN.md)
 - Telegram bot通知、控制功能
 - 更多高级配置项，详见面板 
 
-具体使用、配置细节可参考[WIKI](https://github.com/FranzKafkaYu/x-ui/wiki)
+:bulb:具体**使用、配置细节以及问题排查**可参考[WIKI](https://github.com/FranzKafkaYu/x-ui/wiki)
 # 一键安装
 在安装前请确保你的系统支持`bash`环境,且系统网络正常  
 
