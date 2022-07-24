@@ -4,7 +4,7 @@ CN|[EN](./README_EN.md)
 > 该项目仅作为学习golang的实验性项目，请勿用于生产环境
 
 支持多协议多用户的 xray 面板，究极缝合怪    
-通过内置的Telegram bot方便快捷地进行管理你的代理服务  
+通过免费的Telegram bot方便快捷地进行管理你的代理服务  
 具体使用教程可以参考个人博客文章[链接](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
 欢迎大家使用并反馈意见或提交Pr,帮助项目更好的改善  
 如果您觉得本项目对您有所帮助,不妨给个star:star2:支持我~
@@ -13,7 +13,7 @@ CN|[EN](./README_EN.md)
 
 - 系统状态监控
 - 支持多用户多协议，网页可视化操作
-- 支持的协议：vmess、vless、trojan、shadowsocks、dokodemo-door、socks、http
+- 支持的协议：vmess、vless、trojan、shadowsocks、shadowsocks 2022、dokodemo-door、socks、http
 - 支持配置更多传输配置
 - 流量统计，限制流量，限制到期时间
 - 可自定义 xray 配置模板
