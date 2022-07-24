@@ -45,7 +45,10 @@ bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/insta
 <details>
 <summary><b>点击查看效果预览</b></summary>  
   
-![image](https://user-images.githubusercontent.com/38254177/178550844-2b77e853-184c-4e23-9d69-6ff53b9857b4.png)
+![image](https://user-images.githubusercontent.com/38254177/180629631-f76a05c8-ecf0-4685-bbc7-a7058747d213.png)  
+![image](https://user-images.githubusercontent.com/38254177/180629662-b7a325fc-1ebb-47c9-992c-1e7c758a326b.png)
+
+
  </details>  
  
 `Bot使用`:  
