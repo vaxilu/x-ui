@@ -502,12 +502,12 @@ ssl_cert_issue_standalone() {
         LOGE "证书申请失败,原因请参见报错信息"
         exit 1
     else
-        LOGE "证书申请成功,开始安装证书..."
+        LOGI "证书申请成功,开始安装证书..."
     fi
     #install cert
     ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
-    --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
-    --fullchain-file /root/cert/fullchain.cer
+        --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+        --fullchain-file /root/cert/fullchain.cer
 
     if [ $? -ne 0 ]; then
         LOGE "证书安装失败,脚本退出"
@@ -589,8 +589,8 @@ ssl_cert_issue_by_cloudflare() {
             LOGI "证书签发成功,安装中..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+            --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
+            --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
             LOGE "证书安装失败,脚本退出"
             exit 1
