@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -408,7 +408,129 @@ show_xray_status() {
     fi
 }
 
+#this will be an entrance for ssl cert issue
+#here we can provide two different methods to issue cert
+#first.standalone mode second.DNS API mode
 ssl_cert_issue() {
+    local method=""
+    echo -E ""
+    LOGD "******使用说明******"
+    LOGI "该脚本提供两种方式实现证书签发"
+    LOGI "方式1:acme standalone mode,需要保持端口开放"
+    LOGI "方式2:acme DNS API mode,需要提供Cloudflare Global API Key"
+    LOGI "优先推荐使用方式2进行申请,如方式2无法申请成功,可以再行尝试方式1"
+    read -p "请选择你想使用的方式": method
+    LOGI "你所使用的方式为${method}"
+
+    if [ "${method}" == "1" ]; then
+        ssl_cert_issue_standalone
+    elif [ "${method}" == "2" ]; then
+        ssl_cert_issue_by_cloudflare
+    else
+        LOGE "输入无效,请检查你的输入,脚本将退出..."
+        exit 1
+    fi
+}
+
+install_acme() {
+    cd ~
+    LOGI "开始安装acme脚本..."
+    curl https://get.acme.sh | sh
+    if [ $? -ne 0 ]; then
+        LOGE "acme安装失败"
+        return 1
+    else
+        LOGI "acme安装成功"
+    fi
+    return 0
+}
+
+#method for standalone mode
+ssl_cert_issue_standalone() {
+    #install acme first
+    install_acme
+    if [ $? -ne 0 ]; then
+        LOGE "无法安装acme,请检查错误日志"
+        exit 1
+    fi
+    #install socat second
+    if [[ x"${release}" == x"centos" ]]; then
+        yum install socat -y
+    else
+        apt install socat -y
+    fi
+    if [ $? -ne 0 ]; then
+        LOGE "无法安装socat,请检查错误日志"
+        exit 1
+    else
+        LOGI "socat安装成功..."
+    fi
+    #creat a directory for install cert
+    certPath=/root/cert
+    if [ ! -d "$certPath" ]; then
+        mkdir $certPath
+    else
+        rm -rf $certPath
+        mkdir $certPath
+    fi
+    #get the domain here,and we need verify it
+    local domain=""
+    read -p "请输入你的域名:" domain
+    LOGD "你输入的域名为:${domain},正在进行域名合法性校验..."
+    #here we need to judge whether there exists cert already
+    local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
+    if [ ${currentCert} == ${domain} ]; then
+        local certInfo=$(~/.acme.sh/acme.sh --list)
+        LOGE "域名合法性校验失败,当前环境已有对应域名证书,不可重复申请,当前证书详情:"
+        LOGI "$certInfo"
+        exit 1
+    else
+        LOGI "证书有效性校验通过..."
+    fi
+    #get needed port here
+    local WebPort=80
+    read -p "请输入你所希望使用的端口,如回车将使用默认80端口:" WebPort
+    if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
+        LOGE "你所选择的端口${WebPort}为无效值,将使用默认80端口进行申请"
+    fi
+    LOGI "将会使用${WebPort}进行证书申请,请确保端口处于开放状态..."
+    #NOTE:This should be handled by user
+    #open the port and kill the occupied progress
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+    ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --httpport ${WebPort}
+    if [ $? -ne 0 ]; then
+        LOGE "证书申请失败,原因请参见报错信息"
+        exit 1
+    else
+        LOGE "证书申请成功,开始安装证书..."
+    fi
+    #install cert
+    ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
+    --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+    --fullchain-file /root/cert/fullchain.cer
+
+    if [ $? -ne 0 ]; then
+        LOGE "证书安装失败,脚本退出"
+        exit 1
+    else
+        LOGI "证书安装成功,开启自动更新..."
+    fi
+    ~/.acme.sh/acme.sh --upgrade --auto-upgrade
+    if [ $? -ne 0 ]; then
+        LOGE "自动更新设置失败,脚本退出"
+        ls -lah cert
+        chmod 755 $certPath
+        exit 1
+    else
+        LOGI "证书已安装且已开启自动更新,具体信息如下"
+        ls -lah cert
+        chmod 755 $certPath
+    fi
+
+}
+
+#method for DNS API mode
+ssl_cert_issue_by_cloudflare() {
     echo -E ""
     LOGD "******使用说明******"
     LOGI "该脚本将使用Acme脚本申请证书,使用时需保证:"
@@ -418,11 +540,9 @@ ssl_cert_issue() {
     LOGI "4.该脚本申请证书默认安装路径为/root/cert目录"
     confirm "我已确认以上内容[y/n]" "y"
     if [ $? -eq 0 ]; then
-        cd ~
-        LOGI "安装Acme脚本"
-        curl https://get.acme.sh | sh
+        install_acme
         if [ $? -ne 0 ]; then
-            LOGE "安装acme脚本失败"
+            LOGE "无法安装acme,请检查错误日志"
             exit 1
         fi
         CF_Domain=""
@@ -523,7 +643,7 @@ show_menu() {
   ${green}4.${plain} 重置用户名密码
   ${green}5.${plain} 重置面板设置
   ${green}6.${plain} 设置面板端口
-  ${green}7.${plain} 查看当前面板设置
+  ${green}7.${plain} 查看当前面板信息
 ————————————————
   ${green}8.${plain} 启动 x-ui
   ${green}9.${plain} 停止 x-ui
