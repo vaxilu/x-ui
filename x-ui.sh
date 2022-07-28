@@ -415,10 +415,11 @@ ssl_cert_issue() {
     local method=""
     echo -E ""
     LOGD "******使用说明******"
-    LOGI "该脚本提供两种方式实现证书签发"
+    LOGI "该脚本提供两种方式实现证书签发,证书安装路径均为/root/cert"
     LOGI "方式1:acme standalone mode,需要保持端口开放"
     LOGI "方式2:acme DNS API mode,需要提供Cloudflare Global API Key"
-    LOGI "优先推荐使用方式2进行申请,如方式2无法申请成功,可以再行尝试方式1"
+    LOGI "如域名属于免费域名,则推荐使用方式1进行申请"
+    LOGI "如域名非免费域名且使用Cloudflare进行解析使用方式2进行申请"
     read -p "请选择你想使用的方式": method
     LOGI "你所使用的方式为${method}"
 
