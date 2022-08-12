@@ -1,11 +1,10 @@
 # X-UI
 CN|[EN](./README_EN.md)  
 
-> 免责声明：该项目仅供个人学习、交流，请勿用于非法用途  
-> 使用声明：该项目仅作为学习golang的实验性项目，请勿用于生产环境  
+> 免责声明：该项目仅供个人学习、交流，请勿用于非法用途，请勿用于生产环境  
 
-支持多协议多用户的 xray 面板，究极缝合怪    
-通过免费的Telegram bot方便快捷地进行管理你的代理服务  
+支持单端口多用户、多协议的 xray 面板，究极缝合怪    
+通过免费的Telegram bot方便快捷地进行监控、管理你的代理服务  
 具体使用教程可以参考个人博客文章[链接](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
 欢迎大家使用并反馈意见或提交Pr,帮助项目更好的改善  
 如果您觉得本项目对您有所帮助,不妨给个star:star2:支持我~  
@@ -20,7 +19,7 @@ CN|[EN](./README_EN.md)
 # 功能介绍
 
 - 系统状态监控
-- 支持多用户多协议，网页可视化操作
+- 支持单端口多用户、多协议，网页可视化操作
 - 支持的协议：vmess、vless、trojan、shadowsocks、shadowsocks 2022、dokodemo-door、socks、http
 - 支持配置更多传输配置：http、tcp、ws、grpc、kcp、quic
 - 流量统计，限制流量，限制到期时间，一键重置与设备监控
@@ -39,15 +38,6 @@ CN|[EN](./README_EN.md)
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
 ```  
-
-如果你的系统版本比较老旧，安装后报错：`GLIBC_2.28 not found`，请使用如下命令安装0.3.3.9版本
-
-```
-bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh) 0.3.3.9  
-```
-
-但该版本会在切换xray内核时报错，建议尽快升级系统  
-
 # 效果预览  
 `面板使用`:  
 <details>
