@@ -1,12 +1,18 @@
 # X-UI
 
 [CN](./README.md)| EN  
-X-UI is a webUI pannel based on Xray-core which supports multi protocols and multi users  
+X-UI is a webUI panel based on Xray-core which supports multi protocols and multi users  
 This project is a fork of [vaxilu&#39;s project](https://github.com/vaxilu/x-ui),and it is a experiental project which used by myself for learning golang  
-For some basic usages,please visit my [blog post](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)
+For some basic usages,please visit my [blog post](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
+If you need more language options ,please open a issue and let me know that
 
-# changes
-
+# changes 
+- 2022.08.11：Support multi users on the same port;add CPU limit exceed  alert  
+- 2022.07.28：Add acme standalone mode for cert issue；add  mechanism to keep X-UI alive even there exist crashes
+- 2022.07.24：Add base path auto generate feature for security;add traffice reset automatically;add device alert
+- 2022.07.21：Add more translations;add restart/stop xray service in Web panel
+- 2022.07.11：Add time expiration notify for each inbound;add traffic limit notify for each inbound;add get url link command/inbound copy command in telegram bot  
+- 2022.07.03：Add transport options in Trojan protocol;restruct Telegram bot for convenience  
 - 2022.06.19：Add shadowsocks 2022 Ciphers,add inbounds search,traffic clear function in WebUI
 - 2022.05.14：Add Telegram bot commands,support enable/disable/delete/status check
 - 2022.04.25：Add SSH login notify
@@ -36,14 +42,6 @@ Make sure your system `bash` and `curl` and `network` are ready,here we go
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
 ```
-
-If your system is too old and you got this error：`GLIBC_2.28 not found`，please use the specific version -- 0.3.3.9
-
-```
-bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh) 0.3.3.9  
-```
-
-But this may cause some unexpected errors,plz upgrade you system as soon as possible
 
 ## shortcut  
 After Installation，you can input `x-ui`to enter control menu，current menu details：
