@@ -420,7 +420,7 @@ ssl_cert_issue() {
     LOGI "方式2:acme DNS API mode,需要提供Cloudflare Global API Key"
     LOGI "如域名属于免费域名,则推荐使用方式1进行申请"
     LOGI "如域名非免费域名且使用Cloudflare进行解析使用方式2进行申请"
-    read -p "请选择你想使用的方式": method
+    read -p "请选择你想使用的方式,输入数字1或者2后回车": method
     LOGI "你所使用的方式为${method}"
 
     if [ "${method}" == "1" ]; then
@@ -507,8 +507,8 @@ ssl_cert_issue_standalone() {
     fi
     #install cert
     ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+    --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+    --fullchain-file /root/cert/fullchain.cer
 
     if [ $? -ne 0 ]; then
         LOGE "证书安装失败,脚本退出"
@@ -590,8 +590,8 @@ ssl_cert_issue_by_cloudflare() {
             LOGI "证书签发成功,安装中..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-            --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-            --fullchain-file /root/cert/fullchain.cer
+        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
+        --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
             LOGE "证书安装失败,脚本退出"
             exit 1
