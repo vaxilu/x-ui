@@ -10,6 +10,12 @@ class HttpUtil {
             Vue.prototype.$message.success(msg.msg);
         } else {
             Vue.prototype.$message.error(msg.msg);
+            if (msg.msg == '登录时效已过，请重新登录') {
+                setTimeout(()=> {
+                    Vue.prototype.$message.warning("即将开始重新登录！")
+                    setTimeout(()=> {window.location.reload()},3000)
+                },2000)
+            }
         }
     }
 
