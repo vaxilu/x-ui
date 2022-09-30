@@ -8,12 +8,13 @@
 <script src="{{ .base_path }}assets/qrcode/qrious.min.js"></script>
 <script src="{{ .base_path }}assets/clipboard/clipboard.min.js"></script>
 <script src="{{ .base_path }}assets/uri/URI.min.js"></script>
-<script src="{{ .base_path }}assets/js/axios-init.js?{{ .cur_ver }}"></script>
-<script src="{{ .base_path }}assets/js/util/common.js?{{ .cur_ver }}"></script>
-<script src="{{ .base_path }}assets/js/util/date-util.js?{{ .cur_ver }}"></script>
-<script src="{{ .base_path }}assets/js/util/utils.js?{{ .cur_ver }}"></script>
-<script src="{{ .base_path }}assets/js/model/xray.js?{{ .cur_ver }}"></script>
-<script src="{{ .base_path }}assets/js/model/models.js?{{ .cur_ver }}"></script>
+<!-- 这里通过插入时间戳，避免因为浏览器缓存原因无法读取到js文件修改的变化 -->
+<script src="{{ .base_path }}assets/js/axios-init.js?{{ .timeStamp }}"></script>
+<script src="{{ .base_path }}assets/js/util/common.js?{{ .timeStamp }}"></script>
+<script src="{{ .base_path }}assets/js/util/date-util.js?{{ .timeStamp }}"></script>
+<script src="{{ .base_path }}assets/js/util/utils.js?{{ .timeStamp }}"></script>
+<script src="{{ .base_path }}assets/js/model/xray.js?{{ .timeStamp }}"></script>
+<script src="{{ .base_path }}assets/js/model/models.js?{{ .timeStamp }}"></script>
 <script>
     const basePath = '{{ .base_path }}';
     axios.defaults.baseURL = basePath;
