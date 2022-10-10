@@ -486,7 +486,7 @@ ssl_cert_issue_standalone() {
         LOGI "$certInfo"
         exit 1
     else
-        LOGI "证书有效性校验通过..."
+        LOGI "域名合法性校验通过..."
     fi
     #get needed port here
     local WebPort=80
@@ -567,7 +567,7 @@ ssl_cert_issue_by_cloudflare() {
             LOGI "$certInfo"
             exit 1
         else
-            LOGI "证书有效性校验通过..."
+            LOGI "域名合法性校验通过..."
         fi
         LOGD "请设置API密钥:"
         read -p "Input your key here:" CF_GlobalKey
