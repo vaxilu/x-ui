@@ -69,7 +69,7 @@ func (s *SettingService) GetAllSetting() (*entity.AllSetting, error) {
 		}
 
 		if !found {
-			// 有些设置自动生成，不需要返回到前端给用户修改
+			// Some settings are automatically generated, and there is no need to return to the front end for the user to modify
 			return nil
 		}
 

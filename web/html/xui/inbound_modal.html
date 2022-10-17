@@ -10,14 +10,14 @@
         title: '',
         visible: false,
         confirmLoading: false,
-        okText: '确定',
+        okText: 'OK',
         confirm: null,
         inbound: new Inbound(),
         dbInbound: new DBInbound(),
         ok() {
             ObjectUtil.execute(inModal.confirm, inModal.inbound, inModal.dbInbound);
         },
-        show({ title='', okText='确定', inbound=null, dbInbound=null, confirm=(inbound, dbInbound)=>{} }) {
+        show({ title='', okText='OK', inbound=null, dbInbound=null, confirm=(inbound, dbInbound)=>{} }) {
             this.title = title;
             this.okText = okText;
             if (inbound) {

@@ -1,24 +1,24 @@
 {{define "menuItems"}}
 <a-menu-item key="{{ .base_path }}xui/">
     <a-icon type="dashboard"></a-icon>
-    <span>系统状态</span>
+    <span>System Status</span>
 </a-menu-item>
 <a-menu-item key="{{ .base_path }}xui/inbounds">
     <a-icon type="user"></a-icon>
-    <span>入站列表</span>
+    <span>Inbound List</span>
 </a-menu-item>
 <a-menu-item key="{{ .base_path }}xui/setting">
     <a-icon type="setting"></a-icon>
-    <span>面板设置</span>
+    <span>Panel Settings</span>
 </a-menu-item>
 <!--<a-menu-item key="{{ .base_path }}xui/clients">-->
 <!--    <a-icon type="laptop"></a-icon>-->
-<!--    <span>客户端</span>-->
+<!--    <span>Client</span>-->
 <!--</a-menu-item>-->
 <a-sub-menu>
     <template slot="title">
         <a-icon type="link"></a-icon>
-        <span>其他</span>
+        <span>Other</span>
     </template>
     <a-menu-item key="https://github.com/vaxilu/x-ui/">
         <a-icon type="github"></a-icon>
@@ -27,7 +27,7 @@
 </a-sub-menu>
 <a-menu-item key="{{ .base_path }}logout">
     <a-icon type="logout"></a-icon>
-    <span>退出登录</span>
+    <span>Logout</span>
 </a-menu-item>
 {{end}}
 
