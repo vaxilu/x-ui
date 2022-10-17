@@ -17,7 +17,7 @@
 # Install & Upgrade
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/msameim181/x-ui/main/install.sh)
 ```
 
 ## Manual install & upgrade
