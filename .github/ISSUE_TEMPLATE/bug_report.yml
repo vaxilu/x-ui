@@ -1,7 +1,7 @@
 name: Issue Report
 description: "Create a report to help us improve."
 body:
-  - type: pre-requirement
+  - type:  checkboxes
     id: terms
     attributes:
       label: Welcome
