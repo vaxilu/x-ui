@@ -18,7 +18,7 @@ body:
   - type: textarea
     id: problem
     attributes:
-      label: Description of the problem
+      label: Description of the problem,screencshot would be good 
       placeholder: Your problem description
     validations:
       required: true
@@ -31,23 +31,8 @@ body:
         <details>
 
         ```console
-        $ sing-box version
+        $ x-ui version
         # Paste output here
-        ```
-
-        </details>
-    validations:
-      required: true
-
-  - type: textarea
-    id: config
-    attributes:
-      label: Server and client configuration file
-      value: |-
-        <details>
-
-        ```console
-        # paste json here
         ```
 
         </details>
