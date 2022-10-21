@@ -113,7 +113,7 @@ install_x-ui() {
             exit 1
         fi
         echo -e "x-ui versão mais recente detectada：${last_version}，iniciar a instalação"
-        wget -N --no-check-certificate -O /usr/local/x-ui-linux-${arch}.tar.gz https://github.com/vaxilu/x-ui/releases/download/${last_version}/x-ui-linux-${arch}.tar.gz
+        wget -N --no-check-certificate -O /usr/local/x-ui-linux-${arch}.tar.gz https://github.com/TelksBr/x-ui_br/releases/download/${last_version}/x-ui-linux-${arch}.tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}Falha ao baixar x-ui, certifique-se de que seu servidor pode baixar arquivos do Github${plain}"
             exit 1
