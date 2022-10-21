@@ -17,7 +17,7 @@ painel de raio x com suporte multiusuário multiprotocolo
 # instalar e atualizar
 
 ````
-bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/TelksBr/x-ui_br/main/install.sh)
 ````
 
 ## Instalação e atualização manuais
