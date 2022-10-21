@@ -35,7 +35,7 @@
                                                     :stroke-color="status.mem.color"
                                                     :percent="status.mem.percent"></a-progress>
                                         <div>
-                                            内存: [[ sizeFormat(status.mem.current) ]] / [[ sizeFormat(status.mem.total) ]]
+                                            Memória: [[ sizeFormat(status.mem.current) ]] / [[ sizeFormat(status.mem.total) ]]
                                         </div>
                                     </a-col>
                                 </a-row>
@@ -164,9 +164,9 @@
             </transition>
         </a-layout-content>
     </a-layout>
-    <a-modal id="version-modal" v-model="versionModal.visible" title="切换版本"
+    <a-modal id="version-modal" v-model="versionModal.visible" title="mudar de versão"
              :closable="true" @ok="() => versionModal.visible = false"
-             ok-text="确定" cancel-text="取消">
+             ok-text="Claro" cancel-text="Cancelar">
         <h2>Clique na versão que você deseja mudar</h2>
         <h2>Escolha com cuidado, versões mais antigas podem ter configurações incompatíveis</h2>
         <template v-for="version, index in versionModal.versions">
