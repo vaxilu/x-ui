@@ -38,7 +38,7 @@ CN|[EN](./README_EN.md)
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
 ```    
-For English Users,plase use the following command to install english supported version:  
+For English Users,plase use the following command to install English supported version:  
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install_en.sh)
 ```    
@@ -168,7 +168,14 @@ xray 状态: 运行
 
 - [vaxilu/x-ui](https://github.com/vaxilu/x-ui)
 - [XTLS/Xray-core](https://github.com/XTLS/Xray-core)
-- [telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api)
+- [telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api)  
+
+# 赞助  
+
+如果你觉得本项目对你有用,而且你也恰巧有这方面的需求,你也可以选择通过我的购买链接赞助我  
+- [搬瓦工GIA高端线路](https://bandwagonhost.com/aff.php?aff=65703),仅推荐购买GIA套餐      
+- [Cloudcone性价比主机提供商](https://app.cloudcone.com/?ref=7536)  
+- [Spartan三网4837性价比主机](https://billing.spartanhost.net/aff.php?aff=1875)  
 
 ## Stargazers over time
 
