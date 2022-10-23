@@ -37,7 +37,11 @@ CN|[EN](./README_EN.md)
 
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
-```  
+```    
+For English Users,plase use the following command to install english supported version:  
+```
+bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install_en.sh)
+```    
 # 效果预览  
 `面板使用`:  
 <details>
@@ -141,6 +145,7 @@ xray 状态: 运行
 - Debian 8+
 
 # 变更记录  
+- 2022.10.23: 实现全英文支持;增加批量导出分享链接功能；优化Telegram通知文案  
 - 2022.08.11：实现Vmess/Vless/Trojan单端口多用户；增加CPU使用超限提醒  
 - 2022.07.28：增加acme standalone模式申请证书;增加x-ui自动保活机制;优化编译选项以适配更多系统  
 - 2022.07.24：增加自动生成面板根路径，节点流量自动重置功能，设备IP接入变化通知功能
