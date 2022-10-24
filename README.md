@@ -7,7 +7,8 @@ CN|[EN](./README_EN.md)
 通过免费的Telegram bot方便快捷地进行监控、管理你的代理服务  
 具体使用教程可以参考个人博客文章[链接](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
 欢迎大家使用并反馈意见或提交Pr,帮助项目更好的改善  
-如果您觉得本项目对您有所帮助,不妨给个star:star2:支持我~  
+如果您觉得本项目对您有所帮助,不妨给个star:star2:支持我  
+或者你恰巧有购买服务器的需求,可以通过文末的赞助部分支持我~ 
 
 # 文档目录  
 - [功能介绍](#功能介绍)  
@@ -38,7 +39,7 @@ CN|[EN](./README_EN.md)
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
 ```    
-For English Users,plase use the following command to install English supported version:  
+For English Users,please use the following command to install English supported version:  
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install_en.sh)
 ```    
@@ -145,7 +146,7 @@ xray 状态: 运行
 - Debian 8+
 
 # 变更记录  
-- 2022.10.23: 实现全英文支持;增加批量导出分享链接功能；优化Telegram通知文案  
+- 2022.10.23：实现全英文支持;增加批量导出分享链接功能；优化页面细节与Telegram通知    
 - 2022.08.11：实现Vmess/Vless/Trojan单端口多用户；增加CPU使用超限提醒  
 - 2022.07.28：增加acme standalone模式申请证书;增加x-ui自动保活机制;优化编译选项以适配更多系统  
 - 2022.07.24：增加自动生成面板根路径，节点流量自动重置功能，设备IP接入变化通知功能

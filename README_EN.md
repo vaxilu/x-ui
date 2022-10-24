@@ -6,7 +6,8 @@ This project is a fork of [vaxilu&#39;s project](https://github.com/vaxilu/x-ui)
 For some basic usages,please visit my [blog post](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
 If you need more language options ,please open a issue and let me know that
 
-# changes 
+# changes  
+- 2022.10.23：Fully sport for English,add export links,add CPU cores display
 - 2022.08.11：Support multi users on the same port;add CPU limit exceed  alert  
 - 2022.07.28：Add acme standalone mode for cert issue；add  mechanism to keep X-UI alive even there exist crashes
 - 2022.07.24：Add base path auto generate feature for security;add traffice reset automatically;add device alert
@@ -41,7 +42,11 @@ Make sure your system `bash` and `curl` and `network` are ready,here we go
 
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
+```  
+For English Users,please use the following command to install English supported version:  
 ```
+bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install_en.sh)
+``` 
 
 ## shortcut  
 After Installation，you can input `x-ui`to enter control menu，current menu details：
@@ -90,7 +95,15 @@ xray 状态: 运行
 # credits
 - [vaxilu/x-ui](https://github.com/vaxilu/x-ui)
 - [XTLS/Xray-core](https://github.com/XTLS/Xray-core)
-- [telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api)
+- [telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api)  
+
+# sponsor  
+
+if you want to purchase some virtual servers,you can purchase by my aff link:   
+- [BandwagonHost](https://bandwagonhost.com/aff.php?aff=65703)     
+- [Cloudcone](https://app.cloudcone.com/?ref=7536)  
+- [SpartanHost](https://billing.spartanhost.net/aff.php?aff=1875)  
+
 
 ## Stargazers over time
 
