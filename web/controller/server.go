@@ -80,7 +80,7 @@ func (a *ServerController) getXrayVersion(c *gin.Context) {
 }
 
 func (a *ServerController) installXray(c *gin.Context) {
-	version := c.Param("versão")
+	version := c.Param("version")
 	err := a.serverService.UpdateXray(version)
 	jsonMsg(c, "instalar x-ray", err)
 }

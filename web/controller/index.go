@@ -12,8 +12,8 @@ import (
 )
 
 type LoginForm struct {
-	Username string `json:"nome de usuário" form:"nome de usuário"`
-	Password string `json:"senha" form:"senha"`
+	Username string `json:"username" form:"username"`
+	Password string `json:"password" form:"password"`
 }
 
 type IndexController struct {
@@ -70,7 +70,7 @@ func (a *IndexController) login(c *gin.Context) {
 	}
 
 	err = session.SetLoginUser(c, user)
-	logger.Info("user", user.Id, "coenctado")
+	logger.Info("usuario", user.Id, "coenctado")
 	jsonMsg(c, "Conecte-se", err)
 }
 
