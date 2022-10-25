@@ -31,6 +31,7 @@ CN|[EN](./README_EN.md)
 - 更多高级配置项，详见面板 
 
 :bulb:具体**使用、配置细节以及问题排查**请点击这里:point_right:[WIKI](https://github.com/FranzKafkaYu/x-ui/wiki):point_left:  
+ Specific **Usages、Configurations and Debug** please refer to [WIKI](https://github.com/FranzKafkaYu/x-ui/wiki)    
 # 一键安装
 在安装前请确保你的系统支持`bash`环境,且系统网络正常  
 
