@@ -12,8 +12,8 @@ import (
 )
 
 type LoginForm struct {
-	Username string `json:"username" form:"username"`
-	Password string `json:"password" form:"password"`
+	Username string `json:"nome de usuário" form:"nome de usuário"`
+	Password string `json:"senha" form:"senha"`
 }
 
 type IndexController struct {
@@ -39,45 +39,45 @@ func (a *IndexController) index(c *gin.Context) {
 		c.Redirect(http.StatusTemporaryRedirect, "xui/")
 		return
 	}
-	html(c, "login.html", "登录", nil)
+	html(c, "login.html", "Conecte-se", nil)
 }
 
 func (a *IndexController) login(c *gin.Context) {
 	var form LoginForm
 	err := c.ShouldBind(&form)
 	if err != nil {
-		pureJsonMsg(c, false, "数据格式错误")
+		pureJsonMsg(c, false, "erro de formato de dados")
 		return
 	}
 	if form.Username == "" {
-		pureJsonMsg(c, false, "请输入用户名")
+		pureJsonMsg(c, false, "por favor, digite o nome de usuário")
 		return
 	}
 	if form.Password == "" {
-		pureJsonMsg(c, false, "请输入密码")
+		pureJsonMsg(c, false, "Por favor, digite a senha")
 		return
 	}
 	user := a.userService.CheckUser(form.Username, form.Password)
 	timeStr := time.Now().Format("2006-01-02 15:04:05")
 	if user == nil {
 		job.NewStatsNotifyJob().UserLoginNotify(form.Username, getRemoteIp(c), timeStr, 0)
-		logger.Infof("wrong username or password: \"%s\" \"%s\"", form.Username, form.Password)
-		pureJsonMsg(c, false, "用户名或密码错误")
+		logger.Infof("nome de usuário ou senha errado: \"%s\" \"%s\"", form.Username, form.Password)
+		pureJsonMsg(c, false, "nome de usuário ou senha errados")
 		return
 	} else {
-		logger.Infof("%s login success,Ip Address:%s\n", form.Username, getRemoteIp(c))
+		logger.Infof("%s coenctado,Ip Address:%s\n", form.Username, getRemoteIp(c))
 		job.NewStatsNotifyJob().UserLoginNotify(form.Username, getRemoteIp(c), timeStr, 1)
 	}
 
 	err = session.SetLoginUser(c, user)
-	logger.Info("user", user.Id, "login success")
-	jsonMsg(c, "登录", err)
+	logger.Info("user", user.Id, "coenctado")
+	jsonMsg(c, "Conecte-se", err)
 }
 
 func (a *IndexController) logout(c *gin.Context) {
 	user := session.GetLoginUser(c)
 	if user != nil {
-		logger.Info("user", user.Id, "logout")
+		logger.Info("usuario", user.Id, "sair")
 	}
 	session.ClearSession(c)
 	c.Redirect(http.StatusTemporaryRedirect, c.GetString("base_path"))
