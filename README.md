@@ -1,16 +1,33 @@
-# x-ui
+<p align="center">
+ <h1 align="center">X-UI [PT-BR]</h1>
+ <p align="center">Painel de Xray com suporte a multiusuário e multiprotocolo</p>
+</p>
+  <br/>
+  <p align="center">
+    <a href="https://github.com/TelksBr/x-ui_br/releases">
+      <img alt="releases" src="https://img.shields.io/github/downloads/telksbr/x-ui_br/total.svg" />
+    </a>
+    <a href="https://github.com/TelksBr/x-ui_br/network/members">
+      <img alt="forks" src="https://img.shields.io/github/forks/telksbr/x-ui_br.svg" />
+    </a>
+    <a href="https://github.com/anuraghazra/github-readme-stats/issues">
+      <img alt="stars" src="https://img.shields.io/github/stars/telksbr/x-ui_br.svg" />
+    </a>
+    <a href="https://github.com/TelksBr/x-ui_br/watchers">
+      <img alt="watchers" src="https://img.shields.io/github/watchers/telksbr/x-ui_br.svg" />
+    </a>
+    <a href="https://github.com/TelksBr/x-ui_br/watchers">
+      <img alt="pr-closed" src="https://img.shields.io/github/issues-pr-closed/telksbr/x-ui_br.svg" />
+    </a>
+    <a href="https://github.com/TelksBr/">
+      <img alt="mainteined" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
+    </a>
+  </p>
 
-painel de Xray com suporte multiusuário e multiprotocolo
-
-### Agradecimentos
-https://github.com/NidukaAkalanka
-
-https://github.com/othmx (pela compilação)
-
-# Características
+# Características e Funções
 
 - Monitoramento do estado do sistema
-- Suporte multi-protocolo multiusuário, operação de visualização de página da web
+- Suporte multi-protocolo multiusuário, modo de visualização em página da web
 - Protocolos suportados: vmess, vless, trojan, shadowsocks, dokodemo-door, socks, http
 - Suporte para configurar mais configurações de transmissão
 - Estatísticas de tráfego, limite de tráfego, limite de tempo de expiração
@@ -19,7 +36,19 @@ https://github.com/othmx (pela compilação)
 - Suporte a aplicação de certificado SSL com um clique e renovação automática
 - Para itens de configuração mais avançados, consulte o painel para obter detalhes
 
-# instalar e atualizar
+
+
+## Sistemas Operacionais Suportados
+
+- CentOS 7+
+- Ubuntu 16+
+- Debian 8+
+
+
+
+> O script funciona no Oracle Linux para Arm64, porém não é confirmado como estável.
+
+# Instalar e Atualizar (recomendado)
 
 ````
 bash <(curl -Ls https://raw.githubusercontent.com/TelksBr/x-ui_br/main/install.sh)
@@ -27,7 +56,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/TelksBr/x-ui_br/main/install.s
 
 ## Instalação e atualização manuais
 
-1. Primeiro baixe o pacote compactado mais recente de https://github.com/vaxilu/x-ui/releases, geralmente escolha a arquitetura `amd64`
+1. Primeiro baixe o pacote compactado mais recente de [releases](https://github.com/TelksBr/x-ui_br/releases), geralmente escolha a arquitetura `amd64`
 2. Em seguida, carregue o pacote compactado para o diretório `/root/` do servidor e use o usuário `root` para efetuar login no servidor
 
 > Se a arquitetura da CPU do seu servidor não for `amd64`, substitua `amd64` no comando por outra arquitetura
@@ -45,19 +74,19 @@ systemctl habilitar x-ui
 systemctl reiniciar x-ui
 ````
 
-## Instale usando o docker
+## Instale usando o docker (atualmente cria o painel em chinês)
 
 > Este tutorial do docker e a imagem do docker são fornecidos por [Chasing66](https://github.com/Chasing66)
 
-1. Instale a janela de encaixe
+1. Instale o Docker
 
-```concha
+```shell
 curl -fsSL https://get.docker.com | sh
 ````
 
 2. Instale o x-ui
 
-```concha
+```shell
 mkdir x-ui && cd x-ui
 docker run -itd --network=host \
     -v $PWD/db/:/etc/x-ui/ \
@@ -68,26 +97,22 @@ docker run -itd --network=host \
 
 > Construa sua própria imagem
 
-```concha
+```shell
 docker build -t x-ui .
 ````
 
-## Aplicação de certificado SSL
+## Aplicação de certificado SSL (quebrado)
 
 > Esta função e tutorial são fornecidos por [FranzKafkaYu](https://github.com/FranzKafkaYu)
 
 O script tem uma função de aplicativo de certificado SSL integrada. Para usar este script para solicitar um certificado, as seguintes condições devem ser atendidas:
 
-- Conheça o endereço de e-mail registrado na Cloudflare
-- Conheça a chave de API global da Cloudflare
-- O nome de domínio foi resolvido para o servidor atual por meio do cloudflare
+- Conheça o endereço de e-mail registrado na Cloudflare.
+- Conheça a chave de API global da Cloudflare.
+- O nome de domínio foi resolvido para o servidor atual por meio do cloudflare.
 
-Como obter a chave de API global da Cloudflare:
-    ![](media/bda84fbc2ede834deaba1c173a932223.png)
-    ![](media/d13ffd6a73f938d1037d0708e31433bf.png)
 
-Ao usar, basta digitar `domain name`, `email`, `API KEY`, o diagrama é o seguinte:
-        ![](media/2022-04-04_141259.png)
+Ao usar, basta digitar `domain name`, `email`, `API KEY`.
 
 Precauções:
 
@@ -96,54 +121,38 @@ Precauções:
 - O diretório de instalação do certificado é o diretório /root/cert
 - Os certificados solicitados por este script são todos os certificados de nome de domínio genérico
 
-##Tg uso do robô (em desenvolvimento, temporariamente indisponível)
+## Telegram Bot (em desenvolvimento, temporariamente indisponível)
 
 > Esta função e tutorial são fornecidos por [FranzKafkaYu](https://github.com/FranzKafkaYu)
 
-X-UI suporta notificação diária de tráfego, lembrete de login do painel e outras funções através do robô Tg. Para usar o robô Tg, você precisa se inscrever por conta própria
-Para tutoriais de aplicativos específicos, consulte [link do blog](https://coderfan.net/how-to-use-telegram-bot-to-alarm-you-when-someone-login-into-your-vps.html )
-Instruções de uso: Defina os parâmetros relacionados ao robô no fundo do painel, incluindo
+X-UI suporta notificação diária de tráfego, lembrete de login do painel e outras funções através do robô Tg. Para usar o robô Tg, você precisa se inscrever por conta própria.
 
-- Token de Robô Tg
-- Tg Robot ChatId
-- Tempo de execução do ciclo do robô Tg, na sintaxe do crontab
+Para tutoriais de aplicativos específicos, consulte [link do blog](https://coderfan.net/how-to-use-telegram-bot-to-alarm-you-when-someone-login-into-your-vps.html )
+
+Instruções de uso: Defina os parâmetros relacionados ao robô no fundo do painel, incluindo:
+
+- Token do Bot no Telegram
+- ID do chat do Bot no Telegram
+- Tempo de execução do ciclo do Bot Telegram, na sintaxe do crontab
 
 Sintaxe de referência:
-- 30 * * * * * //Notificar aos 30s de cada ponto
-- @hourly // notificações de hora em hora
-- @daily // Notificação diária (00:00 AM)
-- @every 8h // Notificação a cada 8 horas
+- `30 * * * * *` => Notificar aos 30s de cada ponto
+- `@hourly` => Notificações de hora em hora
+- `@daily` => Notificação diária (00:00 AM)
+- `@every 8h` => Notificação a cada 8 horas
 
-Conteúdo da notificação TG:
-- Uso de tráfego de nós
+Conteúdo da notificação no Telegram:
+- Uso de tráfego de conexões
 - Lembrete de login do painel
-- Lembrete de expiração do nó
-- Lembrete de aviso de trânsito
+- Lembrete de expiração da conexão
+- Alertas de tráfego
 
 Mais recursos estão planejados...
-## sistema de sugestões
 
-- CentOS 7+
-- Ubuntu 16+
-- Debian 8+
+## Agradecimentos
 
-# problema comum
+[Niduka Akalanka](https://github.com/NidukaAkalanka)
 
-## Migrando da v2-ui
+[othmx](https://github.com/othmx) (pela compilação)
 
-Primeiro instale a versão mais recente do x-ui no servidor onde o v2-ui está instalado e, em seguida, use o seguinte comando para migrar, que migrará `todos os dados da conta de entrada` do v2-ui local para o x-ui, `painel configurações e nome de usuário e senha' não serão migrados'
-
-> Após a migração ser bem sucedida, por favor `feche v2-ui` e `restart x-ui`, caso contrário a entrada de v2-ui causará um `conflito de porta` com a entrada de x-ui
-
-````
-x-ui v2-ui
-````
-
-## problema encerrado
-
-Todos os tipos de pequenos problemas brancos veem pressão alta
-
-## Stargazers ao longo do tempo
-
-[![Stargazers ao longo do tempo](https://starchart.cc/vaxilu/x-ui.svg)](https://starchart.cc/vaxilu/x-ui)
 
