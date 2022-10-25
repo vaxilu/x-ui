@@ -14,25 +14,25 @@
     </a-form-item>
     <a-form-item>
         <span slot="label">
-            IP de escuta
+            监听 IP
             <a-tooltip>
                 <template slot="title">
-                    Deixe em branco por padrão
+                    默认留空即可
                 </template>
                 <a-icon type="question-circle" theme="filled"></a-icon>
             </a-tooltip>
         </span>
         <a-input v-model.trim="inbound.listen"></a-input>
     </a-form-item>
-    <a-form-item label="porta">
+    <a-form-item label="端口">
         <a-input type="number" v-model.number="inbound.port"></a-input>
     </a-form-item>
     <a-form-item>
         <span slot="label">
-            fluxo total (GB)
+            总流量(GB)
             <a-tooltip>
                 <template slot="title">
-                    0 significa sem limite
+                    0 表示不限制
                 </template>
                 <a-icon type="question-circle" theme="filled"></a-icon>
             </a-tooltip>
@@ -41,10 +41,10 @@
     </a-form-item>
     <a-form-item>
         <span slot="label">
-            Data de validade
+            到期时间
             <a-tooltip>
                 <template slot="title">
-                    Deixe em branco para nunca expirar
+                    留空则永不到期
                 </template>
                 <a-icon type="question-circle" theme="filled"></a-icon>
             </a-tooltip>

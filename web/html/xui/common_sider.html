@@ -1,15 +1,15 @@
 {{define "menuItems"}}
 <a-menu-item key="{{ .base_path }}xui/">
     <a-icon type="dashboard"></a-icon>
-    <span>status do sistema</span>
+    <span>系统状态</span>
 </a-menu-item>
 <a-menu-item key="{{ .base_path }}xui/inbounds">
     <a-icon type="user"></a-icon>
-    <span>Lista de entrada</span>
+    <span>入站列表</span>
 </a-menu-item>
 <a-menu-item key="{{ .base_path }}xui/setting">
     <a-icon type="setting"></a-icon>
-    <span>configurações do painel</span>
+    <span>面板设置</span>
 </a-menu-item>
 <!--<a-menu-item key="{{ .base_path }}xui/clients">-->
 <!--    <a-icon type="laptop"></a-icon>-->
@@ -18,16 +18,16 @@
 <a-sub-menu>
     <template slot="title">
         <a-icon type="link"></a-icon>
-        <span>outro</span>
+        <span>其他</span>
     </template>
-    <a-menu-item key="https://github.com/TelksBr/x-ui_br/">
+    <a-menu-item key="https://github.com/vaxilu/x-ui/">
         <a-icon type="github"></a-icon>
         <span>Github</span>
     </a-menu-item>
 </a-sub-menu>
 <a-menu-item key="{{ .base_path }}logout">
     <a-icon type="logout"></a-icon>
-    <span>sair</span>
+    <span>退出登录</span>
 </a-menu-item>
 {{end}}
 
