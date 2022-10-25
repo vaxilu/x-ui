@@ -1,5 +1,5 @@
 # X-UI
-CN|[EN](./README_EN.md)  
+简体中文|[ENGLISH](./README_EN.md)  
 
 > 免责声明：该项目仅供个人学习、交流，请勿用于非法用途，请勿用于生产环境  
 

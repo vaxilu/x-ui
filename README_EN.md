@@ -1,13 +1,13 @@
 # X-UI
 
-[CN](./README.md)| EN  
+[简体中文](./README.md)| ENGLISH  
 X-UI is a webUI panel based on Xray-core which supports multi protocols and multi users  
 This project is a fork of [vaxilu&#39;s project](https://github.com/vaxilu/x-ui),and it is a experiental project which used by myself for learning golang  
 For some basic usages,please visit my [blog post](https://coderfan.net/how-to-use-x-ui-pannel-to-set-up-proxies-for-bypassing-gfw.html)  
 If you need more language options ,please open a issue and let me know that
 
 # changes  
-- 2022.10.23：Fully sport for English,add export links,add CPU cores display
+- 2022.10.23：Fully support for English,add export links,add CPU cores display
 - 2022.08.11：Support multi users on the same port;add CPU limit exceed  alert  
 - 2022.07.28：Add acme standalone mode for cert issue；add  mechanism to keep X-UI alive even there exist crashes
 - 2022.07.24：Add base path auto generate feature for security;add traffice reset automatically;add device alert
@@ -51,35 +51,36 @@ bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/insta
 ## shortcut  
 After Installation，you can input `x-ui`to enter control menu，current menu details：
 ```
-  x-ui 面板管理脚本
-  0. 退出脚本
-————————————————
-  1. 安装 x-ui
-  2. 更新 x-ui
-  3. 卸载 x-ui
-————————————————
-  4. 重置用户名密码
-  5. 重置面板设置
-  6. 设置面板端口
-  7. 查看当前面板设置
-————————————————
-  8. 启动 x-ui
-  9. 停止 x-ui
-  10. 重启 x-ui
-  11. 查看 x-ui 状态
-  12. 查看 x-ui 日志
-————————————————
-  13. 设置 x-ui 开机自启
-  14. 取消 x-ui 开机自启
-————————————————
-  15. 一键安装 bbr (最新内核)
-  16. 一键申请SSL证书(acme申请)
  
-面板状态: 已运行
-是否开机自启: 是
-xray 状态: 运行
+  x-ui control menu
+  0. exit
+————————————————
+  1. install   x-ui
+  2. update    x-ui
+  3. uninstall x-ui
+————————————————
+  4. reset username
+  5. reset panel
+  6. reset panel port
+  7. check panel info
+————————————————
+  8. start x-ui
+  9. stop  x-ui
+  10. restart x-ui
+  11. check x-ui status
+  12. check x-ui logs
+————————————————
+  13. enable  x-ui on sysyem startup
+  14. disabel x-ui on sysyem startup
+————————————————
+  15. enable bbr 
+  16. issuse certs
+ 
+x-ui status: running
+enable on system startup: yes
+xray status: running
 
-请输入选择 [0-16]: 
+please input a legal number[0-16]: 
 ```
 
 ## Suggested system as follows:
@@ -89,8 +90,8 @@ xray 状态: 运行
 
 # telegram
 
-[CoderfanBaby](https://t.me/CoderfanBaby)  
-[FranzKafka‘sPrivateGroup](https://t.me/franzkafayu)
+[Channel](https://t.me/CoderfanBaby)  
+[Group](https://t.me/franzkafayu)
 
 # credits
 - [vaxilu/x-ui](https://github.com/vaxilu/x-ui)
