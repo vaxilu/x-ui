@@ -14,7 +14,7 @@ https://github.com/othmx (pela compilação)
 - Protocolos suportados: vmess, vless, trojan, shadowsocks, dokodemo-door, socks, http
 - Suporte para configurar mais configurações de transmissão
 - Estatísticas de tráfego, limite de tráfego, limite de tempo de expiração
-- Modelos de configuração de raio x personalizáveis
+- Modelos de configuração de x-ray personalizáveis
 - Suporte ao painel de acesso https (traga seu próprio nome de domínio + certificado ssl)
 - Suporte a aplicação de certificado SSL com um clique e renovação automática
 - Para itens de configuração mais avançados, consulte o painel para obter detalhes
