@@ -448,11 +448,15 @@ install_acme() {
 
 #method for standalone mode
 ssl_cert_issue_standalone() {
-    #install acme first
-    install_acme
-    if [ $? -ne 0 ]; then
-        LOGE "无法安装acme,请检查错误日志"
-        exit 1
+    #check for acme.sh first
+    if ! command -v ~/.acme.sh/acme.sh &> /dev/null
+    then
+        echo "acme.sh 无法找到。 我们将安装它"
+        install_acme
+        if [ $? -ne 0 ]; then
+                LOGE "安装 acme 失败，请检查日志"
+                exit 1
+        fi
     fi
     #install socat second
     if [[ x"${release}" == x"centos" ]]; then
