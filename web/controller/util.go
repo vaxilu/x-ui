@@ -1,14 +1,13 @@
 package controller
 
 import (
+	"github.com/gin-gonic/gin"
 	"net"
 	"net/http"
 	"strings"
 	"x-ui/config"
 	"x-ui/logger"
 	"x-ui/web/entity"
-
-	"github.com/gin-gonic/gin"
 )
 
 func getUriId(c *gin.Context) int64 {
@@ -47,12 +46,12 @@ func jsonMsgObj(c *gin.Context, msg string, obj interface{}, err error) {
 	if err == nil {
 		m.Success = true
 		if msg != "" {
-			m.Msg = msg + "sucesso"
+			m.Msg = msg + "成功"
 		}
 	} else {
 		m.Success = false
-		m.Msg = msg + "falhou: " + err.Error()
-		logger.Warning(msg+"falhou: ", err)
+		m.Msg = msg + "失败: " + err.Error()
+		logger.Warning(msg+"失败: ", err)
 	}
 	c.JSON(http.StatusOK, m)
 }
