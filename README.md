@@ -1,6 +1,10 @@
 # x-ui
 
-painel de raio x com suporte multiusuário multiprotocolo
+painel de Xray com suporte multiusuário e multiprotocolo
+
+### Agradecimentos
+https://github.com/NidukaAkalanka
+https://github.com/othmx (pela compilação)
 
 # Características
 
@@ -28,7 +32,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/TelksBr/x-ui_br/main/install.s
 > Se a arquitetura da CPU do seu servidor não for `amd64`, substitua `amd64` no comando por outra arquitetura
 
 ````
-cd /raiz/
+cd /root/
 rm x-ui/ /usr/local/x-ui/ /usr/bin/x-ui -rf
 tar zxvf x-ui-linux-amd64.tar.gz
 chmod +x x-ui/x-ui x-ui/bin/xray-linux-* x-ui/x-ui.sh
