@@ -10,6 +10,8 @@ body:
           required: true
         - label: Yes, I'm using the supported system. Only such systems are supported.
           required: true
+        - label: Yes, I have read all WIKI document,nothing can help me in my problem.
+          required: true
         - label: Yes, I've searched similar issues on GitHub and didn't find any.
           required: true
         - label: Yes, I've included all information below (version, config, log, etc).
