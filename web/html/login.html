@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 {{template "head" .}}
 <style>
 
@@ -40,14 +40,14 @@
                 <a-col :xs="22" :sm="20" :md="16" :lg="12" :xl="8">
                     <a-form>
                         <a-form-item>
-                            <a-input v-model.trim="user.username" placeholder='{{ i18n "usuario" }}'
+                            <a-input v-model.trim="user.username" placeholder='{{ i18n "username" }}'
                                      @keydown.enter.native="login" autofocus>
                                 <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)"/>
                             </a-input>
                         </a-form-item>
                         <a-form-item>
                             <a-input type="password" v-model.trim="user.password"
-                                     placeholder='{{ i18n "senha" }}' @keydown.enter.native="login">
+                                     placeholder='{{ i18n "password" }}' @keydown.enter.native="login">
                                 <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)"/>
                             </a-input>
                         </a-form-item>
