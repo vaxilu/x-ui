@@ -101,7 +101,7 @@ docker run -itd --network=host \
 docker build -t x-ui .
 ````
 
-## Aplicação de certificado SSL (quebrado)
+## Aplicação de certificado SSL
 
 > Esta função e tutorial são fornecidos por [FranzKafkaYu](https://github.com/FranzKafkaYu)
 
