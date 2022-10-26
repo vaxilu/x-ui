@@ -202,7 +202,7 @@ start() {
         sleep 2
         check_status
         if [[ $? == 0 ]]; then
-            LOGI "x-ui 启动成功"
+            LOGI "x-ui: Iniciado com sucesso"
         else
             LOGE "O painel falhou ao iniciar, talvez porque o tempo de inicialização excedeu dois segundos, verifique as informações de log mais tarde"
         fi
@@ -223,7 +223,7 @@ stop() {
         sleep 2
         check_status
         if [[ $? == 1 ]]; then
-            LOGI "x-ui 与 xray 停止成功"
+            LOGI "x-ui e xray: Desligado com sucesso"
         else
             LOGE "O painel falhou ao parar, talvez porque o tempo de parada tenha excedido dois segundos, verifique as informações de log mais tarde"
         fi
@@ -409,20 +409,138 @@ show_xray_status() {
 }
 
 ssl_cert_issue() {
+    local method=""
     echo -E ""
-    LOGD "******Instruções******"
-    LOGI "Este script usará o script Acme para solicitar um certificado, certifique-se de que:"
-    LOGI "1. Conheça o endereço de e-mail cadastrado da Cloudflare"
-    LOGI "2. Conheça a chave de API global da Cloudflare"
-    LOGI "3. O nome de domínio foi resolvido para o servidor atual através da Cloudflare"
-    LOGI "4. O caminho de instalação padrão para este script solicitar um certificado é o diretório /root/cert"
-    confirm "Eu confirmei o acima[y/n]" "y"
+    LOGD "********Instruções********"
+    LOGI "Este script do shell usará o ACME para emitir certificados SSL."
+    LOGI "Aqui, fornecemos dois métodos para a emissão de certificados:"
+    LOGI "Método 1: modo ACME Standalone; Precisa manter a porta: 80 aberto (recomendado)"
+    LOGI "Método 2: Modo API ACME DNS; Precisa ter a chave da API Global CloudFlare (se o 1º método falhar)"
+    LOGI "Certificados são instalados no diretorio /root/cert/"
+    read -p "Escolha qual método você deseja (tipo 1 ou 2)": method
+    LOGI "Você escolheu o método:${method}"
+
+    if [ "${method}" == "1" ]; then
+        ssl_cert_issue_standalone
+    elif [ "${method}" == "2" ]; then
+        ssl_cert_issue_by_cloudflare
+    else
+        LOGE "Entrada invalida, repita novamente..."
+        exit 1
+    fi
+}
+
+install_acme() {
+    cd ~
+    LOGI "Instalando ACME..."
+    curl https://get.acme.sh | sh
+    if [ $? -ne 0 ]; then
+        LOGE "Instalação do ACME falhou!"
+        return 1
+    else
+        LOGI "Instalação do ACME concluida"
+    fi
+    return 0
+}
+
+#metodo para o acme standalone
+ssl_cert_issue_standalone() {
+    #instalando acme primeiro..
+    install_acme
+    if [ $? -ne 0 ]; then
+        LOGE "Instalação do ACME falhou, cheque os logs"
+        exit 1
+    fi
+    #install socat second
+    if [[ x"${release}" == x"centos" ]]; then
+        yum install socat -y
+    else
+        apt install socat -y
+    fi
+    if [ $? -ne 0 ]; then
+        LOGE "Instalação do socat falhou, cheque os logs"
+        exit 1
+    else
+        LOGI "Socat instalado com sucesso..."
+    fi
+    #creando direitorio para o certificado
+    certPath=/root/cert
+    if [ ! -d "$certPath" ]; then
+        mkdir $certPath
+    else
+        rm -rf $certPath
+        mkdir $certPath
+    fi
+    #obtendo nome de dominio e verificando ele
+    local domain=""
+    read -p "Por favor, digite seu DOMINIO:" domain
+    LOGD "Seu dominio é:${domain},cheque ele..."
+    #Aqui precisamos julgar se já existe certificado
+    local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
+    if [ ${currentCert} == ${domain} ]; then
+        local certInfo=$(~/.acme.sh/acme.sh --list)
+        LOGE "O sistema já possui o certificado, não é possivel obter novamente, detalhes do certificado atual:"
+        LOGI "$certInfo"
+        exit 1
+    else
+        LOGI "Seu domínio está pronto para a emissão de certificado agora ..."
+    fi
+    #obtenha a porta necessaria aqui
+    local WebPort=80
+    read -p "Escolha qual porta você usa, o padrão será porta 80:" WebPort
+    if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
+        LOGE "Sua entrada ${WebPort} é invalida, é use a porta padrão."
+    fi
+    LOGI "Usando a porta:${WebPort} para obter o certificado, pfv garanta que a porta esteja aberta..."
+    #NOTE:isso deve ser tratado pelo usuario
+    #abra a porta e mate o processo ocupando
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+    ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --httpport ${WebPort}
+    if [ $? -ne 0 ]; then
+        LOGE "A obtenção do certificado falhou, cheque os logs"
+        rm -rf ~/.acme.sh/${domain}
+        exit 1
+    else
+        LOGE "Certificado obtido com sucesso! Instalando certificado agora..."
+    fi
+    #instalando certificado
+    ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
+        --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+        --fullchain-file /root/cert/fullchain.cer
+
+    if [ $? -ne 0 ]; then
+        LOGE "Instalação do certificado falhou, saindo.."
+        rm -rf ~/.acme.sh/${domain}
+        exit 1
+    else
+        LOGI "Instalação do certificado foi concluida com sucesso! habilitando renovação automatica..."
+    fi
+    ~/.acme.sh/acme.sh --upgrade --auto-upgrade
+    if [ $? -ne 0 ]; then
+        LOGE "Renovação automatica do SSL falhou. Detalhes do certificado:"
+        ls -lah cert
+        chmod 755 $certPath
+        exit 1
+    else
+        LOGI "Renovação automatica ativada com sucesso! Detalhes do certificado:"
+        ls -lah cert
+        chmod 755 $certPath
+    fi
+
+}
+
+#method for DNS API mode
+ssl_cert_issue_by_cloudflare() {
+    echo -E ""
+    LOGD "******Requerimentos******"
+    LOGI "1.Saber o e-mail associado a cloudflare"
+    LOGI "2.Saber a Cloudflare Global API Key"
+    LOGI "3.Seu dominio usar Cloudflare como DNS"
+    confirm "Você confirma que tem tudo o necessario? [y/n]" "y"
     if [ $? -eq 0 ]; then
-        cd ~
-        LOGI "Instalar script Acme"
-        curl https://get.acme.sh | sh
+        install_acme
         if [ $? -ne 0 ]; then
-            LOGE "Falha ao instalar o script acme"
+            LOGE "Instalação do ACME falhou. Cheque os logs"
             exit 1
         fi
         CF_Domain=""
@@ -435,46 +553,58 @@ ssl_cert_issue() {
             rm -rf $certPath
             mkdir $certPath
         fi
-        LOGD "Por favor, defina um nome de domínio:"
-        read -p "Input your domain here:" CF_Domain
-        LOGD "seu domínio está definido para:${CF_Domain}"
-        LOGD "Por favor, defina uma chave de API:"
-        read -p "Input your key here:" CF_GlobalKey
-        LOGD "Sua chave de API é:${CF_GlobalKey}"
-        LOGD "Por favor, defina o endereço de e-mail registrado:"
-        read -p "Input your email here:" CF_AccountEmail
-        LOGD "Seu e-mail cadastrado é:${CF_AccountEmail}"
+        LOGD "Insira seu dominio (example.com):"
+        read -p "Coloque seu dominio aqui:" CF_Domain
+        LOGD "Seu dominio é:${CF_Domain}, cheque isso..."
+        #Aqui precisamos julgar se já existe certificado
+        local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
+        if [ ${currentCert} == ${CF_Domain} ]; then
+            local certInfo=$(~/.acme.sh/acme.sh --list)
+            LOGE "O sistema já possui o certificado, não é possivel obter novamente, detalhes do certificado atual:"
+            LOGI "$certInfo"
+            exit 1
+        else
+            LOGI "Seu dominio está pronto para obter o certificado..."
+        fi
+        LOGD "Insira sua Cloudflare Global API key:"
+        read -p "Insira a Key aqui:" CF_GlobalKey
+        LOGD "Sua cloudflare global API key é:${CF_GlobalKey}"
+        LOGD "Coloque seu E-mail Cloudflare:"
+        read -p "Insira o e-mail aqui:" CF_AccountEmail
+        LOGD "Seu e-mail da cloudflare é:${CF_AccountEmail}"
         ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         if [ $? -ne 0 ]; then
-            LOGE "A modificação da CA padrão para Lets'Encrypt falha e o script é encerrado"
+            LOGE "Mudança do CA padrão para Lets'Encrypt falhou. Saindo"
             exit 1
         fi
         export CF_Key="${CF_GlobalKey}"
         export CF_Email=${CF_AccountEmail}
         ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
         if [ $? -ne 0 ]; then
-            LOGE "Falha na emissão do certificado, o script é encerrado"
+            LOGE "Obtenção do certificado falhou. Saindo"
+            rm -rf ~/.acme.sh/${CF_Domain}
             exit 1
         else
-            LOGI "O certificado foi emitido com sucesso e a instalação está em andamento.."
+            LOGI "Obtenção do certificado concluida! Instalando..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+            --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
+            --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
-            LOGE "Falha na instalação do certificado, script encerrado"
+            LOGE "Instalação do certificado falhou. Saindo"
+            rm -rf ~/.acme.sh/${CF_Domain}
             exit 1
         else
-            LOGI "O certificado foi instalado com sucesso e a atualização automática está ativada.."
+            LOGI "Instalação do certificado concluida! Habilitando a renovação automatica..."
         fi
         ~/.acme.sh/acme.sh --upgrade --auto-upgrade
         if [ $? -ne 0 ]; then
-            LOGE "Falha nas configurações de atualização automática, script encerrado"
+            LOGE "Ativação da renovação falhou. Saindo"
             ls -lah cert
             chmod 755 $certPath
             exit 1
         else
-            LOGI "O certificado foi instalado e a atualização automática foi ativada, os detalhes são os seguintes"
+            LOGI "Renovação automatica habilitada! Detalhes:"
             ls -lah cert
             chmod 755 $certPath
         fi
@@ -484,6 +614,12 @@ ssl_cert_issue() {
 }
 
 show_usage() {
+    echo "------------------------------------------"
+    echo "${green}\\  //  ||   || ||${plain}"
+    echo "${green} \\//   ||   || ||${plain}"
+    echo "${green} //\\   ||___|| ||${plain}"
+    echo "${green}//  \\  |_____| ||${plain}"
+    echo "------------------------------------------"
     echo "x-ui Como usar o script de gerenciamento: "
     echo "------------------------------------------"
     echo "x-ui              - Mostrar menu de administração (mais funções)"
@@ -503,6 +639,12 @@ show_usage() {
 
 show_menu() {
     echo -e "
+------------------------------------------
+  ${green}\\  //  ||   || ||${plain}
+  ${green} \\//   ||   || ||${plain}
+  ${green} //\\   ||___|| ||${plain}
+  ${green}//  \\  |_____| ||${plain}
+------------------------------------------
   ${green}x-ui Script de gerenciamento de painel${plain}
   ${green}0.${plain} script de saída
 ————————————————
@@ -524,7 +666,7 @@ show_menu() {
   ${green}13.${plain} 设置 x-ui 开机自启
   ${green}14.${plain} 取消 x-ui 开机自启
 ————————————————
-  ${green}15.${plain} 一key install bbr (kernel mais recente)
+  ${green}15.${plain} 一key instalar protocolo de congestinamento tcp bbr (kernel mais recente)
   ${green}16.${plain} 一Chave para solicitar o certificado SSL (aplicativo acme)
  "
     show_status
