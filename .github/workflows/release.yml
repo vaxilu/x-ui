@@ -15,12 +15,12 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           draft: true
-          prerelease: true
+          prerelease: false
   linuxamd64build:
     name: build x-ui amd64 version
     needs: release
@@ -33,7 +33,7 @@ jobs:
           go-version: 1.18
       - name: build linux amd64 version
         run: |
-          CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
+          CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags='-extldflags=-static' -tags sqlite_omit_load_extension -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
           cp x-ui.service x-ui/x-ui.service
@@ -44,10 +44,11 @@ jobs:
           cd bin
           wget https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip
           unzip Xray-linux-64.zip
-          rm -f Xray-linux-64.zip geoip.dat geosite.dat
+          rm -f Xray-linux-64.zip
+          mv xray xray-linux-amd64
+          rm -f geoip.dat geosite.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
-          mv xray xray-linux-amd64
           cd ..
           cd ..
       - name: package
@@ -55,7 +56,7 @@ jobs:
       - name: upload
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: x-ui-linux-amd64.tar.gz
@@ -73,9 +74,7 @@ jobs:
           go-version: 1.18
       - name: build linux arm64 version
         run: |
-          sudo apt-get update
-          sudo apt install gcc-aarch64-linux-gnu
-          CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC=aarch64-linux-gnu-gcc go build -o xui-release -v main.go
+          GOOS=linux GOARCH=arm64 go build  -ldflags='-extldflags=-static' -tags sqlite_omit_load_extension -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
           cp x-ui.service x-ui/x-ui.service
@@ -86,10 +85,11 @@ jobs:
           cd bin
           wget https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-arm64-v8a.zip
           unzip Xray-linux-arm64-v8a.zip
-          rm -f Xray-linux-arm64-v8a.zip geoip.dat geosite.dat
+          rm -f Xray-linux-arm64-v8a.zip
+          mv xray xray-linux-arm64
+          rm -f geoip.dat geosite.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
-          mv xray xray-linux-arm64
           cd ..
           cd ..
       - name: package
@@ -97,7 +97,7 @@ jobs:
       - name: upload
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: x-ui-linux-arm64.tar.gz
