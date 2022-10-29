@@ -1157,16 +1157,22 @@ Inbound.VmessSettings = class extends Inbound.Settings {
     }
 };
 Inbound.VmessSettings.Vmess = class extends XrayCommonClass {
-    constructor(id=RandomUtil.randomUUID(), alterId=0) {
+    constructor(id=RandomUtil.randomUUID(), alterId=0, email='', limitIp=0) {
         super();
         this.id = id;
         this.alterId = alterId;
+        this.email = email;
+        this.limitIp = limitIp;
+
     }
 
     static fromJson(json={}) {
         return new Inbound.VmessSettings.Vmess(
             json.id,
             json.alterId,
+            json.email,
+            json.limitIp,
+
         );
     }
 };
