@@ -8,3 +8,4 @@ x-ui-*.tar.gz
 /release.sh
 .sync*
 main
+.cache
