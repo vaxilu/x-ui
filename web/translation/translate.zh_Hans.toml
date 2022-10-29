@@ -10,3 +10,15 @@
 "remark" = "备注"
 "enable" = "启用"
 "protocol" = "协议"
+
+[pages.login]
+"title" = "登录"
+
+[pages.index]
+"title" = "系统状态"
+
+[pages.inbounds]
+"title" = "入站列表"
+
+[pages.setting]
+"title" = "设置"

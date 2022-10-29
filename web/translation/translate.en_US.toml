@@ -10,3 +10,17 @@
 "remark" = "remark"
 "enable" = "enable"
 "protocol" = "protocol"
+
+[pages.login]
+"title" = "Login"
+
+[pages.index]
+"title" = "system status"
+
+[pages.inbounds]
+"title" = "Inbounds"
+"titleCh" = "入站列表"
+
+[pages.setting]
+"title" = "Setting"
+"titleCh" = "设置"
