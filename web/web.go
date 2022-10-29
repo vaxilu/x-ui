@@ -270,8 +270,17 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 	}
 
 	engine.Use(func(c *gin.Context) {
-		accept := c.GetHeader("Accept-Language")
-		localizer = i18n.NewLocalizer(bundle, accept)
+		//accept := c.GetHeader("Accept-Language")
+
+		var lang string
+
+		if cookie, err := c.Request.Cookie("lang"); err == nil {
+			lang = cookie.Value
+		} else {
+			lang = c.GetHeader("Accept-Language")
+		}
+
+		localizer = i18n.NewLocalizer(bundle, lang)
 		c.Set("localizer", localizer)
 		c.Next()
 	})
