@@ -11,6 +11,13 @@
 "enable" = "enable"
 "protocol" = "protocol"
 
+[menu]
+"dashboard" = "System Status"
+"inbounds" = "Inbounds"
+"setting" = "Panel Setting"
+"logout" = "LogOut"
+"link" = "Other"
+
 [pages.login]
 "title" = "Login"
 
@@ -19,8 +26,6 @@
 
 [pages.inbounds]
 "title" = "Inbounds"
-"titleCh" = "入站列表"
 
 [pages.setting]
 "title" = "Setting"
-"titleCh" = "设置"

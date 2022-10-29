@@ -11,6 +11,13 @@
 "enable" = "启用"
 "protocol" = "协议"
 
+[menu]
+"dashboard" = "系统状态"
+"inbounds" = "入站列表"
+"setting" = "面板设置"
+"logout" = "退出登录"
+"link" = "其他"
+
 [pages.login]
 "title" = "登录"
 
