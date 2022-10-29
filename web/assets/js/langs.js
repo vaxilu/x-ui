@@ -2,11 +2,11 @@ supportLangs = [
     {
        name : "English",
        value : "en_US",
-       icon : "🇨🇳"
+       icon : "🇺🇸"
     },
     {
         name : "汉语",
         value : "zh_Hans",
-        icon : "🇺🇸"
+        icon : "🇨🇳"
     },
 ]
