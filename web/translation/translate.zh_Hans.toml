@@ -21,6 +21,13 @@
 [pages.login]
 "title" = "登录"
 
+[pages.login.toasts]
+"invalidFormData" = "数据格式错误"
+"emptyUsername" = "请输入用户名"
+"emptyPassword" = "请输入密码"
+"wrongUsernameOrPassword" = "用户名或密码错误"
+"successLogin" = "登录"
+
 [pages.index]
 "title" = "系统状态"
 

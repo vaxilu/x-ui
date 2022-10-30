@@ -21,6 +21,14 @@
 [pages.login]
 "title" = "Login"
 
+[pages.login.toasts]
+"invalidFormData" = "Input Data Format Is Invalid"
+"emptyUsername" = "please Enter Username"
+"emptyPassword" = "please Enter Password"
+"wrongUsernameOrPassword" = "invalid username or password"
+"successLogin" = "Login"
+
+
 [pages.index]
 "title" = "system status"
 
