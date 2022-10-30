@@ -179,11 +179,7 @@ func addInboundClientIps(clientEmail string,ips []string) error {
 }
 func updateInboundClientIps(inboundClientIps *model.InboundClientIps,clientEmail string,ips []string) error {
 
-	var oldIps []string
-	err := json.Unmarshal([]byte(inboundClientIps.Ips), &oldIps)
-	mergedIps := Unique(append(oldIps, ips...))
-
-    jsonIps, err := json.Marshal(mergedIps)
+    jsonIps, err := json.Marshal(ips)
 	checkError(err)
 
 	inboundClientIps.ClientEmail = clientEmail
@@ -199,7 +195,7 @@ func updateInboundClientIps(inboundClientIps *model.InboundClientIps,clientEmail
     limitIp, err := strconv.Atoi(limitIpMactch)
 
 
-	if(limitIp < len(mergedIps) && limitIp != 0 && inbound.Enable) {
+	if(limitIp < len(ips) && limitIp != 0 && inbound.Enable) {
 
 		DisableInbound(inbound.Id)
 	}
