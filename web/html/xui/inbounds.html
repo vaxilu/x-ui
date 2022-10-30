@@ -58,17 +58,19 @@
                                     <a @click="e => e.preventDefault()">{{ i18n "pages.inbounds.operate" }}</a>
                                     <a-menu slot="overlay" @click="a => clickAction(a, dbInbound)">
                                         <a-menu-item v-if="dbInbound.hasLink()" key="qrcode">
-                                            <a-icon type="qrcode"></a-icon>二维码
+                                            <a-icon type="qrcode"></a-icon>
+                                            {{ i18n "qrCode" }}
                                         </a-menu-item>
                                         <a-menu-item key="edit">
-                                            <a-icon type="edit"></a-icon>编辑
+                                            <a-icon type="edit"></a-icon>
+                                            {{ i18n "edit" }}
                                         </a-menu-item>
                                         <a-menu-item key="resetTraffic">
-                                            <a-icon type="retweet"></a-icon>重置流量
+                                            <a-icon type="retweet"></a-icon> {{ i18n "pages.inbounds.resetTraffic" }}
                                         </a-menu-item>
                                         <a-menu-item key="delete">
                                             <span style="color: #FF4D4F">
-                                                <a-icon type="delete"></a-icon>删除
+                                                <a-icon type="delete"></a-icon> {{ i18n "delete"}}
                                             </span>
                                         </a-menu-item>
                                     </a-menu>

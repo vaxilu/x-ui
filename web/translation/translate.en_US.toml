@@ -20,6 +20,9 @@
 "indefinitely" = "indefinitely"
 "unlimited" = "unlimited"
 "none" = "none"
+"qrCode" = "QR Code"
+"edit" = "edit"
+"delete" = "delete"
 
 [menu]
 "dashboard" = "System Status"
@@ -75,6 +78,7 @@
 "details" = "details"
 "transportConfig" = "transport config"
 "expireDate" = "expire date"
+"resetTraffic" = "reset traffic"
 
 [pages.setting]
 "title" = "Setting"
