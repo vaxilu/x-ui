@@ -54,7 +54,7 @@
 "totalReceive" = "Total download traffic of all network cards since system startup"
 "xraySwitchVersionDialog" = "switch xray version"
 "xraySwitchVersionDialogDesc" = "whether to switch the xray version to"
-"dontRefresh" = "Installation is in progress, please do not refresh this page"
+"dontRefreshh" = "Installation is in progress, please do not refresh this page"
 
 
 [pages.inbounds]

@@ -310,7 +310,7 @@
                     cancelText: '{{ i18n "cancel"}}',
                     onOk: async () => {
                         versionModal.hide();
-                        this.loading(true, '{{ i18n "pages.index.dontRefresh"}}');
+                        this.loading(true, '{{ i18n "pages.index.dontRefreshh"}}');
                         await HttpUtil.post(`/server/installXray/${version}`);
                         this.loading(false);
                     },
