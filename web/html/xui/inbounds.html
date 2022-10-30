@@ -83,10 +83,10 @@
                                     <a-tag v-if="dbInbound.up + dbInbound.down < dbInbound.total" color="cyan">[[ sizeFormat(dbInbound.total) ]]</a-tag>
                                     <a-tag v-else color="red">[[ sizeFormat(dbInbound.total) ]]</a-tag>
                                 </template>
-                                <a-tag v-else color="green">无限制</a-tag>
+                                <a-tag v-else color="green">{{ i18n "unlimited" }}</a-tag>
                             </template>
                             <template slot="settings" slot-scope="text, dbInbound">
-                                <a-button type="link" @click="showInfo(dbInbound)">查看</a-button>
+                                <a-button type="link" @click="showInfo(dbInbound)">{{ i18n "check" }}</a-button>
                             </template>
                             <template slot="stream" slot-scope="text, dbInbound, index">
                                 <template v-if="dbInbound.isVMess || dbInbound.isVLess || dbInbound.isTrojan || dbInbound.isSS">
@@ -94,7 +94,7 @@
                                     <a-tag v-if="inbounds[index].stream.isTls" color="blue">tls</a-tag>
                                     <a-tag v-if="inbounds[index].stream.isXTls" color="blue">xtls</a-tag>
                                 </template>
-                                <template v-else>无</template>
+                                <template v-else>{{ i18n "none" }}</template>
                             </template>
                             <template slot="enable" slot-scope="text, dbInbound">
                                 <a-switch v-model="dbInbound.enable" @change="switchEnable(dbInbound)"></a-switch>
@@ -108,7 +108,7 @@
                                         [[ DateUtil.formatMillis(dbInbound.expiryTime) ]]
                                     </a-tag>
                                 </template>
-                                <a-tag v-else color="green">无限期</a-tag>
+                                <a-tag v-else color="green">{{ i18n "indefinitely" }}</a-tag>
                             </template>
                         </a-table>
                     </a-card>

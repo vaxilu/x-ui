@@ -16,6 +16,10 @@
 "minute" = "分钟"
 "hour" = "小时"
 "day" = "天"
+"check" = "查看"
+"indefinitely" = "无限期"
+"unlimited" = "无限制"
+"none" = "无"
 
 [menu]
 "dashboard" = "系统状态"

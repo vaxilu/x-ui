@@ -16,6 +16,10 @@
 "minute" = "minute"
 "hour" = "hour"
 "day" = "day"
+"check" = "check"
+"indefinitely" = "indefinitely"
+"unlimited" = "unlimited"
+"none" = "none"
 
 [menu]
 "dashboard" = "System Status"
