@@ -18,10 +18,11 @@ type CheckClientIpJob struct {
 	xrayService    service.XrayService
 	inboundService service.InboundService
 }
-
+var job *CheckClientIpJob
   
 func NewCheckClientIpJob() *CheckClientIpJob {
-	return new(CheckClientIpJob)
+	job = new(CheckClientIpJob)
+	return job
 }
 
 func (j *CheckClientIpJob) Run() {
@@ -227,6 +228,10 @@ func DisableInbound(id int) error{
 		Update("enable", false)
 	err := result.Error
 	logger.Warning("disable inbound with id:",id)
+
+	if err == nil {
+		job.xrayService.SetToNeedRestart()
+	}
 
 	return err
 }
