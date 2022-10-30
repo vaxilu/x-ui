@@ -21,3 +21,13 @@ func (a *BaseController) checkLogin(c *gin.Context) {
 		c.Next()
 	}
 }
+
+
+func I18n(c *gin.Context , name string, data ...string) string{
+    anyfunc, _  := c.Get("I18n")
+    i18n, _ := anyfunc.(func(key string, params ...string) (string, error))
+
+    message, _ := i18n("pages.index.title")
+
+    return message;
+}
