@@ -59,6 +59,18 @@
 
 [pages.inbounds]
 "title" = "Inbounds"
+"totalDownUp" = "Total uploads/downloads"
+"totalUsage" = "Total usage"
+"inboundCount" = "Number of inbound"
+"operate" = "operate"
+"enable" = "enable"
+"remark" = "remark"
+"protocol" = "protocol"
+"port" = "port"
+"traffic" = "traffic"
+"details" = "details"
+"transportConfig" = "transport config"
+"expireDate" = "expire date"
 
 [pages.setting]
 "title" = "Setting"

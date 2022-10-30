@@ -27,15 +27,15 @@
                     <a-card hoverable style="margin-bottom: 20px;">
                         <a-row>
                             <a-col :xs="24" :sm="24" :lg="12">
-                                总上传 / 下载：
+                                {{ i18n "pages.inbounds.totalDownUp" }}：
                                 <a-tag color="green">[[ sizeFormat(total.up) ]] / [[ sizeFormat(total.down) ]]</a-tag>
                             </a-col>
                             <a-col :xs="24" :sm="24" :lg="12">
-                                总用量：
+                                {{ i18n "pages.inbounds.totalUsage" }}：
                                 <a-tag color="green">[[ sizeFormat(total.up + total.down) ]]</a-tag>
                             </a-col>
                             <a-col :xs="24" :sm="24" :lg="12">
-                                入站数量：
+                                {{ i18n "pages.inbounds.inboundCount" }}：
                                 <a-tag color="green">[[ dbInbounds.length ]]</a-tag>
                             </a-col>
                         </a-row>
@@ -55,7 +55,7 @@
                                  @change="() => getDBInbounds()">
                             <template slot="action" slot-scope="text, dbInbound">
                                 <a-dropdown :trigger="['click']">
-                                    <a @click="e => e.preventDefault()">操作</a>
+                                    <a @click="e => e.preventDefault()">{{ i18n "pages.inbounds.operate" }}</a>
                                     <a-menu slot="overlay" @click="a => clickAction(a, dbInbound)">
                                         <a-menu-item v-if="dbInbound.hasLink()" key="qrcode">
                                             <a-icon type="qrcode"></a-icon>二维码
@@ -121,52 +121,52 @@
 <script>
 
     const columns = [{
-        title: "操作",
+        title: '{{ i18n "pages.inbounds.operate" }}',
         align: 'center',
         width: 30,
         scopedSlots: { customRender: 'action' },
     }, {
-        title: "启用",
+        title: '{{ i18n "pages.inbounds.enable" }}',
         align: 'center',
         width: 40,
         scopedSlots: { customRender: 'enable' },
     }, {
-        title: "id",
+        title: "Id",
         align: 'center',
         dataIndex: "id",
         width: 30,
     }, {
-        title: "备注",
+        title: '{{ i18n "pages.inbounds.remark" }}',
         align: 'center',
         width: 100,
         dataIndex: "remark",
     }, {
-        title: "协议",
+        title: '{{ i18n "pages.inbounds.protocol" }}',
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'protocol' },
     }, {
-        title: "端口",
+        title: '{{ i18n "pages.inbounds.port" }}',
         align: 'center',
         dataIndex: "port",
         width: 60,
     }, {
-        title: "流量↑|↓",
+        title: '{{ i18n "pages.inbounds.traffic" }}↑|↓',
         align: 'center',
         width: 150,
         scopedSlots: { customRender: 'traffic' },
     }, {
-        title: "详细信息",
+        title: '{{ i18n "pages.inbounds.details" }}',
         align: 'center',
         width: 40,
         scopedSlots: { customRender: 'settings' },
     }, {
-        title: "传输配置",
+        title: '{{ i18n "pages.inbounds.transportConfig" }}',
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'stream' },
     }, {
-        title: "到期时间",
+        title: '{{ i18n "pages.inbounds.expireDate" }}',
         align: 'center',
         width: 80,
         scopedSlots: { customRender: 'expiryTime' },

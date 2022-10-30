@@ -58,6 +58,19 @@
 
 [pages.inbounds]
 "title" = "入站列表"
+"totalDownUp" = "总上传 / 下载"
+"totalUsage" = "总用量"
+"inboundCount" = "入站数量"
+"operate" = "操作"
+"enable" = "启用"
+"remark" = "备注"
+"protocol" = "协议"
+"port" = "端口"
+"traffic" = "流量"
+"details" = "详细信息"
+"transportConfig" = "传输配置"
+"expireDate" = "到期时间"
+
 
 [pages.setting]
 "title" = "设置"
