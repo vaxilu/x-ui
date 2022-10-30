@@ -17,7 +17,7 @@
         
             <a-input type="number" v-model.number="inbound.settings.vmesses[0].limitIp"></a-input>
         </a-form-item>
-        <a-form-item v-if="inbound.settings.vmesses[0].email && inbound.settings.vmesses[0].limitIp > 0 && inbound.id">
+        <a-form-item v-if="inbound.settings.vmesses[0].email && inbound.settings.vmesses[0].limitIp > 0 && isEdit">
             <span slot="label">
                 Client IP Log 
                 <a-tooltip>
