@@ -94,7 +94,7 @@
                         </a-tab-pane>
                         <a-tab-pane key="3" tab='{{ i18n "pages.setting.xrayConfiguration"}}'>
                             <a-list item-layout="horizontal" style="background: white">
-                                <setting-list-item type="textarea" title="xray 配置模版" desc="以该模版为基础生成最终的 xray 配置文件，重启面板生效" v-model="allSetting.xrayTemplateConfig"></setting-list-item>
+                                <setting-list-item type="textarea" title='{{ i18n "pages.setting.xrayConfigTemplate"}}' desc='{{ i18n "pages.setting.xrayConfigTemplateDesc"}}' v-model="allSetting.xrayTemplateConfig"></setting-list-item>
                             </a-list>
                         </a-tab-pane>
                         <a-tab-pane key="4" tab='{{ i18n "pages.setting.TGReminder"}}'>

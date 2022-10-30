@@ -57,3 +57,5 @@
 "currentPassword" = "原密码"
 "newUsername" = "新用户名"
 "newPassword" = "新密码"
+"xrayConfigTemplate" = "xray 配置模版"
+"xrayConfigTemplateDesc" = "以该模版为基础生成最终的 xray 配置文件，重启面板生效"

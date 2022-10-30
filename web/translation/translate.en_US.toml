@@ -54,7 +54,9 @@
 "privateKeyPathDesc" = "Fill in an absolute path starting with '/', restart the panel to take effect"
 "panelUrlPath" = "panel url root path"
 "panelUrlPathDesc" = "Must start with '/' and end with '/', restart the panel to take effect"
-"oldUsername" = "Current Username" #原用户名
-"currentPassword" = "Current Password" #原密码
-"newUsername" = "New Username" #新用户名
-"newPassword" = "New Password" #新密码
+"oldUsername" = "Current Username"
+"currentPassword" = "Current Password"
+"newUsername" = "New Username"
+"newPassword" = "New Password"
+"xrayConfigTemplate" = "xray Configuration Template" #xray 配置模版
+"xrayConfigTemplateDesc" = "Generate the final xray configuration file based on this template, restart the panel to take effect" #以该模版为基础生成最终的 xray 配置文件，重启面板生效
