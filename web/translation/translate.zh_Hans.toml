@@ -98,6 +98,9 @@
 "resetTrafficContent" = "确定要重置流量吗?"
 "copyLink" = "复制链接"
 "address" = "地址"
+"network" = "网络"
+"destinationPort" = "目标端口"
+"targetAddress" = "目标地址"
 
 
 

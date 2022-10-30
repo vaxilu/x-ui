@@ -99,6 +99,9 @@
 "resetTrafficContent" = "Are you sure you want to reset traffic?"
 "copyLink" = "Copy Link"
 "address" = "address"
+"network" = "network"
+"destinationPort" = "destination port"
+"targetAddress" = "target address"
 
 [pages.setting]
 "title" = "Setting"
