@@ -25,6 +25,7 @@
 "delete" = "删除"
 "reset" = "重置"
 "copySuccess" = "复制成功"
+"sure" = "确定"
 
 [menu]
 "dashboard" = "系统状态"
@@ -96,6 +97,7 @@
 "title" = "设置"
 "save" = "保存配置"
 "restartPanel" = "重启面板"
+"restartPanelDesc" = "确定要重启面板吗？点击确定将于 3 秒后重启，若重启后无法访问面板，请前往服务器查看面板日志信息"
 "panelConfig" = "面板配置"
 "userSetting" = "用户设置"
 "xrayConfiguration" = "xray 相关设置"

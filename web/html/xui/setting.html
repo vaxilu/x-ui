@@ -165,10 +165,10 @@
             async restartPanel() {
                 await new Promise(resolve => {
                     this.$confirm({
-                        title: '重启面板',
-                        content: '确定要重启面板吗？点击确定将于 3 秒后重启，若重启后无法访问面板，请前往服务器查看面板日志信息',
-                        okText: '确定',
-                        cancelText: '取消',
+                        title: '{{ i18n "pages.setting.restartPanel" }}',
+                        content: '{{ i18n "pages.setting.restartPanelDesc" }}',
+                        okText: '{{ i18n "sure" }}',
+                        cancelText: '{{ i18n "cancel" }}',
                         onOk: () => resolve(),
                     });
                 });

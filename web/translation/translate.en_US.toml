@@ -25,6 +25,7 @@
 "delete" = "delete"
 "reset" = "reset"
 "copySuccess" = "Copy successfully"
+"sure" = "Sure"
 
 
 [menu]
@@ -95,6 +96,7 @@
 "title" = "Setting"
 "save" = "Save"
 "restartPanel" = "Restart Panel"
+"restartPanelDesc" = "Are you sure you want to restart the panel? Click OK to restart after 3 seconds. If you cannot access the panel after restarting, please go to the server to view the panel log information"
 "panelConfig" = "Panel Configuration"
 "userSetting" = "User Setting"
 "xrayConfiguration" = "xray Configuration"
