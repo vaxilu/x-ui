@@ -24,6 +24,7 @@
 "edit" = "编辑"
 "delete" = "删除"
 "reset" = "重置"
+"copySuccess" = "复制成功"
 
 [menu]
 "dashboard" = "系统状态"
@@ -86,6 +87,7 @@
 "deleteInbound" = "删除入站"
 "deleteInboundContent" = "确定要删除入站吗?"
 "resetTrafficContent" = "确定要重置流量吗?"
+"copyLink" = "复制链接"
 
 
 

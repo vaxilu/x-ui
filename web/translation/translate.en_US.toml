@@ -24,6 +24,8 @@
 "edit" = "edit"
 "delete" = "delete"
 "reset" = "reset"
+"copySuccess" = "Copy successfully"
+
 
 [menu]
 "dashboard" = "System Status"
@@ -87,6 +89,7 @@
 "deleteInbound" = "Delete Inbound"
 "deleteInboundContent" = "Are you sure you want to delete inbound?"
 "resetTrafficContent" = "Are you sure you want to reset traffic?"
+"copyLink" = "Copy Link"
 
 [pages.setting]
 "title" = "Setting"
