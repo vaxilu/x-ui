@@ -38,9 +38,11 @@
 "title" = "设置"
 "save" = "保存配置"
 "restartPanel" = "重启面板"
-
 "panelConfig" = "面板配置"
-
+"userSetting" = "用户设置"
+"xrayConfiguration" = "xray 相关设置"
+"TGReminder" = "TG提醒相关设置"
+"otherSetting" = "其他设置"
 "panelListeningIP" = "面板监听 IP"
 "panelListeningIPDesc" = "默认留空监听所有 IP，重启面板生效"
 "panelPort" = "面板监听端口"

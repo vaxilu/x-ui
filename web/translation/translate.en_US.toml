@@ -39,9 +39,11 @@
 "title" = "Setting"
 "save" = "Save"
 "restartPanel" = "Restart Panel"
-
 "panelConfig" = "Panel Configuration"
-
+"userSetting" = "User Setting" # 用户设置
+"xrayConfiguration" = "xray Configuration" # xray 相关设置
+"TGReminder" = "TG Reminder Related Settings" # TG提醒相关设置
+"otherSetting" = "Other Setting" #其他设置
 "panelListeningIP" = "Panel listening IP"
 "panelListeningIPDesc" = "Leave blank by default to monitor all IPs, restart the panel to take effect"
 "panelPort" = "Panel Port"
