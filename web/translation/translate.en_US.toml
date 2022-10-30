@@ -26,7 +26,14 @@
 "reset" = "reset"
 "copySuccess" = "Copy successfully"
 "sure" = "Sure"
-
+"encryption" = "encryption"
+"transmission" = "transmission"
+"host" = "host"
+"path" = "path"
+"camouflage" = "camouflage"
+"turnOn" = "turn on"
+"closure" = "closure"
+"domainName" = "domain name"
 
 [menu]
 "dashboard" = "System Status"
@@ -91,6 +98,7 @@
 "deleteInboundContent" = "Are you sure you want to delete inbound?"
 "resetTrafficContent" = "Are you sure you want to reset traffic?"
 "copyLink" = "Copy Link"
+"address" = "address"
 
 [pages.setting]
 "title" = "Setting"

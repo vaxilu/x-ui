@@ -26,6 +26,14 @@
 "reset" = "重置"
 "copySuccess" = "复制成功"
 "sure" = "确定"
+"encryption" = "加密"
+"transmission" = "传输"
+"host" = "主持人"
+"path" = "小路"
+"camouflage" = "伪装"
+"turnOn" = "开启"
+"closure" = "关闭"
+"domainName" = "域名"
 
 [menu]
 "dashboard" = "系统状态"
@@ -89,6 +97,8 @@
 "deleteInboundContent" = "确定要删除入站吗?"
 "resetTrafficContent" = "确定要重置流量吗?"
 "copyLink" = "复制链接"
+"address" = "地址"
+
 
 
 
