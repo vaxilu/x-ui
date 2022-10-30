@@ -68,3 +68,8 @@
 "telegramChatIdDesc" = "Restart the panel to take effect"
 "telegramNotifyTime" = "Telegram bot notification time"
 "telegramNotifyTimeDesc" = "Using Crontab timing format, restart the panel to take effect"
+"timeZonee" = "Time Zone"
+"timeZoneDesc" = "The scheduled task runs according to the time in the time zone, and restarts the panel to take effect"
+
+
+

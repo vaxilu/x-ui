@@ -67,3 +67,5 @@
 "telegramChatIdDesc" = "重启面板生效"
 "telegramNotifyTime" = "电报机器人通知时间"
 "telegramNotifyTimeDesc" = "采用Crontab定时格式,重启面板生效"
+"timeZonee" = "时区"
+"timeZoneDesc" = "定时任务按照该时区的时间运行，重启面板生效"
