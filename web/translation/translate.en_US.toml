@@ -54,3 +54,7 @@
 "privateKeyPathDesc" = "Fill in an absolute path starting with '/', restart the panel to take effect"
 "panelUrlPath" = "panel url root path"
 "panelUrlPathDesc" = "Must start with '/' and end with '/', restart the panel to take effect"
+"oldUsername" = "Current Username" #原用户名
+"currentPassword" = "Current Password" #原密码
+"newUsername" = "New Username" #新用户名
+"newPassword" = "New Password" #新密码

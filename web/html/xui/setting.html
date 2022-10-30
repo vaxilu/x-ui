@@ -72,22 +72,23 @@
                         </a-tab-pane>
                         <a-tab-pane key="2" tab='{{ i18n "pages.setting.userSetting"}}'>
                             <a-form style="background: white; padding: 20px">
-                                <a-form-item label="原用户名">
+                                <a-form-item label='{{ i18n "pages.setting.oldUsername"}}'>
                                     <a-input v-model="user.oldUsername" style="max-width: 300px"></a-input>
                                 </a-form-item>
-                                <a-form-item label="原密码">
+                                <a-form-item label='{{ i18n "pages.setting.currentPassword"}}'>
                                     <a-input type="password" v-model="user.oldPassword"
                                              style="max-width: 300px"></a-input>
                                 </a-form-item>
-                                <a-form-item label="新用户名">
+                                <a-form-item label='{{ i18n "pages.setting.newUsername"}}'>
                                     <a-input v-model="user.newUsername" style="max-width: 300px"></a-input>
                                 </a-form-item>
-                                <a-form-item label="新密码">
+                                <a-form-item label='{{ i18n "pages.setting.newPassword"}}'>
                                     <a-input type="password" v-model="user.newPassword"
                                              style="max-width: 300px"></a-input>
                                 </a-form-item>
                                 <a-form-item>
-                                    <a-button type="primary" @click="updateUser">修改</a-button>
+<!--                                    <a-button type="primary" @click="updateUser">修改</a-button>-->
+                                    <a-button type="primary" @click="updateUser">{{ i18n "confirm" }}</a-button>
                                 </a-form-item>
                             </a-form>
                         </a-tab-pane>
