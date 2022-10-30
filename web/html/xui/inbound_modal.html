@@ -14,6 +14,7 @@
         confirm: null,
         inbound: new Inbound(),
         dbInbound: new DBInbound(),
+        clientIps: "",
         ok() {
             ObjectUtil.execute(inModal.confirm, inModal.inbound, inModal.dbInbound);
         },
@@ -64,6 +65,9 @@
             },
             get dbInbound() {
                 return inModal.dbInbound;
+            },
+            get clientIps() {
+                return inModal.clientIps;
             }
         },
         methods: {
@@ -71,8 +75,27 @@
                 if (oldValue === 'kcp') {
                     this.inModal.inbound.tls = false;
                 }
-            }
-        }
+            },
+            async getDBClientIps(email) {
+
+                const msg = await HttpUtil.post('/xui/inbound/clientIps/'+ email);
+                if (!msg.success) {
+                    return;
+                }
+                ips = JSON.parse(msg.obj)
+                ips = ips.join(",")
+                this.inModal.clientIps =  ips
+            },
+            async clearDBClientIps(email) {
+                const msg = await HttpUtil.post('/xui/inbound/clearClientIps/'+ email);
+                if (!msg.success) {
+                    return;
+                }
+                this.inModal.clientIps =  ""
+            },
+
+        },
+     
     });
 
 </script>

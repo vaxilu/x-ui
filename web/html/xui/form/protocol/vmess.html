@@ -17,6 +17,23 @@
         
             <a-input type="number" v-model.number="inbound.settings.vmesses[0].limitIp"></a-input>
         </a-form-item>
+        <a-form-item v-if="inbound.settings.vmesses[0].email">
+            <span slot="label">
+                client ip log
+                <a-tooltip>
+                    <template slot="title">
+                        disable inbound if more than entered count (0 for disable limit ip)
+                    </template>
+                    <a-icon type="question-circle" theme="filled"></a-icon>
+                </a-tooltip>
+            </span>
+            
+            <a-textarea disabled :input="getDBClientIps(inbound.settings.vmesses[0].email)" v-model="clientIps" :auto-size="{ minRows: 3, maxRows: 3 }">
+            </a-textarea>
+
+            <a-button type="danger" @click="clearDBClientIps(inbound.settings.vmesses[0].email)" >clear log</a-button>
+        </a-form-item>
+
     </a-form>
     <a-form-item label="id">
         <a-input v-model.trim="inbound.settings.vmesses[0].id"></a-input>

@@ -8,3 +8,5 @@ x-ui-*.tar.gz
 /release.sh
 .sync*
 main
+release/
+access.log

@@ -176,3 +176,27 @@ func (s *InboundService) DisableInvalidInbounds() (int64, error) {
 	count := result.RowsAffected
 	return count, err
 }
+
+func (s *InboundService) GetInboundClientIps(clientEmail string) (string, error) {
+	db := database.GetDB()
+	InboundClientIps := &model.InboundClientIps{}
+	err := db.Model(model.InboundClientIps{}).Where("client_email = ?", clientEmail).First(InboundClientIps).Error
+	if err != nil {
+		return "", err
+	}
+	return InboundClientIps.Ips, nil
+}
+func (s *InboundService) ClearClientIps(clientEmail string) (error) {
+	db := database.GetDB()
+
+	result := db.Model(model.InboundClientIps{}).
+		Where("client_email = ?", clientEmail).
+		Update("ips", "")
+	err := result.Error
+
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
