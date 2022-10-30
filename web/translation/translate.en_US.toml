@@ -23,6 +23,7 @@
 "qrCode" = "QR Code"
 "edit" = "edit"
 "delete" = "delete"
+"reset" = "reset"
 
 [menu]
 "dashboard" = "System Status"
@@ -79,6 +80,13 @@
 "transportConfig" = "transport config"
 "expireDate" = "expire date"
 "resetTraffic" = "reset traffic"
+"addInbound" = "addInbound"
+"addTo" = "Add To"
+"revise" = "Revise"
+"modifyInbound" = "Modify InBound"
+"deleteInbound" = "Delete Inbound"
+"deleteInboundContent" = "Are you sure you want to delete inbound?"
+"resetTrafficContent" = "Are you sure you want to reset traffic?"
 
 [pages.setting]
 "title" = "Setting"

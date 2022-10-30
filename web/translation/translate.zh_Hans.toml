@@ -20,6 +20,10 @@
 "indefinitely" = "无限期"
 "unlimited" = "无限制"
 "none" = "无"
+"qrCode" = "二维码"
+"edit" = "编辑"
+"delete" = "删除"
+"reset" = "重置"
 
 [menu]
 "dashboard" = "系统状态"
@@ -75,9 +79,14 @@
 "transportConfig" = "传输配置"
 "expireDate" = "到期时间"
 "resetTraffic" = "重置流量"
-"qrCode" = "二维码"
-"edit" = "编辑"
-"delete" = "删除"
+"addInbound" = "添加入"
+"addTo" = "添加"
+"revise" = "修改"
+"modifyInbound" = "修改入站"
+"deleteInbound" = "删除入站"
+"deleteInboundContent" = "确定要删除入站吗?"
+"resetTrafficContent" = "确定要重置流量吗?"
+
 
 
 
