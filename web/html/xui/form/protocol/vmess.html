@@ -6,7 +6,7 @@
         </a-form-item>
         <a-form-item>
             <span slot="label">
-                Ip Count Limit
+                IP Count Limit
                 <a-tooltip>
                     <template slot="title">
                         disable inbound if more than entered count (0 for disable limit ip)
@@ -17,12 +17,12 @@
         
             <a-input type="number" v-model.number="inbound.settings.vmesses[0].limitIp"></a-input>
         </a-form-item>
-        <a-form-item v-if="inbound.settings.vmesses[0].email">
+        <a-form-item v-if="inbound.settings.vmesses[0].email && inbound.settings.vmesses[0].limitIp > 0 && inbound.id">
             <span slot="label">
-                client ip log
+                Client IP Log 
                 <a-tooltip>
                     <template slot="title">
-                        disable inbound if more than entered count (0 for disable limit ip)
+                        IPs history Log (before enabling inbound after it has been disabled by IP limit, you should clear the log)
                     </template>
                     <a-icon type="question-circle" theme="filled"></a-icon>
                 </a-tooltip>
