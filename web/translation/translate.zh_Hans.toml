@@ -11,6 +11,12 @@
 "enable" = "启用"
 "protocol" = "协议"
 
+"loading" = "加载中"
+"second" = "秒"
+"minute" = "分钟"
+"hour" = "小时"
+"day" = "天"
+
 [menu]
 "dashboard" = "系统状态"
 "inbounds" = "入站列表"
@@ -30,6 +36,25 @@
 
 [pages.index]
 "title" = "系统状态"
+"memory" = "内存"
+"hard" = "硬盘"
+"xrayStatus" = "xray 状态"
+"xraySwitch" = "切换版本"
+"xraySwitchClick" = "点击你想切换的版本"
+"xraySwitchClickDesk" = "请谨慎选择，旧版本可能配置不兼容"
+"operationHours" = "运行时间"
+"operationHoursDesc" = "系统自启动以来的运行时间"
+"systemLoad" = "系统负载"
+"connectionCount" = "连接数"
+"connectionCountDesc" = "所有网卡的总连接数"
+"upSpeed" = "所有网卡的总上传速度"
+"downSpeed" = "所有网卡的总下载速度"
+"totalSent" = "系统启动以来所有网卡的总上传流量"
+"totalReceive" = "系统启动以来所有网卡的总下载流量"
+"xraySwitchVersionDialog" = "切换 xray 版本"
+"xraySwitchVersionDialogDesc" = "是否切换 xray 版本至"
+"dontRefresh" = "安装中，请不要刷新此页面"
+
 
 [pages.inbounds]
 "title" = "入站列表"
