@@ -37,3 +37,18 @@
 
 [pages.setting]
 "title" = "Setting"
+"save" = "Save"
+"restartPanel" = "Restart Panel"
+
+"panelConfig" = "Panel Configuration"
+
+"panelListeningIP" = "Panel listening IP"
+"panelListeningIPDesc" = "Leave blank by default to monitor all IPs, restart the panel to take effect"
+"panelPort" = "Panel Port"
+"panelPortDesc" = "Restart the panel to take effect"
+"publicKeyPath" = "Panel certificate public key file path"
+"publicKeyPathDesc" = "Fill in an absolute path starting with '/', restart the panel to take effect"
+"privateKeyPath" = "Panel certificate key file path"
+"privateKeyPathDesc" = "Fill in an absolute path starting with '/', restart the panel to take effect"
+"panelUrlPath" = "panel url root path"
+"panelUrlPathDesc" = "Must start with '/' and end with '/', restart the panel to take effect"
