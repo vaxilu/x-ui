@@ -37,8 +37,10 @@
 "additional" = "额外"
 "monitor" = "监听"
 "certificate" = "证书"
-"fail" : "失败"
+"fail" = "失败"
 "success" = "成功"
+"getVersion" = "获取版本"
+"install" = "安装"
 
 [menu]
 "dashboard" = "系统状态"
@@ -161,3 +163,11 @@
 "telegramNotifyTimeDesc" = "采用Crontab定时格式,重启面板生效"
 "timeZonee" = "时区"
 "timeZoneDesc" = "定时任务按照该时区的时间运行，重启面板生效"
+
+[pages.setting.toasts]
+"modifySetting" = "修改设置"
+"getSetting" = "获取设置"
+"modifyUser" = "修改用户"
+"originalUserPassIncorrect" = "原用户名或原密码错误"
+"userPassMustBeNotEmpty" = "新用户名和新密码不能为空"
+

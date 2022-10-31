@@ -39,8 +39,8 @@
 "certificate" = "certificat"
 "fail" = "fail"
 "success" = "success"
-
-
+"getVersion" = "get version"
+"install" = "install"
 
 [menu]
 "dashboard" = "System Status"
@@ -164,5 +164,9 @@
 "timeZonee" = "Time Zone"
 "timeZoneDesc" = "The scheduled task runs according to the time in the time zone, and restarts the panel to take effect"
 
-
-
+[pages.setting.toasts]
+"modifySetting" = "modify setting"
+"getSetting" = "get setting"
+"modifyUser" = "modify user"
+"originalUserPassIncorrect" = "The original user name or original password is incorrect"
+"userPassMustBeNotEmpty" = "New username and new password cannot be empty"
