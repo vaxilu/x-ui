@@ -37,6 +37,8 @@
 "additional" = "额外"
 "monitor" = "监听"
 "certificate" = "证书"
+"fail" : "失败"
+"success" = "成功"
 
 [menu]
 "dashboard" = "系统状态"

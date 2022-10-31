@@ -37,6 +37,8 @@
 "additional" = "additional"
 "monitor" = "monitor"
 "certificate" = "certificat"
+"fail" = "fail"
+"success" = "success"
 
 
 
