@@ -51,6 +51,7 @@
 
 [pages.login]
 "title" = "Login"
+"loginAgain" = "The login time limit has expired, please log in again"
 
 [pages.login.toasts]
 "invalidFormData" = "Input Data Format Is Invalid"

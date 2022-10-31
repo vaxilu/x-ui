@@ -49,6 +49,7 @@
 
 [pages.login]
 "title" = "登录"
+"loginAgain" = "登录时效已过，请重新登录"
 
 [pages.login.toasts]
 "invalidFormData" = "数据格式错误"
