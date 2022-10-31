@@ -42,7 +42,6 @@ func GetLogLevel() LogLevel {
 }
 
 func IsDebug() bool {
-    return true
 	return os.Getenv("XUI_DEBUG") == "true"
 }
 
