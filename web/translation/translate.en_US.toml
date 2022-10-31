@@ -34,6 +34,8 @@
 "turnOn" = "turn on"
 "closure" = "closure"
 "domainName" = "domain name"
+"additional" = "additional"
+
 
 [menu]
 "dashboard" = "System Status"
@@ -102,6 +104,8 @@
 "network" = "network"
 "destinationPort" = "destination port"
 "targetAddress" = "target address"
+"disableInsecureEncryption" = "Disable insecure encryption"
+
 
 [pages.setting]
 "title" = "Setting"

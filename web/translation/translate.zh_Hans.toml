@@ -34,6 +34,7 @@
 "turnOn" = "开启"
 "closure" = "关闭"
 "domainName" = "域名"
+"additional" = "额外"
 
 [menu]
 "dashboard" = "系统状态"
@@ -101,6 +102,7 @@
 "network" = "网络"
 "destinationPort" = "目标端口"
 "targetAddress" = "目标地址"
+"disableInsecureEncryption" = "禁用不安全加密"
 
 
 
