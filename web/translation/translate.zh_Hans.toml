@@ -35,6 +35,8 @@
 "closure" = "关闭"
 "domainName" = "域名"
 "additional" = "额外"
+"monitor" = "监听"
+"certificate" = "证书"
 
 [menu]
 "dashboard" = "系统状态"
@@ -103,6 +105,17 @@
 "destinationPort" = "目标端口"
 "targetAddress" = "目标地址"
 "disableInsecureEncryption" = "禁用不安全加密"
+"monitorDesc" = "默认留空即可"
+"meansNoLimit" = "表示不限制"
+"totalFlow" = "总流量"
+"leaveBlankToNeverExpire" = "留空则永不到期"
+"noRecommendKeepDefault" = "没有特殊需求保持默认即可"
+"certificatePath" = "证书文件路径"
+"certificateContent" = "证书文件内容"
+"publicKeyPath" = "公钥文件路径"
+"publicKeyContent" = "公钥内容"
+"keyPath" = "密钥文件路径"
+"keyContent" = "密钥内容"
 
 
 

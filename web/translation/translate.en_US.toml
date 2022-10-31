@@ -35,6 +35,9 @@
 "closure" = "closure"
 "domainName" = "domain name"
 "additional" = "additional"
+"monitor" = "monitor"
+"certificate" = "certificat"
+
 
 
 [menu]
@@ -105,6 +108,17 @@
 "destinationPort" = "destination port"
 "targetAddress" = "target address"
 "disableInsecureEncryption" = "Disable insecure encryption"
+"monitorDesc" = "Leave blank by default"
+"meansNoLimit" = "means no limit"
+"totalFlow" = "total flow"
+"leaveBlankToNeverExpire" = "Leave blank to never expire"
+"noRecommendKeepDefault" = "There are no special requirements to keep the default"
+"certificatePath" = "certificate file path"
+"certificateContent" = "certificate file content"
+"publicKeyPath" = "public key file path"
+"publicKeyContent" = "public key content"
+"keyPath" = "key file path"
+"keyContent" = "key content"
 
 
 [pages.setting]
