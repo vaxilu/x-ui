@@ -123,6 +123,9 @@
 "keyPath" = "key file path"
 "keyContent" = "key content"
 
+[pages.inbounds.toasts]
+"obtain" = "Obtain"
+
 
 [pages.setting]
 "title" = "Setting"
