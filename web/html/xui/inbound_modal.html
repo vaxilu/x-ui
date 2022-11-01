@@ -71,7 +71,17 @@
                 if (oldValue === 'kcp') {
                     this.inModal.inbound.tls = false;
                 }
-            }
+            },
+            addClient(protocol,value, clients) {
+                switch (protocol) {
+                    case Protocols.VMESS: clients.push(new Inbound.VmessSettings.Vmess());
+                    default: return null;
+                }
+            },
+            removeClient(index, clients) {
+                clients.splice(index, 1);
+            },
+
         }
     });
 
