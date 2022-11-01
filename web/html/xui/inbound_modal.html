@@ -75,6 +75,7 @@
             addClient(protocol,value, clients) {
                 switch (protocol) {
                     case Protocols.VMESS: clients.push(new Inbound.VmessSettings.Vmess());
+                    case Protocols.VLESS: clients.push(new Inbound.VLESSSettings.VLESS());
                     default: return null;
                 }
             },
