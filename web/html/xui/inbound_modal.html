@@ -74,8 +74,8 @@
             },
             addClient(protocol,value, clients) {
                 switch (protocol) {
-                    case Protocols.VMESS: clients.push(new Inbound.VmessSettings.Vmess());
-                    case Protocols.VLESS: clients.push(new Inbound.VLESSSettings.VLESS());
+                    case Protocols.VMESS: return clients.push(new Inbound.VmessSettings.Vmess());
+                    case Protocols.VLESS: return clients.push(new Inbound.VLESSSettings.VLESS());
                     default: return null;
                 }
             },
