@@ -318,7 +318,7 @@
             },
             showQrcode(dbInbound) {
                 const link = dbInbound.genLink();
-                qrModal.show('二维码', link);
+                qrModal.show('二维码', link, dbInbound);
             },
             showInfo(dbInbound) {
                 infoModal.show(dbInbound);
