@@ -46,9 +46,7 @@ func processLogFile() {
 		checkError(err)
 	}
 	
-	lines := ss.Split(string(data), "\n")	if err != nil {
-		return nil
-	}
+	lines := ss.Split(string(data), "\n")
 	for _, line := range lines {
 		ipRegx, _ := regexp.Compile(`[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+`)
 		emailRegx, _ := regexp.Compile(`email:.+`)
