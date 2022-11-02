@@ -26,6 +26,7 @@ func NewCheckClientIpJob() *CheckClientIpJob {
 }
 
 func (j *CheckClientIpJob) Run() {
+	logger.Debug("Check Client IP Job...")
 	processLogFile()
 }
 
@@ -45,7 +46,9 @@ func processLogFile() {
 		checkError(err)
 	}
 	
-	lines := ss.Split(string(data), "\n")
+	lines := ss.Split(string(data), "\n")	if err != nil {
+		return nil
+	}
 	for _, line := range lines {
 		ipRegx, _ := regexp.Compile(`[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+`)
 		emailRegx, _ := regexp.Compile(`email:.+`)
@@ -77,18 +80,21 @@ func processLogFile() {
 		}
 
 	}
-	for clientEmail, ips := range InboundClientIps {
-		inboundClientIps,err := GetInboundClientIps(clientEmail)
-		if(err != nil){
-			addInboundClientIps(clientEmail,ips)
-
-		}else{
-			updateInboundClientIps(inboundClientIps,clientEmail,ips)
-		}
-			
+	err = ClearInboudClientIps()
+	if err != nil {
+		return
 	}
 
+	var inboundsClientIps []*model.InboundClientIps
+	for clientEmail, ips := range InboundClientIps {
+		inboundClientIps := GetInboundClientIps(clientEmail, ips)
+		if inboundClientIps != nil {
+			inboundsClientIps = append(inboundsClientIps, inboundClientIps)
+		}
+	}
 
+	err = AddInboundsClientIps(inboundsClientIps)
+	checkError(err)
 }
 func GetAccessLogPath() string {
 	
@@ -97,9 +103,7 @@ func GetAccessLogPath() string {
 
 	jsonConfig := map[string]interface{}{}
     err = json.Unmarshal([]byte(config), &jsonConfig)
-    if err != nil {
-        logger.Warning(err)
-    }
+	checkError(err)
 	if(jsonConfig["log"] != nil) {
 		jsonLog := jsonConfig["log"].(map[string]interface{})
 		if(jsonLog["access"] != nil) {
@@ -126,85 +130,55 @@ func contains(s []string, str string) bool {
 
 	return false
 }
-// https://codereview.stackexchange.com/a/192954
-func Unique(slice []string) []string {
-    // create a map with all the values as key
-    uniqMap := make(map[string]struct{})
-    for _, v := range slice {
-        uniqMap[v] = struct{}{}
-    }
 
-    // turn the map keys into a slice
-    uniqSlice := make([]string, 0, len(uniqMap))
-    for v := range uniqMap {
-        uniqSlice = append(uniqSlice, v)
-    }
-    return uniqSlice
-}
-
-func GetInboundClientIps(clientEmail string) (*model.InboundClientIps, error) {
+func ClearInboudClientIps() error {
 	db := database.GetDB()
-	InboundClientIps := &model.InboundClientIps{}
-	err := db.Model(model.InboundClientIps{}).Where("client_email = ?", clientEmail).First(InboundClientIps).Error
-	if err != nil {
-		return nil, err
-	}
-	return InboundClientIps, nil
+	err := db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&model.InboundClientIps{}).Error
+	checkError(err)
+	return err
 }
-func addInboundClientIps(clientEmail string,ips []string) error {
+
+func GetInboundClientIps(clientEmail string, ips []string) *model.InboundClientIps {
+	jsonIps, err := json.Marshal(ips)
+	if err != nil {
+		return nil
+	}
+
 	inboundClientIps := &model.InboundClientIps{}
-    jsonIps, err := json.Marshal(ips)
-	checkError(err)
-
 	inboundClientIps.ClientEmail = clientEmail
 	inboundClientIps.Ips = string(jsonIps)
-	
 
-	db := database.GetDB()
-	tx := db.Begin()
-
-	defer func() {
-		if err == nil {
-			tx.Commit()
-		} else {
-			tx.Rollback()
-		}
-	}()
-
-	err = tx.Save(inboundClientIps).Error
+	inbound, err := GetInboundByEmail(clientEmail)
 	if err != nil {
-		return err
+		return nil
 	}
-	return nil
-}
-func updateInboundClientIps(inboundClientIps *model.InboundClientIps,clientEmail string,ips []string) error {
-
-    jsonIps, err := json.Marshal(ips)
-	checkError(err)
-
-	inboundClientIps.ClientEmail = clientEmail
-	inboundClientIps.Ips = string(jsonIps)
-	
-	// check inbound limitation
-	inbound, _ := GetInboundByEmail(clientEmail)
-
 	limitIpRegx, _ := regexp.Compile(`"limitIp": .+`)
-
 	limitIpMactch := limitIpRegx.FindString(inbound.Settings)
 	limitIpMactch =  ss.Split(limitIpMactch, `"limitIp": `)[1]
     limitIp, err := strconv.Atoi(limitIpMactch)
-
-
+	if err != nil {
+		return nil
+	}
 	if(limitIp < len(ips) && limitIp != 0 && inbound.Enable) {
-
 		DisableInbound(inbound.Id)
 	}
 
+	return inboundClientIps
+}
+
+func AddInboundsClientIps(inboundsClientIps []*model.InboundClientIps) error {
+	if inboundsClientIps == nil || len(inboundsClientIps) == 0 {
+		return nil
+	}
 	db := database.GetDB()
-	err = db.Save(inboundClientIps).Error
+	tx := db.Begin()
+
+	err := tx.Save(inboundsClientIps).Error
 	if err != nil {
+		tx.Rollback()
 		return err
 	}
+	tx.Commit()
 	return nil
 }
 
@@ -217,7 +191,8 @@ func GetInboundByEmail(clientEmail string) (*model.Inbound, error) {
 	}
 	return inbounds, nil
 }
-func DisableInbound(id int) error{
+
+func DisableInbound(id int) error {
 	db := database.GetDB()
 	result := db.Model(model.Inbound{}).
 		Where("id = ? and enable = ?", id, true).
