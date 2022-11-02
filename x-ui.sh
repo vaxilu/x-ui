@@ -451,7 +451,6 @@ ssl_cert_issue_standalone() {
     #check for acme.sh first
     if ! command -v ~/.acme.sh/acme.sh &> /dev/null
     then
-        echo "acme.sh 无法找到。 我们将安装它"
         install_acme
         if [ $? -ne 0 ]; then
                 LOGE "安装 acme 失败，请检查日志"
