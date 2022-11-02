@@ -449,12 +449,11 @@ install_acme() {
 #method for standalone mode
 ssl_cert_issue_standalone() {
     #check for acme.sh first
-    if ! command -v ~/.acme.sh/acme.sh &> /dev/null
-    then
+    if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
         install_acme
         if [ $? -ne 0 ]; then
-                LOGE "安装 acme 失败，请检查日志"
-                exit 1
+            LOGE "安装 acme 失败，请检查日志"
+            exit 1
         fi
     fi
     #install socat second
