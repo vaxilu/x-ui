@@ -22,7 +22,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/hossinasaadi/x-ui/master/insta
 
 ## Manual install & upgrade
 
-1. First download the latest compressed package from https://github.com/vaxilu/x-ui/releases , generally choose Architecture `amd64`
+1. First download the latest compressed package from https://github.com/hossinasaadi/x-ui/releases , generally choose Architecture `amd64`
 2. Then upload the compressed package to the server's `/root/` directory and `root` rootlog in to the server with user
 
 > If your server cpu architecture is not `amd64` replace another architecture
@@ -129,7 +129,7 @@ More features are planned...
 
 ## Migrating from v2-ui
 
-First install the latest version of x-ui on the server where v2-ui is installed, and then use the following command to migrate, which will migrate the native v2-ui `所All inbound account data` to x-ui，`Panel settings and username passwords are not migrated`
+First install the latest version of x-ui on the server where v2-ui is installed, and then use the following command to migrate, which will migrate the native v2-ui `All inbound account data` to x-ui，`Panel settings and username passwords are not migrated`
 
 > Please `Close v2-ui` and `restart x-ui`, otherwise the inbound of v2-ui will cause a `port conflict with the inbound of x-ui`
 
