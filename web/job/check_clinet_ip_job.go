@@ -105,7 +105,7 @@ func processLogFile() {
 	LimitDevice := func() { LimitDevice() }
 
 	stop := schedule(LimitDevice, 1000 *time.Millisecond)
-	time.Sleep(10 * time.Second)
+	time.Sleep(60 * time.Second)
 	stop <- true
  
 }
