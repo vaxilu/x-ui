@@ -42,7 +42,7 @@ systemctl restart x-ui
 
 ## Install using docker
 
-> This docker tutorial and docker image are provided by [Chasing66](https://github.com/Chasing66)提供
+> This docker tutorial and docker image are provided by [Chasing66](https://github.com/Chasing66)
 
 1. install docker
 
@@ -69,7 +69,7 @@ docker build -t x-ui .
 
 ## SSL certificate application
 
-> This feature and tutorial are provided by [FranzKafkaYu](https://github.com/FranzKafkaYu)提供
+> This feature and tutorial are provided by [FranzKafkaYu](https://github.com/FranzKafkaYu)
 
 The script has a built-in SSL certificate application function. To use this script to apply for a certificate, the following conditions must be met:
 
@@ -93,7 +93,7 @@ Precautions:
 
 ## Tg robot use (under development, temporarily unavailable)
 
-> This feature and tutorial are provided by [FranzKafkaYu](https://github.com/FranzKafkaYu)提供
+> This feature and tutorial are provided by [FranzKafkaYu](https://github.com/FranzKafkaYu)
 
 X-UI supports daily traffic notification, panel login reminder and other functions through the Tg robot. To use the Tg robot, you need to apply for the specific application tutorial. You can refer to the [blog](https://coderfan.net/how-to-use-telegram-bot-to-alarm-you-when-someone-login-into-your-vps.html)
 Set the robot-related parameters in the panel background, including:
