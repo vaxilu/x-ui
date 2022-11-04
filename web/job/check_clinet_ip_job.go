@@ -104,7 +104,7 @@ func processLogFile() {
 	// check if inbound connection is more than limited ip and drop connection
 	LimitDevice := func() { LimitDevice() }
 
-	stop := schedule(LimitDevice, 1000 *time.Millisecond)
+	stop := schedule(LimitDevice, 700 *time.Millisecond)
 	time.Sleep(60 * time.Second)
 	stop <- true
  
@@ -211,21 +211,6 @@ func GetInboundByEmail(clientEmail string) (*model.Inbound, error) {
 		return nil, err
 	}
 	return inbounds, nil
-}
-
-func DisableInbound(id int) error {
-	db := database.GetDB()
-	result := db.Model(model.Inbound{}).
-		Where("id = ? and enable = ?", id, true).
-		Update("enable", false)
-	err := result.Error
-	logger.Warning("disable inbound with id:",id)
-
-	if err == nil {
-		job.xrayService.SetToNeedRestart()
-	}
-
-	return err
 }
 
 func LimitDevice(){
