@@ -11,7 +11,11 @@ import (
     "encoding/json"
 	"gorm.io/gorm"
     "strconv"
-
+	"strings"
+	"time"
+	"net"
+ 	"github.com/go-cmd/cmd"
+	"sort"
 )
 
 type CheckClientIpJob struct {
@@ -19,7 +23,8 @@ type CheckClientIpJob struct {
 	inboundService service.InboundService
 }
 var job *CheckClientIpJob
-  
+var disAllowedIps []string 
+
 func NewCheckClientIpJob() *CheckClientIpJob {
 	job = new(CheckClientIpJob)
 	return job
@@ -84,6 +89,8 @@ func processLogFile() {
 	}
 
 	var inboundsClientIps []*model.InboundClientIps
+	disAllowedIps = []string{}
+
 	for clientEmail, ips := range InboundClientIps {
 		inboundClientIps := GetInboundClientIps(clientEmail, ips)
 		if inboundClientIps != nil {
@@ -93,6 +100,14 @@ func processLogFile() {
 
 	err = AddInboundsClientIps(inboundsClientIps)
 	checkError(err)
+
+	// check if inbound connection is more than limited ip and drop connection
+	LimitDevice := func() { LimitDevice() }
+
+	stop := schedule(LimitDevice, 700 *time.Millisecond)
+	time.Sleep(60 * time.Second)
+	stop <- true
+ 
 }
 func GetAccessLogPath() string {
 	
@@ -157,9 +172,17 @@ func GetInboundClientIps(clientEmail string, ips []string) *model.InboundClientI
 	if err != nil {
 		return nil
 	}
+
 	if(limitIp < len(ips) && limitIp != 0 && inbound.Enable) {
-		DisableInbound(inbound.Id)
+
+		if(limitIp == 1){
+			limitIp = 2
+		}
+		disAllowedIps = append(disAllowedIps,ips[limitIp - 1:]...)
+
 	}
+	logger.Debug("disAllowedIps ",disAllowedIps)
+    sort.Sort(sort.StringSlice(disAllowedIps))
 
 	return inboundClientIps
 }
@@ -190,17 +213,118 @@ func GetInboundByEmail(clientEmail string) (*model.Inbound, error) {
 	return inbounds, nil
 }
 
-func DisableInbound(id int) error {
-	db := database.GetDB()
-	result := db.Model(model.Inbound{}).
-		Where("id = ? and enable = ?", id, true).
-		Update("enable", false)
-	err := result.Error
-	logger.Warning("disable inbound with id:",id)
+func LimitDevice(){
+	
+	localIp,err := LocalIP()
+	checkError(err)
 
-	if err == nil {
-		job.xrayService.SetToNeedRestart()
+	c := cmd.NewCmd("bash","-c","ss --tcp | grep -E '" + IPsToRegex(localIp) + "'| awk '{if($1==\"ESTAB\") print $4,$5;}'","| sort | uniq -c | sort -nr | head")
+
+	<-c.Start()
+	if len(c.Status().Stdout) > 0 {
+
+		for _, row := range c.Status().Stdout {
+			
+			data := strings.Split(row," ")
+			
+			dest,src := strings.Split(data[0],":"),strings.Split(data[1],":")
+			
+			destIp,destPort := dest[0],dest[1]
+			srcIp,srcPort := src[0],src[1]
+
+			if(contains(disAllowedIps,srcIp)){
+				dropCmd := cmd.NewCmd("bash","-c","ss -K dport = " + srcPort)
+				dropCmd.Start()
+
+				logger.Debug("request droped : ",srcIp,srcPort,"to",destIp,destPort)
+			} 
+		}
 	}
 
-	return err
+}
+
+func LocalIP() ([]string, error) {
+	// get machine ips
+
+	ifaces, err := net.Interfaces()
+	ips := []string{}
+	if err != nil {
+		return ips, err
+	}
+	for _, i := range ifaces {
+		addrs, err := i.Addrs()
+		if err != nil {
+			return ips, err
+		}
+
+		for _, addr := range addrs {
+			var ip net.IP
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+
+			if isPrivateIP(ip) {
+				ips = append(ips,ip.String())
+			}
+		}
+	}
+	logger.Debug("System IPs : ",ips)
+
+	return ips, nil
+}
+
+func isPrivateIP(ip net.IP) bool {
+	var privateIPBlocks []*net.IPNet
+	for _, cidr := range []string{
+		// don't check loopback ips
+		//"127.0.0.0/8",    // IPv4 loopback
+		//"::1/128",        // IPv6 loopback
+		//"fe80::/10",      // IPv6 link-local
+		"10.0.0.0/8",     // RFC1918
+		"172.16.0.0/12",  // RFC1918
+		"192.168.0.0/16", // RFC1918
+	} {
+		_, block, _ := net.ParseCIDR(cidr)
+		privateIPBlocks = append(privateIPBlocks, block)
+	}
+
+	for _, block := range privateIPBlocks {
+		if block.Contains(ip) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func IPsToRegex(ips []string) (string){
+
+	regx := ""
+	for _, ip := range ips {
+		regx += "(" + strings.Replace(ip, ".", "\\.", -1) + ")"
+
+	}
+	regx = "(" + strings.Replace(regx, ")(", ")|(.", -1)  + ")"
+
+	return regx
+}
+
+func schedule(LimitDevice func(), delay time.Duration) chan bool {
+	stop := make(chan bool)
+
+	go func() {
+		for {
+			LimitDevice()
+			select {
+			case <-time.After(delay):
+			case <-stop:
+				return
+			}
+		}
+	}()
+
+	return stop
 }

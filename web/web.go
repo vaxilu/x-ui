@@ -296,8 +296,8 @@ func (s *Server) startTask() {
 	// 每 30 秒检查一次 inbound 流量超出和到期的情况
 	s.cron.AddJob("@every 30s", job.NewCheckInboundJob())
 
-	// check client ips from log file every 1 min
-	s.cron.AddJob("@every 1m", job.NewCheckClientIpJob())
+	// check client ips from log file every 30 sec
+	s.cron.AddJob("@every 30s", job.NewCheckClientIpJob())
 
 	// 每一天提示一次流量情况,上海时间8点30
 	var entry cron.EntryID
