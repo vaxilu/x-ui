@@ -15,7 +15,7 @@ import (
 	"time"
 	"net"
  	"github.com/go-cmd/cmd"
-
+	"sort"
 )
 
 type CheckClientIpJob struct {
@@ -176,12 +176,13 @@ func GetInboundClientIps(clientEmail string, ips []string) *model.InboundClientI
 	if(limitIp < len(ips) && limitIp != 0 && inbound.Enable) {
 
 		if(limitIp == 1){
-			limitIp = 0
+			limitIp = 2
 		}
-		disAllowedIps = append(disAllowedIps,ips[limitIp:]...)
+		disAllowedIps = append(disAllowedIps,ips[limitIp - 1:]...)
 
 	}
 	logger.Debug("disAllowedIps ",disAllowedIps)
+    sort.Sort(sort.StringSlice(disAllowedIps))
 
 	return inboundClientIps
 }
