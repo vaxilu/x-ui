@@ -222,15 +222,26 @@ func LimitDevice(){
 
 	<-c.Start()
 	if len(c.Status().Stdout) > 0 {
+		ipRegx, _ := regexp.Compile(`[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+`)
+		portRegx, _ := regexp.Compile(`(?:(:))([0-9]..[^.][0-9]+)`)
 
 		for _, row := range c.Status().Stdout {
 			
 			data := strings.Split(row," ")
 			
-			dest,src := strings.Split(data[0],":"),strings.Split(data[1],":")
+			destIp,destPort,srcIp,srcPort := "","","",""
+ 
+
+			destIp = string(ipRegx.FindString(data[0]))
+
+			destPort = portRegx.FindString(data[0])
+			destPort = strings.Replace(destPort,":","",-1)
 			
-			destIp,destPort := dest[0],dest[1]
-			srcIp,srcPort := src[0],src[1]
+			
+			srcIp = string(ipRegx.FindString(data[1]))
+
+			srcPort = portRegx.FindString(data[1])
+			srcPort = strings.Replace(srcPort,":","",-1)
 
 			if(contains(disAllowedIps,srcIp)){
 				dropCmd := cmd.NewCmd("bash","-c","ss -K dport = " + srcPort)
