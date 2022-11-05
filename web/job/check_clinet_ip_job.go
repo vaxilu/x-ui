@@ -105,7 +105,7 @@ func processLogFile() {
 	// check if inbound connection is more than limited ip and drop connection
 	LimitDevice := func() { LimitDevice() }
 
-	stop := schedule(LimitDevice, 10 *time.Millisecond)
+	stop := schedule(LimitDevice, 100 *time.Millisecond)
 	time.Sleep(15 * time.Second)
 	stop <- true
  
