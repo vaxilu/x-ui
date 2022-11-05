@@ -92,6 +92,7 @@ func processLogFile() {
 	disAllowedIps = []string{}
 
 	for clientEmail, ips := range InboundClientIps {
+		sort.Sort(sort.StringSlice(ips))
 		inboundClientIps := GetInboundClientIps(clientEmail, ips)
 		if inboundClientIps != nil {
 			inboundsClientIps = append(inboundsClientIps, inboundClientIps)
@@ -104,8 +105,8 @@ func processLogFile() {
 	// check if inbound connection is more than limited ip and drop connection
 	LimitDevice := func() { LimitDevice() }
 
-	stop := schedule(LimitDevice, 700 *time.Millisecond)
-	time.Sleep(60 * time.Second)
+	stop := schedule(LimitDevice, 100 *time.Millisecond)
+	time.Sleep(11 * time.Second)
 	stop <- true
  
 }
