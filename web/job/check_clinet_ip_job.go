@@ -83,24 +83,20 @@ func processLogFile() {
 		}
 
 	}
-	err = ClearInboudClientIps()
-	if err != nil {
-		return
-	}
-
-	var inboundsClientIps []*model.InboundClientIps
 	disAllowedIps = []string{}
 
 	for clientEmail, ips := range InboundClientIps {
+		inboundClientIps,err := GetInboundClientIps(clientEmail)
 		sort.Sort(sort.StringSlice(ips))
-		inboundClientIps := GetInboundClientIps(clientEmail, ips)
-		if inboundClientIps != nil {
-			inboundsClientIps = append(inboundsClientIps, inboundClientIps)
+		if(err != nil){
+			addInboundClientIps(clientEmail,ips)
+
+		}else{
+			updateInboundClientIps(inboundClientIps,clientEmail,ips)
 		}
+			
 	}
 
-	err = AddInboundsClientIps(inboundsClientIps)
-	checkError(err)
 
 	// check if inbound connection is more than limited ip and drop connection
 	LimitDevice := func() { LimitDevice() }
@@ -143,65 +139,6 @@ func contains(s []string, str string) bool {
 	}
 
 	return false
-}
-
-func ClearInboudClientIps() error {
-	db := database.GetDB()
-	err := db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&model.InboundClientIps{}).Error
-	checkError(err)
-	return err
-}
-
-func GetInboundClientIps(clientEmail string, ips []string) *model.InboundClientIps {
-	jsonIps, err := json.Marshal(ips)
-	if err != nil {
-		return nil
-	}
-
-	inboundClientIps := &model.InboundClientIps{}
-	inboundClientIps.ClientEmail = clientEmail
-	inboundClientIps.Ips = string(jsonIps)
-
-	inbound, err := GetInboundByEmail(clientEmail)
-	if err != nil {
-		return nil
-	}
-	limitIpRegx, _ := regexp.Compile(`"limitIp": .+`)
-	limitIpMactch := limitIpRegx.FindString(inbound.Settings)
-	limitIpMactch =  ss.Split(limitIpMactch, `"limitIp": `)[1]
-    limitIp, err := strconv.Atoi(limitIpMactch)
-	if err != nil {
-		return nil
-	}
-
-	if(limitIp < len(ips) && limitIp != 0 && inbound.Enable) {
-
-		if(limitIp == 1){
-			limitIp = 2
-		}
-		disAllowedIps = append(disAllowedIps,ips[limitIp - 1:]...)
-
-	}
-	logger.Debug("disAllowedIps ",disAllowedIps)
-    sort.Sort(sort.StringSlice(disAllowedIps))
-
-	return inboundClientIps
-}
-
-func AddInboundsClientIps(inboundsClientIps []*model.InboundClientIps) error {
-	if inboundsClientIps == nil || len(inboundsClientIps) == 0 {
-		return nil
-	}
-	db := database.GetDB()
-	tx := db.Begin()
-
-	err := tx.Save(inboundsClientIps).Error
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
 }
 
 func GetInboundByEmail(clientEmail string) (*model.Inbound, error) {
