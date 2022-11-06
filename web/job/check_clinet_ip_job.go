@@ -140,6 +140,91 @@ func contains(s []string, str string) bool {
 
 	return false
 }
+func GetInboundClientIps(clientEmail string) (*model.InboundClientIps, error) {
+	db := database.GetDB()
+	InboundClientIps := &model.InboundClientIps{}
+	err := db.Model(model.InboundClientIps{}).Where("client_email = ?", clientEmail).First(InboundClientIps).Error
+	if err != nil {
+		return nil, err
+	}
+	return InboundClientIps, nil
+}
+func addInboundClientIps(clientEmail string,ips []string) error {
+	inboundClientIps := &model.InboundClientIps{}
+    jsonIps, err := json.Marshal(ips)
+	checkError(err)
+
+	inboundClientIps.ClientEmail = clientEmail
+	inboundClientIps.Ips = string(jsonIps)
+	
+
+	db := database.GetDB()
+	tx := db.Begin()
+
+	defer func() {
+		if err == nil {
+			tx.Commit()
+		} else {
+			tx.Rollback()
+		}
+	}()
+
+	err = tx.Save(inboundClientIps).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func updateInboundClientIps(inboundClientIps *model.InboundClientIps,clientEmail string,ips []string) error {
+
+    jsonIps, err := json.Marshal(ips)
+	checkError(err)
+
+	inboundClientIps.ClientEmail = clientEmail
+	inboundClientIps.Ips = string(jsonIps)
+	
+	// check inbound limitation
+	inbound, _ := GetInboundByEmail(clientEmail)
+
+	limitIpRegx, _ := regexp.Compile(`"limitIp": .+`)
+
+	limitIpMactch := limitIpRegx.FindString(inbound.Settings)
+	limitIpMactch =  ss.Split(limitIpMactch, `"limitIp": `)[1]
+    limitIp, err := strconv.Atoi(limitIpMactch)
+
+
+	if(limitIp < len(ips) && limitIp != 0 && inbound.Enable) {
+
+		if(limitIp == 1){
+			limitIp = 2
+		}
+		disAllowedIps = append(disAllowedIps,ips[limitIp - 1:]...)
+
+	}
+	logger.Debug("disAllowedIps ",disAllowedIps)
+    sort.Sort(sort.StringSlice(disAllowedIps))
+
+	db := database.GetDB()
+	err = db.Save(inboundClientIps).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func DisableInbound(id int) error{
+	db := database.GetDB()
+	result := db.Model(model.Inbound{}).
+		Where("id = ? and enable = ?", id, true).
+		Update("enable", false)
+	err := result.Error
+	logger.Warning("disable inbound with id:",id)
+
+	if err == nil {
+		job.xrayService.SetToNeedRestart()
+	}
+
+	return err
+}
 
 func GetInboundByEmail(clientEmail string) (*model.Inbound, error) {
 	db := database.GetDB()
