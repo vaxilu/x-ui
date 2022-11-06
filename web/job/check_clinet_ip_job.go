@@ -83,24 +83,20 @@ func processLogFile() {
 		}
 
 	}
-	err = ClearInboudClientIps()
-	if err != nil {
-		return
-	}
-
-	var inboundsClientIps []*model.InboundClientIps
 	disAllowedIps = []string{}
 
 	for clientEmail, ips := range InboundClientIps {
+		inboundClientIps,err := GetInboundClientIps(clientEmail)
 		sort.Sort(sort.StringSlice(ips))
-		inboundClientIps := GetInboundClientIps(clientEmail, ips)
-		if inboundClientIps != nil {
-			inboundsClientIps = append(inboundsClientIps, inboundClientIps)
+		if(err != nil){
+			addInboundClientIps(clientEmail,ips)
+
+		}else{
+			updateInboundClientIps(inboundClientIps,clientEmail,ips)
 		}
+			
 	}
 
-	err = AddInboundsClientIps(inboundsClientIps)
-	checkError(err)
 
 	// check if inbound connection is more than limited ip and drop connection
 	LimitDevice := func() { LimitDevice() }
@@ -144,35 +140,58 @@ func contains(s []string, str string) bool {
 
 	return false
 }
-
-func ClearInboudClientIps() error {
+func GetInboundClientIps(clientEmail string) (*model.InboundClientIps, error) {
 	db := database.GetDB()
-	err := db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&model.InboundClientIps{}).Error
-	checkError(err)
-	return err
-}
-
-func GetInboundClientIps(clientEmail string, ips []string) *model.InboundClientIps {
-	jsonIps, err := json.Marshal(ips)
+	InboundClientIps := &model.InboundClientIps{}
+	err := db.Model(model.InboundClientIps{}).Where("client_email = ?", clientEmail).First(InboundClientIps).Error
 	if err != nil {
-		return nil
+		return nil, err
 	}
-
+	return InboundClientIps, nil
+}
+func addInboundClientIps(clientEmail string,ips []string) error {
 	inboundClientIps := &model.InboundClientIps{}
+    jsonIps, err := json.Marshal(ips)
+	checkError(err)
+
 	inboundClientIps.ClientEmail = clientEmail
 	inboundClientIps.Ips = string(jsonIps)
+	
 
-	inbound, err := GetInboundByEmail(clientEmail)
+	db := database.GetDB()
+	tx := db.Begin()
+
+	defer func() {
+		if err == nil {
+			tx.Commit()
+		} else {
+			tx.Rollback()
+		}
+	}()
+
+	err = tx.Save(inboundClientIps).Error
 	if err != nil {
-		return nil
+		return err
 	}
+	return nil
+}
+func updateInboundClientIps(inboundClientIps *model.InboundClientIps,clientEmail string,ips []string) error {
+
+    jsonIps, err := json.Marshal(ips)
+	checkError(err)
+
+	inboundClientIps.ClientEmail = clientEmail
+	inboundClientIps.Ips = string(jsonIps)
+	
+	// check inbound limitation
+	inbound, _ := GetInboundByEmail(clientEmail)
+
 	limitIpRegx, _ := regexp.Compile(`"limitIp": .+`)
+
 	limitIpMactch := limitIpRegx.FindString(inbound.Settings)
 	limitIpMactch =  ss.Split(limitIpMactch, `"limitIp": `)[1]
     limitIp, err := strconv.Atoi(limitIpMactch)
-	if err != nil {
-		return nil
-	}
+
 
 	if(limitIp < len(ips) && limitIp != 0 && inbound.Enable) {
 
@@ -185,23 +204,26 @@ func GetInboundClientIps(clientEmail string, ips []string) *model.InboundClientI
 	logger.Debug("disAllowedIps ",disAllowedIps)
     sort.Sort(sort.StringSlice(disAllowedIps))
 
-	return inboundClientIps
-}
-
-func AddInboundsClientIps(inboundsClientIps []*model.InboundClientIps) error {
-	if inboundsClientIps == nil || len(inboundsClientIps) == 0 {
-		return nil
-	}
 	db := database.GetDB()
-	tx := db.Begin()
-
-	err := tx.Save(inboundsClientIps).Error
+	err = db.Save(inboundClientIps).Error
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
-	tx.Commit()
 	return nil
+}
+func DisableInbound(id int) error{
+	db := database.GetDB()
+	result := db.Model(model.Inbound{}).
+		Where("id = ? and enable = ?", id, true).
+		Update("enable", false)
+	err := result.Error
+	logger.Warning("disable inbound with id:",id)
+
+	if err == nil {
+		job.xrayService.SetToNeedRestart()
+	}
+
+	return err
 }
 
 func GetInboundByEmail(clientEmail string) (*model.Inbound, error) {
