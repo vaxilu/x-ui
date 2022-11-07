@@ -9,7 +9,6 @@ import (
  	ss "strings"
 	"regexp"
     "encoding/json"
-	"gorm.io/gorm"
     "strconv"
 	"strings"
 	"time"
@@ -33,6 +32,12 @@ func NewCheckClientIpJob() *CheckClientIpJob {
 func (j *CheckClientIpJob) Run() {
 	logger.Debug("Check Client IP Job...")
 	processLogFile()
+
+	// disAllowedIps = []string{"192.168.1.183","192.168.1.197"}
+	blockedIps := []byte(ss.Join(disAllowedIps,","))
+    err := os.WriteFile("./bin/blockedIPs", blockedIps, 0755)
+	checkError(err)
+
 }
 
 func processLogFile() {
@@ -101,8 +106,8 @@ func processLogFile() {
 	// check if inbound connection is more than limited ip and drop connection
 	LimitDevice := func() { LimitDevice() }
 
-	stop := schedule(LimitDevice, 100 *time.Millisecond)
-	time.Sleep(15 * time.Second)
+	stop := schedule(LimitDevice, 1000 *time.Millisecond)
+	time.Sleep(10 * time.Second)
 	stop <- true
  
 }
@@ -184,9 +189,14 @@ func updateInboundClientIps(inboundClientIps *model.InboundClientIps,clientEmail
 	inboundClientIps.Ips = string(jsonIps)
 	
 	// check inbound limitation
-	inbound, _ := GetInboundByEmail(clientEmail)
+	inbound, err := GetInboundByEmail(clientEmail)
+	checkError(err)
 
 	limitIpRegx, _ := regexp.Compile(`"limitIp": .+`)
+	if inbound.Settings == "" {
+		logger.Debug("wrong data ",inbound)
+		return nil
+	}
 
 	limitIpMactch := limitIpRegx.FindString(inbound.Settings)
 	limitIpMactch =  ss.Split(limitIpMactch, `"limitIp": `)[1]
@@ -230,7 +240,7 @@ func GetInboundByEmail(clientEmail string) (*model.Inbound, error) {
 	db := database.GetDB()
 	var inbounds *model.Inbound
 	err := db.Model(model.Inbound{}).Where("settings LIKE ?", "%" + clientEmail + "%").Find(&inbounds).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
 		return nil, err
 	}
 	return inbounds, nil
