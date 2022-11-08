@@ -30,6 +30,11 @@ func (a *InboundController) initRouter(g *gin.RouterGroup) {
 	g.POST("/add", a.addInbound)
 	g.POST("/del/:id", a.delInbound)
 	g.POST("/update/:id", a.updateInbound)
+
+	g.POST("/clientIps/:email", a.getClientIps)
+	g.POST("/clearClientIps/:email", a.clearClientIps)
+	
+
 }
 
 func (a *InboundController) startTask() {
@@ -105,4 +110,24 @@ func (a *InboundController) updateInbound(c *gin.Context) {
 	if err == nil {
 		a.xrayService.SetToNeedRestart()
 	}
+}
+func (a *InboundController) getClientIps(c *gin.Context) {
+	email := c.Param("email")
+
+	ips , err := a.inboundService.GetInboundClientIps(email)
+	if err != nil {
+		jsonObj(c, "No IP Record", nil)
+		return
+	}
+	jsonObj(c, ips, nil)
+}
+func (a *InboundController) clearClientIps(c *gin.Context) {
+	email := c.Param("email")
+
+	err := a.inboundService.ClearClientIps(email)
+	if err != nil {
+		jsonMsg(c, "修改", err)
+		return
+	}
+	jsonMsg(c, "Log Cleared", nil)
 }

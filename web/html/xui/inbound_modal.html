@@ -11,13 +11,15 @@
         visible: false,
         confirmLoading: false,
         okText: '{{ i18n "sure" }}',
+        isEdit: false,
         confirm: null,
         inbound: new Inbound(),
         dbInbound: new DBInbound(),
+        clientIps: "",
         ok() {
             ObjectUtil.execute(inModal.confirm, inModal.inbound, inModal.dbInbound);
         },
-        show({ title='', okText='{{ i18n "sure" }}', inbound=null, dbInbound=null, confirm=(inbound, dbInbound)=>{} }) {
+        show({ title='', okText='{{ i18n "sure" }}', inbound=null, dbInbound=null, confirm=(inbound, dbInbound)=>{}, isEdit=false  }) {
             this.title = title;
             this.okText = okText;
             if (inbound) {
@@ -32,6 +34,7 @@
             }
             this.confirm = confirm;
             this.visible = true;
+            this.isEdit = isEdit;
         },
         close() {
             inModal.visible = false;
@@ -64,6 +67,12 @@
             },
             get dbInbound() {
                 return inModal.dbInbound;
+            },
+            get clientIps() {
+                return inModal.clientIps;
+            },
+            get isEdit() {
+                return inModal.isEdit;
             }
         },
         methods: {
@@ -71,8 +80,34 @@
                 if (oldValue === 'kcp') {
                     this.inModal.inbound.tls = false;
                 }
-            }
-        }
+            },
+            async getDBClientIps(email) {
+
+                const msg = await HttpUtil.post('/xui/inbound/clientIps/'+ email);
+                if (!msg.success) {
+                    return;
+                }
+                try {
+                    ips = JSON.parse(msg.obj)
+                    ips = ips.join(",")
+                    this.inModal.clientIps =  ips
+                } catch (error) {
+                    // text
+                    this.inModal.clientIps =  msg.obj
+
+                }
+
+            },
+            async clearDBClientIps(email) {
+                const msg = await HttpUtil.post('/xui/inbound/clearClientIps/'+ email);
+                if (!msg.success) {
+                    return;
+                }
+                this.inModal.clientIps =  ""
+            },
+
+        },
+     
     });
 
 </script>

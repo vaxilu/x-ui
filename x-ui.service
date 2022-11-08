@@ -4,6 +4,7 @@ After=network.target
 Wants=network.target
 
 [Service]
+Environment="xray.vmess.aead.forced=false"
 Type=simple
 WorkingDirectory=/usr/local/x-ui/
 ExecStart=/usr/local/x-ui/x-ui

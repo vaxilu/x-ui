@@ -243,7 +243,8 @@
                         inModal.loading();
                         await this.addInbound(inbound, dbInbound);
                         inModal.close();
-                    }
+                    },
+                    isEdit: false
                 });
             },
             openEditInbound(dbInbound) {
@@ -258,7 +259,8 @@
                         inModal.loading();
                         await this.updateInbound(inbound, dbInbound);
                         inModal.close();
-                    }
+                    },
+                    isEdit: true
                 });
             },
             async addInbound(inbound, dbInbound) {
