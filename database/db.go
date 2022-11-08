@@ -40,6 +40,9 @@ func initInbound() error {
 func initSetting() error {
 	return db.AutoMigrate(&model.Setting{})
 }
+func initInboundClientIps() error {
+	return db.AutoMigrate(&model.InboundClientIps{})
+}
 
 func InitDB(dbPath string) error {
 	dir := path.Dir(dbPath)
@@ -73,6 +76,10 @@ func InitDB(dbPath string) error {
 		return err
 	}
 	err = initSetting()
+	if err != nil {
+		return err
+	}
+	err = initInboundClientIps()
 	if err != nil {
 		return err
 	}

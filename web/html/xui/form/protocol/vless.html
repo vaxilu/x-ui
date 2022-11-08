@@ -1,11 +1,45 @@
 {{define "form/vless"}}
 <a-form layout="inline">
+    <a-form layout="inline">
+        <a-form-item label="Email">
+            <a-input v-model.trim="inbound.settings.vlesses[0].email"></a-input>
+        </a-form-item>
+        <a-form-item>
+            <span slot="label">
+                IP Count Limit
+                <a-tooltip>
+                    <template slot="title">
+                        disable inbound if more than entered count (0 for disable limit ip)
+                    </template>
+                    <a-icon type="question-circle" theme="filled"></a-icon>
+                </a-tooltip>
+            </span>
+
+            <a-input type="number" v-model.number="inbound.settings.vlesses[0].limitIp"></a-input>
+        </a-form-item>
+        <a-form-item v-if="inbound.settings.vlesses[0].email && inbound.settings.vlesses[0].limitIp > 0 && isEdit">
+            <span slot="label">
+                client IP log
+                <a-tooltip>
+                    <template slot="title">
+                        IPs history Log (before enabling inbound after it has been disabled by IP limit, you should clear the log)
+                    </template>
+                    <a-icon type="question-circle" theme="filled"></a-icon>
+                </a-tooltip>
+            </span>
+
+            <a-textarea disabled :input="getDBClientIps(inbound.settings.vlesses[0].email)" v-model="clientIps" :auto-size="{ minRows: 3, maxRows: 3 }">
+            </a-textarea>
+
+            <a-button type="danger" @click="clearDBClientIps(inbound.settings.vlesses[0].email)" >clear log</a-button>
+        </a-form-item>
+    </a-form>
     <a-form-item label="id">
         <a-input v-model.trim="inbound.settings.vlesses[0].id"></a-input>
     </a-form-item>
     <a-form-item v-if="inbound.xtls" label="flow">
         <a-select v-model="inbound.settings.vlesses[0].flow" style="width: 150px">
-            <a-select-option value="">无</a-select-option>
+            <a-select-option value="" v-text='{{ i18n "none" }}'></a-select-option>
             <a-select-option v-for="key in FLOW_CONTROL" :value="key">[[ key ]]</a-select-option>
         </a-select>
     </a-form-item>
