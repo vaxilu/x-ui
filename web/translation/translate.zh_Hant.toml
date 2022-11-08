@@ -10,3 +10,29 @@
 "remark" = "備註"
 "enable" = "啟用"
 "protocol" = "協議"
+
+[menu]
+"dashboard" = "系统状态"
+"inbounds" = "入站列表"
+"setting" = "面板设置"
+"logout" = "退出登录"
+"link" = "其他"
+
+[pages.login]
+"title" = "登錄"
+
+[pages.login.toasts]
+"invalidFormData" = "数据格式错误"
+"emptyUsername" = "请输入用户名"
+"emptyPassword" = "请输入密码"
+"wrongUsernameOrPassword" = "用户名或密码错误"
+"successLogin" = "登录"
+
+[pages.index]
+"title" = "系统状态"
+
+[pages.inbounds]
+"title" = "入站列表"
+
+[pages.setting]
+"title" = "设置"

@@ -26,6 +26,12 @@
         padding-left: 50px;
     }
 
+    .selectLang{
+        display: flex;
+        text-align: center;
+        justify-content: center;
+    }
+
 </style>
 <body>
 <a-layout id="app" v-cloak>
@@ -33,7 +39,7 @@
         <a-layout-content>
             <a-row type="flex" justify="center">
                 <a-col :xs="22" :sm="20" :md="16" :lg="12" :xl="8">
-                    <h1>{{ .title }}</h1>
+                    <h1>{{ i18n "pages.login.title" }}</h1>
                 </a-col>
             </a-row>
             <a-row type="flex" justify="center">
@@ -54,6 +60,29 @@
                         <a-form-item>
                             <a-button block @click="login" :loading="loading">{{ i18n "login" }}</a-button>
                         </a-form-item>
+                        <a-form-item>
+
+                            <a-row justify="center" class="selectLang">
+                                <a-col :span="4"><span>Language : </span></a-col>
+
+                                <a-col :span="6">
+                                    <a-select
+                                            ref="selectLang"
+                                            v-model="lang"
+                                            @change="setLang(lang)"
+                                    >
+                                        <a-select-option  :value="l.value" label="China" v-for="l in supportLangs" >
+                                            <span role="img" aria-label="l.name" v-text="l.icon"></span>
+                                            &nbsp;&nbsp;<span v-text="l.name"></span>
+                                        </a-select-option>
+                                    </a-select>
+                                </a-col>
+
+                            </a-row>
+
+
+
+                        </a-form-item>
                     </a-form>
                 </a-col>
             </a-row>
@@ -73,6 +102,10 @@
         data: {
             loading: false,
             user: new User(),
+            lang : ""
+        },
+        created(){
+          this.lang = getLang();
         },
         methods: {
             async login() {

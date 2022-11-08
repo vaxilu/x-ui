@@ -27,15 +27,15 @@
                     <a-card hoverable style="margin-bottom: 20px;">
                         <a-row>
                             <a-col :xs="24" :sm="24" :lg="12">
-                                总上传 / 下载：
+                                {{ i18n "pages.inbounds.totalDownUp" }}：
                                 <a-tag color="green">[[ sizeFormat(total.up) ]] / [[ sizeFormat(total.down) ]]</a-tag>
                             </a-col>
                             <a-col :xs="24" :sm="24" :lg="12">
-                                总用量：
+                                {{ i18n "pages.inbounds.totalUsage" }}：
                                 <a-tag color="green">[[ sizeFormat(total.up + total.down) ]]</a-tag>
                             </a-col>
                             <a-col :xs="24" :sm="24" :lg="12">
-                                入站数量：
+                                {{ i18n "pages.inbounds.inboundCount" }}：
                                 <a-tag color="green">[[ dbInbounds.length ]]</a-tag>
                             </a-col>
                         </a-row>
@@ -55,20 +55,22 @@
                                  @change="() => getDBInbounds()">
                             <template slot="action" slot-scope="text, dbInbound">
                                 <a-dropdown :trigger="['click']">
-                                    <a @click="e => e.preventDefault()">操作</a>
+                                    <a @click="e => e.preventDefault()">{{ i18n "pages.inbounds.operate" }}</a>
                                     <a-menu slot="overlay" @click="a => clickAction(a, dbInbound)">
                                         <a-menu-item v-if="dbInbound.hasLink()" key="qrcode">
-                                            <a-icon type="qrcode"></a-icon>二维码
+                                            <a-icon type="qrcode"></a-icon>
+                                            {{ i18n "qrCode" }}
                                         </a-menu-item>
                                         <a-menu-item key="edit">
-                                            <a-icon type="edit"></a-icon>编辑
+                                            <a-icon type="edit"></a-icon>
+                                            {{ i18n "edit" }}
                                         </a-menu-item>
                                         <a-menu-item key="resetTraffic">
-                                            <a-icon type="retweet"></a-icon>重置流量
+                                            <a-icon type="retweet"></a-icon> {{ i18n "pages.inbounds.resetTraffic" }}
                                         </a-menu-item>
                                         <a-menu-item key="delete">
                                             <span style="color: #FF4D4F">
-                                                <a-icon type="delete"></a-icon>删除
+                                                <a-icon type="delete"></a-icon> {{ i18n "delete"}}
                                             </span>
                                         </a-menu-item>
                                     </a-menu>
@@ -83,10 +85,10 @@
                                     <a-tag v-if="dbInbound.up + dbInbound.down < dbInbound.total" color="cyan">[[ sizeFormat(dbInbound.total) ]]</a-tag>
                                     <a-tag v-else color="red">[[ sizeFormat(dbInbound.total) ]]</a-tag>
                                 </template>
-                                <a-tag v-else color="green">无限制</a-tag>
+                                <a-tag v-else color="green">{{ i18n "unlimited" }}</a-tag>
                             </template>
                             <template slot="settings" slot-scope="text, dbInbound">
-                                <a-button type="link" @click="showInfo(dbInbound)">查看</a-button>
+                                <a-button type="link" @click="showInfo(dbInbound)">{{ i18n "check" }}</a-button>
                             </template>
                             <template slot="stream" slot-scope="text, dbInbound, index">
                                 <template v-if="dbInbound.isVMess || dbInbound.isVLess || dbInbound.isTrojan || dbInbound.isSS">
@@ -94,7 +96,7 @@
                                     <a-tag v-if="inbounds[index].stream.isTls" color="blue">tls</a-tag>
                                     <a-tag v-if="inbounds[index].stream.isXTls" color="blue">xtls</a-tag>
                                 </template>
-                                <template v-else>无</template>
+                                <template v-else>{{ i18n "none" }}</template>
                             </template>
                             <template slot="enable" slot-scope="text, dbInbound">
                                 <a-switch v-model="dbInbound.enable" @change="switchEnable(dbInbound)"></a-switch>
@@ -108,7 +110,7 @@
                                         [[ DateUtil.formatMillis(dbInbound.expiryTime) ]]
                                     </a-tag>
                                 </template>
-                                <a-tag v-else color="green">无限期</a-tag>
+                                <a-tag v-else color="green">{{ i18n "indefinitely" }}</a-tag>
                             </template>
                         </a-table>
                     </a-card>
@@ -121,52 +123,52 @@
 <script>
 
     const columns = [{
-        title: "操作",
+        title: '{{ i18n "pages.inbounds.operate" }}',
         align: 'center',
         width: 30,
         scopedSlots: { customRender: 'action' },
     }, {
-        title: "启用",
+        title: '{{ i18n "pages.inbounds.enable" }}',
         align: 'center',
         width: 40,
         scopedSlots: { customRender: 'enable' },
     }, {
-        title: "id",
+        title: "Id",
         align: 'center',
         dataIndex: "id",
         width: 30,
     }, {
-        title: "备注",
+        title: '{{ i18n "pages.inbounds.remark" }}',
         align: 'center',
         width: 100,
         dataIndex: "remark",
     }, {
-        title: "协议",
+        title: '{{ i18n "pages.inbounds.protocol" }}',
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'protocol' },
     }, {
-        title: "端口",
+        title: '{{ i18n "pages.inbounds.port" }}',
         align: 'center',
         dataIndex: "port",
         width: 60,
     }, {
-        title: "流量↑|↓",
+        title: '{{ i18n "pages.inbounds.traffic" }}↑|↓',
         align: 'center',
         width: 150,
         scopedSlots: { customRender: 'traffic' },
     }, {
-        title: "详细信息",
+        title: '{{ i18n "pages.inbounds.details" }}',
         align: 'center',
         width: 40,
         scopedSlots: { customRender: 'settings' },
     }, {
-        title: "传输配置",
+        title: '{{ i18n "pages.inbounds.transportConfig" }}',
         align: 'center',
         width: 60,
         scopedSlots: { customRender: 'stream' },
     }, {
-        title: "到期时间",
+        title: '{{ i18n "pages.inbounds.expireDate" }}',
         align: 'center',
         width: 80,
         scopedSlots: { customRender: 'expiryTime' },
@@ -234,8 +236,9 @@
             },
             openAddInbound() {
                 inModal.show({
-                    title: '添加入站',
-                    okText: '添加',
+                    title: '{{ i18n "pages.inbounds.addInbound"}}',
+                    okText: '{{ i18n "pages.inbounds.addTo"}}',
+                    cancelText: '{{ i18n "close" }}',
                     confirm: async (inbound, dbInbound) => {
                         inModal.loading();
                         await this.addInbound(inbound, dbInbound);
@@ -247,8 +250,9 @@
             openEditInbound(dbInbound) {
                 const inbound = dbInbound.toInbound();
                 inModal.show({
-                    title: '修改入站',
-                    okText: '修改',
+                    title: '{{ i18n "pages.inbounds.modifyInbound"}}',
+                    okText: '{{ i18n "pages.inbounds.revise"}}',
+                    cancelText: '{{ i18n "close" }}',
                     inbound: inbound,
                     dbInbound: dbInbound,
                     confirm: async (inbound, dbInbound) => {
@@ -297,10 +301,10 @@
             },
             resetTraffic(dbInbound) {
                 this.$confirm({
-                    title: '重置流量',
-                    content: '确定要重置流量吗?',
-                    okText: '重置',
-                    cancelText: '取消',
+                    title: '{{ i18n "pages.inbounds.resetTraffic"}}',
+                    content: '{{ i18n "pages.inbounds.resetTrafficContent"}}',
+                    okText: '{{ i18n "reset"}}',
+                    cancelText: '{{ i18n "cancel"}}',
                     onOk: () => {
                         const inbound = dbInbound.toInbound();
                         dbInbound.up = 0;
@@ -311,16 +315,16 @@
             },
             delInbound(dbInbound) {
                 this.$confirm({
-                    title: '删除入站',
-                    content: '确定要删除入站吗?',
-                    okText: '删除',
-                    cancelText: '取消',
+                    title: '{{ i18n "pages.inbounds.deleteInbound"}}',
+                    content: '{{ i18n "pages.inbounds.deleteInboundContent"}}',
+                    okText: '{{ i18n "delete"}}',
+                    cancelText: '{{ i18n "cancel"}}',
                     onOk: () => this.submit('/xui/inbound/del/' + dbInbound.id),
                 });
             },
             showQrcode(dbInbound) {
                 const link = dbInbound.genLink();
-                qrModal.show('二维码', link);
+                qrModal.show('{{ i18n "qrCode"}}', link);
             },
             showInfo(dbInbound) {
                 infoModal.show(dbInbound);

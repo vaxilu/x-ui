@@ -10,3 +10,4 @@ x-ui-*.tar.gz
 main
 release/
 access.log
+.cache

@@ -254,7 +254,7 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 
 	var localizer *i18n.Localizer
 
-	engine.FuncMap["i18n"] = func(key string, params ...string) (string, error) {
+	I18n := func(key string, params ...string) (string, error) {
 		names := findI18nParamNames(key)
 		if len(names) != len(params) {
 			return "", common.NewError("find names:", names, "---------- params:", params, "---------- num not equal")
@@ -269,10 +269,22 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 		})
 	}
 
+	engine.FuncMap["i18n"]  = I18n;
+
 	engine.Use(func(c *gin.Context) {
-		accept := c.GetHeader("Accept-Language")
-		localizer = i18n.NewLocalizer(bundle, accept)
+		//accept := c.GetHeader("Accept-Language")
+
+		var lang string
+
+		if cookie, err := c.Request.Cookie("lang"); err == nil {
+			lang = cookie.Value
+		} else {
+			lang = c.GetHeader("Accept-Language")
+		}
+
+		localizer = i18n.NewLocalizer(bundle, lang)
 		c.Set("localizer", localizer)
+		c.Set("I18n" , I18n)
 		c.Next()
 	})
 

@@ -12,7 +12,7 @@ type BaseController struct {
 func (a *BaseController) checkLogin(c *gin.Context) {
 	if !session.IsLogin(c) {
 		if isAjax(c) {
-			pureJsonMsg(c, false, "登录时效已过，请重新登录")
+			pureJsonMsg(c, false, I18n(c , "pages.login.loginAgain"))
 		} else {
 			c.Redirect(http.StatusTemporaryRedirect, c.GetString("base_path"))
 		}
@@ -20,4 +20,14 @@ func (a *BaseController) checkLogin(c *gin.Context) {
 	} else {
 		c.Next()
 	}
+}
+
+
+func I18n(c *gin.Context , name string, data ...string) string{
+    anyfunc, _  := c.Get("I18n")
+    i18n, _ := anyfunc.(func(key string, params ...string) (string, error))
+
+    message, _ := i18n(name)
+
+    return message;
 }
