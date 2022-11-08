@@ -1,6 +1,14 @@
 # x-ui
 
-xray panel supporting multi-protocol multi-user
+xray panel supporting multi-protocol, **Multi-lang (English,Chinese)**, **IP Restrication Per Inbound**
+
+| Features        | Enable?           |
+| ------------- |:-------------:|
+| Multi-lang | :heavy_check_mark: |
+| IP Restriction | :heavy_check_mark: |
+| Inbound Multi User | :clock1:       |
+
+**If you think this project is helpful to you, you may wish to give a** :star2: 
 
 # Features
 
