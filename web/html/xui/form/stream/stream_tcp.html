@@ -4,7 +4,7 @@
     <a-form-item label="acceptProxyProtocol">
         <a-switch v-model="inbound.stream.tcp.acceptProxyProtocol"></a-switch>
     </a-form-item>
-    <a-form-item label="http 伪装">
+    <a-form-item label="http disguise">
         <a-switch
                 :checked="inbound.stream.tcp.type === 'http'"
                 @change="checked => inbound.stream.tcp.type = checked ? 'http' : 'none'">
@@ -15,18 +15,18 @@
 <!-- tcp request -->
 <a-form v-if="inbound.stream.tcp.type === 'http'"
         layout="inline">
-    <a-form-item label="请求版本">
+    <a-form-item label="Request version">
         <a-input v-model.trim="inbound.stream.tcp.request.version"></a-input>
     </a-form-item>
-    <a-form-item label="请求方法">
+    <a-form-item label="Request method">
         <a-input v-model.trim="inbound.stream.tcp.request.method"></a-input>
     </a-form-item>
-    <a-form-item label="请求路径">
+    <a-form-item label="Request path">
         <a-row v-for="(path, index) in inbound.stream.tcp.request.path">
             <a-input v-model.trim="inbound.stream.tcp.request.path[index]"></a-input>
         </a-row>
     </a-form-item>
-    <a-form-item label="请求头">
+    <a-form-item label="Request header">
         <a-row>
             <a-button size="small"
                       @click="inbound.stream.tcp.request.addHeader('Host', 'xxx.com')">
@@ -35,9 +35,9 @@
         </a-row>
         <a-input-group v-for="(header, index) in inbound.stream.tcp.request.headers">
             <a-input style="width: 50%" v-model.trim="header.name"
-                     addon-before="名称"></a-input>
+                     addon-before="name"></a-input>
             <a-input style="width: 50%" v-model.trim="header.value"
-                     addon-before="值">
+                     addon-before="value">
                 <template slot="addonAfter">
                     <a-button size="small"
                               @click="inbound.stream.tcp.request.removeHeader(index)">
@@ -52,16 +52,16 @@
 <!-- tcp response -->
 <a-form v-if="inbound.stream.tcp.type === 'http'"
         layout="inline">
-    <a-form-item label="响应版本">
+    <a-form-item label="Responsive version">
         <a-input v-model.trim="inbound.stream.tcp.response.version"></a-input>
     </a-form-item>
-    <a-form-item label="响应状态">
+    <a-form-item label="response status">
         <a-input v-model.trim="inbound.stream.tcp.response.status"></a-input>
     </a-form-item>
-    <a-form-item label="响应状态说明">
+    <a-form-item label="Response status description">
         <a-input v-model.trim="inbound.stream.tcp.response.reason"></a-input>
     </a-form-item>
-    <a-form-item label="响应头">
+    <a-form-item label="response header">
         <a-row>
             <a-button size="small"
                       @click="inbound.stream.tcp.response.addHeader('Content-Type', 'application/octet-stream')">
@@ -70,9 +70,9 @@
         </a-row>
         <a-input-group v-for="(header, index) in inbound.stream.tcp.response.headers">
             <a-input style="width: 50%" v-model.trim="header.name"
-                     addon-before="名称"></a-input>
+                     addon-before="name"></a-input>
             <a-input style="width: 50%" v-model.trim="header.value"
-                     addon-before="值">
+                     addon-before="value">
                 <template slot="addonAfter">
                     <a-button size="small"
                               @click="inbound.stream.tcp.response.removeHeader(index)">
