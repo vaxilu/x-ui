@@ -24,13 +24,17 @@ xray panel supporting multi-protocol, **Multi-lang (English,Chinese)**, **IP Res
 
 # Enable IP Restrictions Per Inbound
 1 - open panel settings and tab xray related settings put this to first of json :
- ```
+ ```json
  { 
+ ...
+ 
  "log": {
     "loglevel": "warning", 
     "access": "./access.log"
   },
-
+  
+ ...
+ "api": ...
 ```
 - change access log path as you want
 
