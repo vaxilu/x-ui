@@ -1,8 +1,9 @@
 {{define "form/vless"}}
-<a-form layout="inline">
+<a-form layout="inline" v-for="(vless, index) in inbound.settings.vlesses"
+:key="`vless-${index}`">
     <a-form layout="inline">
         <a-form-item label="Email">
-            <a-input v-model.trim="inbound.settings.vlesses[0].email"></a-input>
+            <a-input v-model.trim="vless.email"></a-input>
         </a-form-item>
         <a-form-item>
             <span slot="label">
@@ -15,11 +16,11 @@
                 </a-tooltip>
             </span>
 
-            <a-input type="number" v-model.number="inbound.settings.vlesses[0].limitIp"></a-input>
+            <a-input type="number" v-model.number="vless.limitIp"></a-input>
         </a-form-item>
-        <a-form-item v-if="inbound.settings.vlesses[0].email && inbound.settings.vlesses[0].limitIp > 0 && isEdit">
+        <a-form-item v-if="vless.email && vless.limitIp > 0 && isEdit">
             <span slot="label">
-                client IP log
+                IP log
                 <a-tooltip>
                     <template slot="title">
                         IPs history Log (before enabling inbound after it has been disabled by IP limit, you should clear the log)
@@ -27,22 +28,59 @@
                     <a-icon type="question-circle" theme="filled"></a-icon>
                 </a-tooltip>
             </span>
+            <a-form layout="block">
 
-            <a-textarea disabled :input="getDBClientIps(inbound.settings.vlesses[0].email)" v-model="clientIps" :auto-size="{ minRows: 3, maxRows: 3 }">
-            </a-textarea>
+                <a-textarea readonly @click="getDBClientIps(vless.email,$event)" placeholder="Click To Get IPs"  :auto-size="{ minRows: 0.5, maxRows: 10 }">
+                </a-textarea>
 
-            <a-button type="danger" @click="clearDBClientIps(inbound.settings.vlesses[0].email)" >clear log</a-button>
+                <a-button type="danger" @click="clearDBClientIps(vless.email,$event)" >clear log</a-button>
+            </a-form>
         </a-form-item>
     </a-form>
     <a-form-item label="id">
-        <a-input v-model.trim="inbound.settings.vlesses[0].id"></a-input>
+        <a-input v-model.trim="vless.id"></a-input>
     </a-form-item>
     <a-form-item v-if="inbound.xtls" label="flow">
-        <a-select v-model="inbound.settings.vlesses[0].flow" style="width: 150px">
-            <a-select-option value="" v-text='{{ i18n "none" }}'></a-select-option>
+        <a-select v-model="vless.flow" style="width: 150px">
+            <a-select-option value="">{{ i18n "none" }}</a-select-option>
             <a-select-option v-for="key in FLOW_CONTROL" :value="key">[[ key ]]</a-select-option>
         </a-select>
     </a-form-item>
+
+        <!--Add Svg Icon-->
+        <svg
+
+        @click="addClient(inbound.protocol,vless, inbound.settings.vlesses)"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+        class="ml-2 cursor-pointer"
+        >
+        <path fill="none" d="M0 0h24v24H0z" />
+        <path
+        fill="green"
+        d="M11 11V7h2v4h4v2h-4v4h-2v-4H7v-2h4zm1 11C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"
+        />
+    </svg>
+
+    <!--Remove Svg Icon-->
+    <svg
+        v-show="inbound.settings.vlesses.length > 1"
+        @click="removeClient(index, inbound.settings.vlesses)"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+        class="ml-2 cursor-pointer"
+        >
+        <path fill="none" d="M0 0h24v24H0z" />
+        <path
+        fill="#EC4899"
+        d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9.414l2.828-2.829 1.415 1.415L13.414 12l2.829 2.828-1.415 1.415L12 13.414l-2.828 2.829-1.415-1.415L10.586 12 7.757 9.172l1.415-1.415L12 10.586z"
+        />
+    </svg>
+    <a-divider style="height: 2px; background-color: #7e7e7e" />
 </a-form>
 
 <a-form layout="inline">

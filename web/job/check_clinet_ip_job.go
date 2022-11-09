@@ -9,7 +9,7 @@ import (
  	ss "strings"
 	"regexp"
     "encoding/json"
-    "strconv"
+    // "strconv"
 	"strings"
 	"time"
 	"net"
@@ -192,24 +192,25 @@ func updateInboundClientIps(inboundClientIps *model.InboundClientIps,clientEmail
 	inbound, err := GetInboundByEmail(clientEmail)
 	checkError(err)
 
-	limitIpRegx, _ := regexp.Compile(`"limitIp": .+`)
 	if inbound.Settings == "" {
 		logger.Debug("wrong data ",inbound)
 		return nil
 	}
 
-	limitIpMactch := limitIpRegx.FindString(inbound.Settings)
-	limitIpMactch =  ss.Split(limitIpMactch, `"limitIp": `)[1]
-    limitIp, err := strconv.Atoi(limitIpMactch)
+	settings := map[string][]model.Client{}
+	json.Unmarshal([]byte(inbound.Settings), &settings)
+	clients := settings["clients"]
 
-
-	if(limitIp < len(ips) && limitIp != 0 && inbound.Enable) {
-
-		if(limitIp == 1){
-			limitIp = 2
+	for _, client := range clients {
+		if client.Email == clientEmail {
+			
+			limitIp := client.LimitIP
+			
+			if(limitIp < len(ips) && limitIp != 0 && inbound.Enable) {
+				
+				disAllowedIps = append(disAllowedIps,ips[limitIp:]...)
+			}
 		}
-		disAllowedIps = append(disAllowedIps,ips[limitIp - 1:]...)
-
 	}
 	logger.Debug("disAllowedIps ",disAllowedIps)
     sort.Sort(sort.StringSlice(disAllowedIps))

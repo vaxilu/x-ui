@@ -15,7 +15,6 @@
         confirm: null,
         inbound: new Inbound(),
         dbInbound: new DBInbound(),
-        clientIps: "",
         ok() {
             ObjectUtil.execute(inModal.confirm, inModal.inbound, inModal.dbInbound);
         },
@@ -68,9 +67,6 @@
             get dbInbound() {
                 return inModal.dbInbound;
             },
-            get clientIps() {
-                return inModal.clientIps;
-            },
             get isEdit() {
                 return inModal.isEdit;
             }
@@ -81,7 +77,18 @@
                     this.inModal.inbound.tls = false;
                 }
             },
-            async getDBClientIps(email) {
+            addClient(protocol,value, clients) {
+                switch (protocol) {
+                    case Protocols.VMESS: return clients.push(new Inbound.VmessSettings.Vmess());
+                    case Protocols.VLESS: return clients.push(new Inbound.VLESSSettings.VLESS());
+                    default: return null;
+                }
+            },
+            removeClient(index, clients) {
+                clients.splice(index, 1);
+            },
+
+            async getDBClientIps(email,event) {
 
                 const msg = await HttpUtil.post('/xui/inbound/clientIps/'+ email);
                 if (!msg.success) {
@@ -90,24 +97,23 @@
                 try {
                     ips = JSON.parse(msg.obj)
                     ips = ips.join(",")
-                    this.inModal.clientIps =  ips
+                    event.target.value = ips
                 } catch (error) {
                     // text
-                    this.inModal.clientIps =  msg.obj
+                    event.target.value = msg.obj
 
                 }
 
             },
-            async clearDBClientIps(email) {
+            async clearDBClientIps(email,event) {
                 const msg = await HttpUtil.post('/xui/inbound/clearClientIps/'+ email);
                 if (!msg.success) {
                     return;
                 }
-                this.inModal.clientIps =  ""
+                event.target.value = ""
             },
 
         },
-     
     });
 
 </script>
