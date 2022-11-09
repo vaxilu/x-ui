@@ -6,7 +6,7 @@ xray panel supporting multi-protocol, **Multi-lang (English,Chinese)**, **IP Res
 | ------------- |:-------------:|
 | Multi-lang | :heavy_check_mark: |
 | IP Restriction | :heavy_check_mark: |
-| Inbound Multi User | :clock1:       |
+| Inbound Multi User | :heavy_check_mark: |
 
 **If you think this project is helpful to you, you may wish to give a** :star2: 
 
