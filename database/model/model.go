@@ -69,3 +69,10 @@ type Setting struct {
 	Key   string `json:"key" form:"key"`
 	Value string `json:"value" form:"value"`
 }
+type Client struct {
+	ID       string `json:"id"`
+	AlterIds uint16 `json:"alterId"`
+	Email string `json:"email"`
+	LimitIP int `json:"limitIp"`
+	Security string `json:"security"`
+}
