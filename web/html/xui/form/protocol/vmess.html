@@ -20,7 +20,7 @@
         </a-form-item>
         <a-form-item v-if="vmess.email && vmess.limitIp > 0 && isEdit">
             <span slot="label">
-                Client IP Log 
+                IP Log 
                 <a-tooltip>
                     <template slot="title">
                         IPs history Log (before enabling inbound after it has been disabled by IP limit, you should clear the log)
@@ -29,10 +29,10 @@
                 </a-tooltip>
             </span>
             
-            <a-textarea disabled :input="getDBClientIps(vmess.email)" v-model="clientIps" :auto-size="{ minRows: 1, maxRows: 1 }">
+            <a-textarea readonly @click="getDBClientIps(vmess.email,$event)" placeholder="Click To Get IPs"  :auto-size="{ minRows: 0.5, maxRows: 10 }">
             </a-textarea>
 
-            <a-button type="danger" @click="clearDBClientIps(vmess.email)" >clear log</a-button>
+            <a-button type="danger" @click="clearDBClientIps(vmess.email,$event)" >clear log</a-button>
         </a-form-item>
 
     </a-form>

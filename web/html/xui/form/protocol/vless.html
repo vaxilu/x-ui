@@ -20,7 +20,7 @@
         </a-form-item>
         <a-form-item v-if="vless.email && vless.limitIp > 0 && isEdit">
             <span slot="label">
-                client IP log
+                IP log
                 <a-tooltip>
                     <template slot="title">
                         IPs history Log (before enabling inbound after it has been disabled by IP limit, you should clear the log)
@@ -28,11 +28,13 @@
                     <a-icon type="question-circle" theme="filled"></a-icon>
                 </a-tooltip>
             </span>
+            <a-form layout="block">
 
-            <a-textarea disabled :value="getIPsByIndex(index)"   :auto-size="{ minRows: 1, maxRows: 1 }">
-            </a-textarea>
+                <a-textarea readonly @click="getDBClientIps(vless.email,$event)" placeholder="Click To Get IPs"  :auto-size="{ minRows: 0.5, maxRows: 10 }">
+                </a-textarea>
 
-            <a-button type="danger" @click="clearDBClientIps(vless.email)" >clear log</a-button>
+                <a-button type="danger" @click="clearDBClientIps(vless.email,$event)" >clear log</a-button>
+            </a-form>
         </a-form-item>
     </a-form>
     <a-form-item label="id">
