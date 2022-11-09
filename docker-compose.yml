@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  vpn:
+    build:
+      context: .
+      args:
+        - USERNAME=vpnuser
+        - PASSWORD=qweasdQWEASD
+        - PORT=9007
+    network_mode: host
+    environment:
+      - TZ=Asia/Tehran
+    restart: unless-stopped
