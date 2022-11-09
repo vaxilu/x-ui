@@ -32,10 +32,10 @@
     <p>tls: <a-tag color="red">{{ i18n "closure" }}</a-tag></p>
 </template>
 <p v-if="inbound.tls">
-    tls {{ i18n "domainName" }}: <a-tag :color="inbound.serverName ? 'green' : 'orange'">[[ inbound.serverName ? inbound.serverName : '{{ i18n "none" }}' ]]</a-tag>
+    tls {{ i18n "domainName" }}: <a-tag :color="inbound.serverName ? 'green' : 'orange'">[[ inbound.serverName ? inbound.serverName : '' ]]</a-tag>
 </p>
 <p v-if="inbound.xtls">
-    xtls {{ i18n "domainName" }}: <a-tag :color="inbound.serverName ? 'green' : 'orange'">[[ inbound.serverName ? inbound.serverName : '{{ i18n "none" }}' ]]</a-tag>
+    xtls {{ i18n "domainName" }}: <a-tag :color="inbound.serverName ? 'green' : 'orange'">[[ inbound.serverName ? inbound.serverName : '' ]]</a-tag>
 </p>
 {{end}}
 
@@ -46,14 +46,16 @@
     <p>{{ i18n "pages.inbounds.address"}}: <a-tag color="blue">[[ dbInbound.address ]]</a-tag></p>
     <p>{{ i18n "pages.inbounds.port"}}: <a-tag color="green">[[ dbInbound.port ]]</a-tag></p>
 
-    <template v-if="dbInbound.isVMess">
-        <p>uuid: <a-tag color="green">[[ inbound.uuid ]]</a-tag></p>
-        <p>alterId: <a-tag color="green">[[ inbound.alterId ]]</a-tag></p>
+    <template v-if="dbInbound.isVMess" v-for="(vmess, index) in inbound.settings.vmesses">
+        <p>uuid: <a-tag color="green">[[ vmess.id ]]</a-tag></p>
+        <p>alterId: <a-tag color="green">[[ vmess.alterId ]]</a-tag></p>
+        <a-divider style="height: 2px; background-color: #7e7e7e" />
     </template>
 
-    <template v-if="dbInbound.isVLess">
-        <p>uuid: <a-tag color="green">[[ inbound.uuid ]]</a-tag></p>
-        <p v-if="inbound.isXTls">flow: <a-tag color="green">[[ inbound.flow ]]</a-tag></p>
+    <template v-if="dbInbound.isVLess" v-for="(vless, index) in inbound.settings.vlesses">
+        <p>uuid: <a-tag color="green">[[ vless.id ]]</a-tag></p>
+        <p v-if="inbound.isXTls">flow: <a-tag color="green">[[ vless.flow ]]</a-tag></p>
+        <a-divider style="height: 2px; background-color: #7e7e7e" />
     </template>
 
     <template v-if="dbInbound.isTrojan">

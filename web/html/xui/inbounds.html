@@ -324,7 +324,7 @@
             },
             showQrcode(dbInbound) {
                 const link = dbInbound.genLink();
-                qrModal.show('{{ i18n "qrCode"}}', link);
+                qrModal.show('{{ i18n "qrCode"}}', link, dbInbound);
             },
             showInfo(dbInbound) {
                 infoModal.show(dbInbound);

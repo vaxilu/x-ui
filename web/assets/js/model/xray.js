@@ -881,7 +881,7 @@ class Inbound extends XrayCommonClass {
         this.sniffing = new Sniffing();
     }
 
-    genVmessLink(address='', remark='') {
+    genVmessLink(address='', remark='', clientIndex=0) {
         if (this.protocol !== Protocols.VMESS) {
             return '';
         }
@@ -934,8 +934,8 @@ class Inbound extends XrayCommonClass {
             ps: remark,
             add: address,
             port: this.port,
-            id: this.settings.vmesses[0].id,
-            aid: this.settings.vmesses[0].alterId,
+            id: this.settings.vmesses[clientIndex].id,
+            aid: this.settings.vmesses[clientIndex].alterId,
             net: network,
             type: type,
             host: host,
@@ -945,9 +945,9 @@ class Inbound extends XrayCommonClass {
         return 'vmess://' + base64(JSON.stringify(obj, null, 2));
     }
 
-    genVLESSLink(address = '', remark='') {
+    genVLESSLink(address = '', remark='', clientIndex=0) {
         const settings = this.settings;
-        const uuid = settings.vlesses[0].id;
+        const uuid = settings.vlesses[clientIndex].id;
         const port = this.port;
         const type = this.stream.network;
         const params = new Map();
@@ -1009,7 +1009,7 @@ class Inbound extends XrayCommonClass {
         }
 
         if (this.xtls) {
-            params.set("flow", this.settings.vlesses[0].flow);
+            params.set("flow", this.settings.vlesses[clientIndex].flow);
         }
 
         const link = `vless://${uuid}@${address}:${port}`;
@@ -1036,10 +1036,10 @@ class Inbound extends XrayCommonClass {
         return `trojan://${settings.clients[0].password}@${address}:${this.port}#${encodeURIComponent(remark)}`;
     }
 
-    genLink(address='', remark='') {
+    genLink(address='', remark='', clientIndex=0) {
         switch (this.protocol) {
-            case Protocols.VMESS: return this.genVmessLink(address, remark);
-            case Protocols.VLESS: return this.genVLESSLink(address, remark);
+            case Protocols.VMESS: return this.genVmessLink(address, remark, clientIndex);
+            case Protocols.VLESS: return this.genVLESSLink(address, remark, clientIndex);
             case Protocols.SHADOWSOCKS: return this.genSSLink(address, remark);
             case Protocols.TROJAN: return this.genTrojanLink(address, remark);
             default: return '';

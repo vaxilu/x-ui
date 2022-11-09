@@ -15,7 +15,7 @@
         confirm: null,
         inbound: new Inbound(),
         dbInbound: new DBInbound(),
-        clientIps: "",
+        clientIps: [],
         ok() {
             ObjectUtil.execute(inModal.confirm, inModal.inbound, inModal.dbInbound);
         },
@@ -81,7 +81,18 @@
                     this.inModal.inbound.tls = false;
                 }
             },
-            async getDBClientIps(email) {
+            addClient(protocol,value, clients) {
+                switch (protocol) {
+                    case Protocols.VMESS: return clients.push(new Inbound.VmessSettings.Vmess());
+                    case Protocols.VLESS: return clients.push(new Inbound.VLESSSettings.VLESS());
+                    default: return null;
+                }
+            },
+            removeClient(index, clients) {
+                clients.splice(index, 1);
+            },
+
+            async getDBClientIps(index, email) {
 
                 const msg = await HttpUtil.post('/xui/inbound/clientIps/'+ email);
                 if (!msg.success) {
@@ -90,10 +101,10 @@
                 try {
                     ips = JSON.parse(msg.obj)
                     ips = ips.join(",")
-                    this.inModal.clientIps =  ips
+                    this.inModal.clientIps[index] =  ips
                 } catch (error) {
                     // text
-                    this.inModal.clientIps =  msg.obj
+                    this.inModal.clientIps[index] =  msg.obj
 
                 }
 
@@ -105,8 +116,34 @@
                 }
                 this.inModal.clientIps =  ""
             },
+            getIPsByIndex(index) {
+                return inModal.clientIps[index]
+            },
 
         },
+        updated()  {
+            switch (inModal.inbound.protocol) {
+                    case Protocols.VMESS: 
+                        vmesses = inModal.inbound.settings.vmesses
+                        for (const index in vmesses) {
+                            if(vmesses[index].email)
+                                this.getDBClientIps(index, vmesses[index].email)
+                        }
+                    break;
+                    case Protocols.VLESS: 
+                        vlesses = inModal.inbound.settings.vlesses
+
+                        for (const index in vlesses) {
+                            if(vlesses[index].email)
+                                this.getDBClientIps(index, vlesses[index].email)
+
+                        }
+                    break;
+                    default: return null;
+            }
+            console.log(this.inModal.clientIps)
+
+        }
      
     });
 
