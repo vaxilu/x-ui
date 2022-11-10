@@ -48,16 +48,17 @@ func (s *InboundService) checkPortExist(port int, ignoreId int) (bool, error) {
 	return count > 0, nil
 }
 
-func (s *InboundService) AddInbound(inbound *model.Inbound) error {
+func (s *InboundService) AddInbound(inbound *model.Inbound) (*model.Inbound,error) {
 	exist, err := s.checkPortExist(inbound.Port, 0)
 	if err != nil {
-		return err
+		return inbound, err
 	}
 	if exist {
-		return common.NewError("端口已存在:", inbound.Port)
+		return inbound, common.NewError("端口已存在:", inbound.Port)
 	}
 	db := database.GetDB()
-	return db.Save(inbound).Error
+	
+	return inbound, db.Save(inbound).Error
 }
 
 func (s *InboundService) AddInbounds(inbounds []*model.Inbound) error {
@@ -107,18 +108,18 @@ func (s *InboundService) GetInbound(id int) (*model.Inbound, error) {
 	return inbound, nil
 }
 
-func (s *InboundService) UpdateInbound(inbound *model.Inbound) error {
+func (s *InboundService) UpdateInbound(inbound *model.Inbound) (*model.Inbound, error) {
 	exist, err := s.checkPortExist(inbound.Port, inbound.Id)
 	if err != nil {
-		return err
+		return inbound, err
 	}
 	if exist {
-		return common.NewError("端口已存在:", inbound.Port)
+		return inbound, common.NewError("端口已存在:", inbound.Port)
 	}
 
 	oldInbound, err := s.GetInbound(inbound.Id)
 	if err != nil {
-		return err
+		return inbound, err
 	}
 	oldInbound.Up = inbound.Up
 	oldInbound.Down = inbound.Down
@@ -135,7 +136,7 @@ func (s *InboundService) UpdateInbound(inbound *model.Inbound) error {
 	oldInbound.Tag = fmt.Sprintf("inbound-%v", inbound.Port)
 
 	db := database.GetDB()
-	return db.Save(oldInbound).Error
+	return inbound, db.Save(oldInbound).Error
 }
 
 func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
