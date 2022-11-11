@@ -810,6 +810,17 @@ class Inbound extends XrayCommonClass {
         return this.stream.grpc.serviceName;
     }
 
+    isExpiry(index) {
+        switch (this.protocol) {
+            case Protocols.VMESS:
+                return this.settings.vmesses[index].expiryTime < new Date().getTime();
+            case Protocols.VLESS:
+                return this.settings.vlesses[index].expiryTime < new Date().getTime();
+            default:
+                return false;
+        }
+    }
+
     canEnableTls() {
         switch (this.protocol) {
             case Protocols.VMESS:
@@ -1178,6 +1189,20 @@ Inbound.VmessSettings.Vmess = class extends XrayCommonClass {
 
         );
     }
+    get _expiryTime() {
+        if (this.expiryTime === 0) {
+            return null;
+        }
+        return moment(this.expiryTime);
+    }
+
+    set _expiryTime(t) {
+        if (t == null) {
+            this.expiryTime = 0;
+        } else {
+            this.expiryTime = t.valueOf();
+        }
+    }
 };
 
 Inbound.VLESSSettings = class extends Inbound.Settings {
@@ -1215,6 +1240,21 @@ Inbound.VLESSSettings = class extends Inbound.Settings {
             fallbacks: Inbound.VLESSSettings.toJsonArray(this.fallbacks),
         };
     }
+    get _expiryTime() {
+        if (this.expiryTime === 0) {
+            return null;
+        }
+        return moment(this.expiryTime);
+    }
+
+    set _expiryTime(t) {
+        if (t == null) {
+            this.expiryTime = 0;
+        } else {
+            this.expiryTime = t.valueOf();
+        }
+    }
+
 };
 Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
 
