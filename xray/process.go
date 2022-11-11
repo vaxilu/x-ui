@@ -22,6 +22,7 @@ import (
 )
 
 var trafficRegex = regexp.MustCompile("(inbound|outbound)>>>([^>]+)>>>traffic>>>(downlink|uplink)")
+var ClientTrafficRegex = regexp.MustCompile("(user)>>>([^>]+)>>>traffic>>>(downlink|uplink)")
 
 func GetBinaryName() string {
 	return fmt.Sprintf("xray-%s-%s", runtime.GOOS, runtime.GOARCH)
@@ -253,6 +254,9 @@ func (p *process) GetTraffic(reset bool) ([]*Traffic, error) {
 	traffics := make([]*Traffic, 0)
 	for _, stat := range resp.GetStat() {
 		matchs := trafficRegex.FindStringSubmatch(stat.Name)
+		if len(matchs) < 3 {
+			continue
+		}
 		isInbound := matchs[1] == "inbound"
 		tag := matchs[2]
 		isDown := matchs[3] == "downlink"
@@ -266,6 +270,56 @@ func (p *process) GetTraffic(reset bool) ([]*Traffic, error) {
 				Tag:       tag,
 			}
 			tagTrafficMap[tag] = traffic
+			traffics = append(traffics, traffic)
+		}
+		if isDown {
+			traffic.Down = stat.Value
+		} else {
+			traffic.Up = stat.Value
+		}
+	}
+
+	return traffics, nil
+}
+func (p *process) GetClientTraffic(reset bool) ([]*ClientTraffic, error) {
+	if p.apiPort == 0 {
+		return nil, common.NewError("xray api port wrong:", p.apiPort)
+	}
+	conn, err := grpc.Dial(fmt.Sprintf("127.0.0.1:%v", p.apiPort), grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := statsservice.NewStatsServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+	request := &statsservice.QueryStatsRequest{
+		Reset_: reset,
+	}
+	resp, err := client.QueryStats(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+	emailTrafficMap := map[string]*ClientTraffic{}
+	traffics := make([]*ClientTraffic, 0)
+	for _, stat := range resp.GetStat() {
+		matchs := ClientTrafficRegex.FindStringSubmatch(stat.Name)
+		if len(matchs) < 3 {
+			continue
+		}
+		isUser := matchs[1] == "user"
+		email := matchs[2]
+		isDown := matchs[3] == "downlink"
+		if ! isUser {
+			continue
+		}
+		traffic, ok := emailTrafficMap[email]
+		if !ok {
+			traffic = &ClientTraffic{
+				Email:       email,
+			}
+			emailTrafficMap[email] = traffic
 			traffics = append(traffics, traffic)
 		}
 		if isDown {

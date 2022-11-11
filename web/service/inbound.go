@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"time"
+    "encoding/json"
 	"x-ui/database"
 	"x-ui/database/model"
 	"x-ui/util/common"
@@ -163,6 +164,48 @@ func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
 				return
 			}
 		}
+	}
+	return
+}
+func (s *InboundService) AddClientTraffic(traffics []*xray.ClientTraffic) (err error) {
+	if len(traffics) == 0 {
+		return nil
+	}
+	db := database.GetDB()
+	db = db.Model(model.Inbound{})
+	tx := db.Begin()
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+	for _, traffic := range traffics {
+		inbound := &model.Inbound{}
+
+		err := tx.Where("settings like ?", "%" + traffic.Email + "%").First(inbound).Error
+		clientStats := map[string]*xray.ClientTraffic{}
+		json.Unmarshal([]byte(inbound.ClientStats), &clientStats)
+
+		if _, ok := clientStats[traffic.Email]; ok {
+			clientStats[traffic.Email].Up = clientStats[traffic.Email].Up + traffic.Up
+			clientStats[traffic.Email].Down  = clientStats[traffic.Email].Down + traffic.Down
+		}else{
+			clientStats[traffic.Email] = traffic
+		}
+		jsonClientStats, err := json.Marshal(clientStats)
+
+		// if clientStats[traffic.Email]
+		err = tx.Where("settings like ?", "%" + traffic.Email + "%").
+			Update("client_stats", jsonClientStats).
+			Error
+
+
+		if err != nil {
+			return err
+		}
+	
 	}
 	return
 }

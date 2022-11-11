@@ -79,8 +79,3 @@ type Client struct {
 	Total      int64  `json:"total" form:"total"`
 	ExpiryTime int64  `json:"expiryTime" form:"expiryTime"`
 }
-type ClientStats struct {
-	Email string `json:"email"`
-	Up         int64  `json:"up" form:"up"`
-	Down       int64  `json:"down" form:"down"`
-}
