@@ -115,6 +115,17 @@
             isExpiry(index) {
                 return this.inbound.isExpiry(index)
             },
+            getUpStats(email) {
+                console.log(email,this.inbound.clientStats[email])
+                if(this.inbound.clientStats[email])
+                    return this.inbound.clientStats[email]["Up"]
+
+            },
+            getDownStats(email) {
+                if(this.inbound.clientStats[email])
+                    return this.inbound.clientStats[email]["Down"]
+            },
+
 
         },
     });

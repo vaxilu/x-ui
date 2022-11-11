@@ -82,7 +82,7 @@ func (s *XrayService) GetXrayTraffic() ([]*xray.Traffic, error) {
 	if !s.IsXrayRunning() {
 		return nil, errors.New("xray is not running")
 	}
-	return p.GetTraffic(true)
+	return p.GetTraffic(false)
 }
 func (s *XrayService) GetXrayClientTraffic() ([]*xray.ClientTraffic, error) {
 	if !s.IsXrayRunning() {

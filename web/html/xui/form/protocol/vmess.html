@@ -71,9 +71,15 @@
             <a-date-picker :show-time="{ format: 'HH:mm' }" format="YYYY-MM-DD HH:mm"
                            v-model="vmess._expiryTime" style="width: 300px;"></a-date-picker>
         </a-form-item>
-    
-                <!--Add Svg Icon-->
-                <svg
+        <a-form layout="inline">
+            <a-tag color="blue">[[ sizeFormat(getUpStats(vmess.email)) ]] / [[ sizeFormat(getDownStats(vmess.email)) ]]</a-tag>
+            <a-form v-if="vmess.totalGB > 0">
+                <a-tag color="red">used : [[ sizeFormat(getUpStats(vmess.email) + getDownStats(vmess.email)) ]]</a-tag>
+            </a-form>
+        </a-form>
+
+            <!--Add Svg Icon-->
+            <svg
 
                 @click="addClient(inbound.protocol,vmess, inbound.settings.vmesses)"
                 xmlns="http://www.w3.org/2000/svg"

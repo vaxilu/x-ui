@@ -608,6 +608,7 @@ class Inbound extends XrayCommonClass {
                 streamSettings=new StreamSettings(),
                 tag='',
                 sniffing=new Sniffing(),
+                clientStats='',
                 ) {
         super();
         this.port = port;
@@ -617,6 +618,10 @@ class Inbound extends XrayCommonClass {
         this.stream = streamSettings;
         this.tag = tag;
         this.sniffing = sniffing;
+        this.clientStats = clientStats;
+    }
+    getClientStats() {
+        return this.clientStats;
     }
 
     get protocol() {
@@ -1066,6 +1071,7 @@ class Inbound extends XrayCommonClass {
             StreamSettings.fromJson(json.streamSettings),
             json.tag,
             Sniffing.fromJson(json.sniffing),
+            json.clientStats
         )
     }
 
@@ -1082,6 +1088,7 @@ class Inbound extends XrayCommonClass {
             streamSettings: streamSettings,
             tag: this.tag,
             sniffing: this.sniffing.toJson(),
+            clientStats: this.clientStats
         };
     }
 }
@@ -1203,6 +1210,14 @@ Inbound.VmessSettings.Vmess = class extends XrayCommonClass {
             this.expiryTime = t.valueOf();
         }
     }
+    get _totalGB() {
+        return toFixed(this.totalGB / ONE_GB, 2);
+    }
+
+    set _totalGB(gb) {
+        this.totalGB = toFixed(gb * ONE_GB, 0);
+    }
+
 };
 
 Inbound.VLESSSettings = class extends Inbound.Settings {
@@ -1254,6 +1269,14 @@ Inbound.VLESSSettings = class extends Inbound.Settings {
             this.expiryTime = t.valueOf();
         }
     }
+    get _totalGB() {
+        return toFixed(this.totalGB / ONE_GB, 2);
+    }
+
+    set _totalGB(gb) {
+        this.totalGB = toFixed(gb * ONE_GB, 0);
+    }
+
 
 };
 Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
