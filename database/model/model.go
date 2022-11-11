@@ -32,6 +32,7 @@ type Inbound struct {
 	Remark     string `json:"remark" form:"remark"`
 	Enable     bool   `json:"enable" form:"enable"`
 	ExpiryTime int64  `json:"expiryTime" form:"expiryTime"`
+	ClientStats ClientStats `json:"clientStats" form:"clientStats"`
 
 	// config part
 	Listen         string   `json:"listen" form:"listen"`
@@ -75,9 +76,11 @@ type Client struct {
 	Email string `json:"email"`
 	LimitIP int `json:"limitIp"`
 	Security string `json:"security"`
+	Total      int64  `json:"total" form:"total"`
+	ExpiryTime int64  `json:"expiryTime" form:"expiryTime"`
+}
+type ClientStats struct {
+	Email string `json:"email"`
 	Up         int64  `json:"up" form:"up"`
 	Down       int64  `json:"down" form:"down"`
-	Total      int64  `json:"total" form:"total"`
-	Enable     bool   `json:"enable" form:"enable"`
-	ExpiryTime int64  `json:"expiryTime" form:"expiryTime"`
 }
