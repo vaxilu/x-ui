@@ -9,5 +9,6 @@ x-ui-*.tar.gz
 .sync*
 main
 release/
+bin/
 access.log
 .cache

@@ -1157,13 +1157,14 @@ Inbound.VmessSettings = class extends Inbound.Settings {
     }
 };
 Inbound.VmessSettings.Vmess = class extends XrayCommonClass {
-    constructor(id=RandomUtil.randomUUID(), alterId=0, email='', limitIp=0) {
+    constructor(id=RandomUtil.randomUUID(), alterId=0, email='', limitIp=0, totalGB=0, expiryTime='') {
         super();
         this.id = id;
         this.alterId = alterId;
         this.email = email;
         this.limitIp = limitIp;
-
+        this.totalGB = totalGB;
+        this.expiryTime = expiryTime;
     }
 
     static fromJson(json={}) {
@@ -1172,6 +1173,8 @@ Inbound.VmessSettings.Vmess = class extends XrayCommonClass {
             json.alterId,
             json.email,
             json.limitIp,
+            json.totalGB,
+            json.expiryTime,
 
         );
     }
@@ -1215,12 +1218,15 @@ Inbound.VLESSSettings = class extends Inbound.Settings {
 };
 Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
 
-    constructor(id=RandomUtil.randomUUID(), flow=FLOW_CONTROL.DIRECT, email='', limitIp=0) {
+    constructor(id=RandomUtil.randomUUID(), flow=FLOW_CONTROL.DIRECT, email='', limitIp=0, totalGB=0, expiryTime='') {
         super();
         this.id = id;
         this.flow = flow;
         this.email = email;
         this.limitIp = limitIp;
+        this.totalGB = totalGB;
+        this.expiryTime = expiryTime;
+
     }
 
     static fromJson(json={}) {
@@ -1228,7 +1234,10 @@ Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
             json.id,
             json.flow,
             json.email,
-            json.limitIp
+            json.limitIp,
+            json.totalGB,
+            json.expiryTime,
+
         );
     }
 };
