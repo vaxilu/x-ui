@@ -120,13 +120,13 @@ func (s *XrayService) GetXrayTraffic() ([]*xray.Traffic, error) {
 	if !s.IsXrayRunning() {
 		return nil, errors.New("xray is not running")
 	}
-	return p.GetTraffic(false)
+	return p.GetTraffic(true)
 }
 func (s *XrayService) GetXrayClientTraffic() ([]*xray.ClientTraffic, error) {
 	if !s.IsXrayRunning() {
 		return nil, errors.New("xray is not running")
 	}
-	return p.GetClientTraffic(true)
+	return p.GetClientTraffic(false)
 }
 
 func (s *XrayService) RestartXray(isForce bool) error {
