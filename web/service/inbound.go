@@ -58,9 +58,12 @@ func (s *InboundService) AddInbound(inbound *model.Inbound) (*model.Inbound,erro
 		return inbound, common.NewError("端口已存在:", inbound.Port)
 	}
 	db := database.GetDB()
-	s.UpdateClientStat(inbound.Id,inbound.Settings)
 
-	return inbound, db.Save(inbound).Error
+	err = db.Save(inbound).Error
+	if err == nil {
+		s.UpdateClientStat(inbound.Id,inbound.Settings)
+	}
+	return inbound, err
 }
 
 func (s *InboundService) AddInbounds(inbounds []*model.Inbound) error {
