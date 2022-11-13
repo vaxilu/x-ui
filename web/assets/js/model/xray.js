@@ -818,9 +818,13 @@ class Inbound extends XrayCommonClass {
     isExpiry(index) {
         switch (this.protocol) {
             case Protocols.VMESS:
-                return this.settings.vmesses[index].expiryTime < new Date().getTime();
+                if(this.settings.vmesses[index]._expiryTime != null)
+                    return this.settings.vmesses[index]._expiryTime < new Date().getTime();
+                return false
             case Protocols.VLESS:
-                return this.settings.vlesses[index].expiryTime < new Date().getTime();
+                if(this.settings.vlesses[index]._expiryTime != null)
+                    return this.settings.vlesses[index]._expiryTime < new Date().getTime();
+                return false
             default:
                 return false;
         }
@@ -1197,14 +1201,14 @@ Inbound.VmessSettings.Vmess = class extends XrayCommonClass {
         );
     }
     get _expiryTime() {
-        if (this.expiryTime === 0) {
+        if (this.expiryTime === 0 || this.expiryTime === "") {
             return null;
         }
         return moment(this.expiryTime);
     }
 
     set _expiryTime(t) {
-        if (t == null) {
+        if (t == null || t === "") {
             this.expiryTime = 0;
         } else {
             this.expiryTime = t.valueOf();
@@ -1256,14 +1260,14 @@ Inbound.VLESSSettings = class extends Inbound.Settings {
         };
     }
     get _expiryTime() {
-        if (this.expiryTime === 0) {
+        if (this.expiryTime === 0 || this.expiryTime === "") {
             return null;
         }
         return moment(this.expiryTime);
     }
 
     set _expiryTime(t) {
-        if (t == null) {
+        if (t == null || t === "") {
             this.expiryTime = 0;
         } else {
             this.expiryTime = t.valueOf();

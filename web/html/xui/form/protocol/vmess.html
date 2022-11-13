@@ -3,7 +3,7 @@
 <a-collapse activeKey="0"  v-for="(vmess, index) in inbound.settings.vmesses"
 :key="`vmess-${index}`">
     <a-collapse-panel :header="getHeaderText(vmess.email)">
-        <a-tag v-if="isExpiry(index) || (getUpStats(vmess.email) + getDownStats(vmess.email)) > vmess.totalGB" color="red" style="margin-bottom: 10px;display: block;text-align: center;">Account is (Expired|Traffic Ended) And Disabled</a-tag>
+        <a-tag v-if="isExpiry(index) || ((getUpStats(vmess.email) + getDownStats(vmess.email)) > vmess.totalGB && vmess.totalGB != 0)" color="red" style="margin-bottom: 10px;display: block;text-align: center;">Account is (Expired|Traffic Ended) And Disabled</a-tag>
 
         <a-form layout="inline">
             <a-form-item label="Email">
