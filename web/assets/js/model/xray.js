@@ -1259,28 +1259,6 @@ Inbound.VLESSSettings = class extends Inbound.Settings {
             fallbacks: Inbound.VLESSSettings.toJsonArray(this.fallbacks),
         };
     }
-    get _expiryTime() {
-        if (this.expiryTime === 0 || this.expiryTime === "") {
-            return null;
-        }
-        return moment(this.expiryTime);
-    }
-
-    set _expiryTime(t) {
-        if (t == null || t === "") {
-            this.expiryTime = 0;
-        } else {
-            this.expiryTime = t.valueOf();
-        }
-    }
-    get _totalGB() {
-        return toFixed(this.totalGB / ONE_GB, 2);
-    }
-
-    set _totalGB(gb) {
-        this.totalGB = toFixed(gb * ONE_GB, 0);
-    }
-
 
 };
 Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
@@ -1306,6 +1284,28 @@ Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
             json.expiryTime,
 
         );
+    }
+
+    get _expiryTime() {
+        if (this.expiryTime === 0 || this.expiryTime === "") {
+            return null;
+        }
+        return moment(this.expiryTime);
+    }
+
+    set _expiryTime(t) {
+        if (t == null || t === "") {
+            this.expiryTime = 0;
+        } else {
+            this.expiryTime = t.valueOf();
+        }
+    }
+    get _totalGB() {
+        return toFixed(this.totalGB / ONE_GB, 2);
+    }
+
+    set _totalGB(gb) {
+        this.totalGB = toFixed(gb * ONE_GB, 0);
     }
 };
 Inbound.VLESSSettings.Fallback = class extends XrayCommonClass {

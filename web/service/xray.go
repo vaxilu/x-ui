@@ -6,7 +6,6 @@ import (
 	"sync"
 	"x-ui/logger"
 	"x-ui/xray"
-	"x-ui/database/model"
 	"go.uber.org/atomic"
 )
 
@@ -51,7 +50,7 @@ func (s *XrayService) GetXrayVersion() string {
 	}
 	return p.GetVersion()
 }
-func RemoveIndex(s []model.Client, index int) []model.Client {
+func RemoveIndex(s []interface{}, index int) []interface{} {
 	return append(s[:index], s[index+1:]...)
 }
 
@@ -78,9 +77,9 @@ func (s *XrayService) GetXrayConfig() (*xray.Config, error) {
 			continue
 		}
 		// get settings clients
-		settings := map[string][]model.Client{}
+		settings := map[string]interface{}{}
 		json.Unmarshal([]byte(inbound.Settings), &settings)
-		clients := settings["clients"]
+		clients :=  settings["clients"].([]interface{})
 	
 
 
@@ -90,10 +89,11 @@ func (s *XrayService) GetXrayConfig() (*xray.Config, error) {
 		for _, clientTraffic := range clientStats {
 			
 			for index, client := range clients {
-				if client.Email == clientTraffic.Email {
+				c := client.(map[string]interface{})
+				if c["email"] == clientTraffic.Email {
 					if ! clientTraffic.Enable {
 						clients = RemoveIndex(clients,index)
-						logger.Info("Remove Inbound User",client.Email)
+						logger.Info("Remove Inbound User",c["email"] ,index)
 
 					}
 
