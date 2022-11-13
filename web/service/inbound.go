@@ -58,7 +58,8 @@ func (s *InboundService) AddInbound(inbound *model.Inbound) (*model.Inbound,erro
 		return inbound, common.NewError("端口已存在:", inbound.Port)
 	}
 	db := database.GetDB()
-	
+	s.UpdateClientStat(inbound.Id,inbound.Settings)
+
 	return inbound, db.Save(inbound).Error
 }
 
@@ -136,6 +137,7 @@ func (s *InboundService) UpdateInbound(inbound *model.Inbound) (*model.Inbound, 
 	oldInbound.Sniffing = inbound.Sniffing
 	oldInbound.Tag = fmt.Sprintf("inbound-%v", inbound.Port)
 
+	s.UpdateClientStat(inbound.Id,inbound.Settings)
 	db := database.GetDB()
 	return inbound, db.Save(oldInbound).Error
 }
@@ -235,6 +237,36 @@ func (s *InboundService) DisableInvalidClients() (int64, error) {
 	err := result.Error
 	count := result.RowsAffected
 	return count, err
+}
+func (s *InboundService) UpdateClientStat(inboundId int, inboundSettings string) (error) {
+	db := database.GetDB()
+
+	// get settings clients
+	settings := map[string][]model.Client{}
+	json.Unmarshal([]byte(inboundSettings), &settings)
+	clients := settings["clients"]
+	for _, client := range clients {
+		result := db.Model(xray.ClientTraffic{}).
+		Where("inbound_id = ? and email = ?", inboundId, client.Email).
+		Updates(map[string]interface{}{"enable": true, "total": client.TotalGB, "expiry_time": client.ExpiryTime})
+		if result.RowsAffected == 0 {
+			clientTraffic := xray.ClientTraffic{}
+			clientTraffic.InboundId = inboundId
+			clientTraffic.Email = client.Email
+			clientTraffic.Total = client.TotalGB
+			clientTraffic.ExpiryTime = client.ExpiryTime
+			clientTraffic.Enable = true
+			clientTraffic.Up = 0
+			clientTraffic.Down = 0
+			db.Create(&clientTraffic)
+		}
+		err := result.Error
+		if err != nil {
+			return err
+		}
+	
+	}
+	return nil
 }
 
 func (s *InboundService) GetInboundClientIps(clientEmail string) (string, error) {

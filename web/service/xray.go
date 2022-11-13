@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"sync"
-	"time"
-
 	"x-ui/logger"
 	"x-ui/xray"
 	"x-ui/database/model"
@@ -69,6 +67,8 @@ func (s *XrayService) GetXrayConfig() (*xray.Config, error) {
 		return nil, err
 	}
 
+	s.inboundService.DisableInvalidClients()
+
 	inbounds, err := s.inboundService.GetAllInbounds()
 	if err != nil {
 		return nil, err
@@ -85,17 +85,15 @@ func (s *XrayService) GetXrayConfig() (*xray.Config, error) {
 
 
 		// check users active or not
-		now := time.Now().Unix() * 1000
 
 		clientStats := inbound.ClientStats
 		for _, clientTraffic := range clientStats {
 			
 			for index, client := range clients {
 				if client.Email == clientTraffic.Email {
-					totalUsage := clientTraffic.Up + clientTraffic.Down
-					if totalUsage > client.TotalGB || (client.ExpiryTime > 0 && client.ExpiryTime <= now){
+					if ! clientTraffic.Enable {
 						clients = RemoveIndex(clients,index)
-						logger.Debug("Remove Inbound User",client.Email)
+						logger.Info("Remove Inbound User",client.Email)
 
 					}
 
