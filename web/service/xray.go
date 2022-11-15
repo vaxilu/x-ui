@@ -93,7 +93,7 @@ func (s *XrayService) GetXrayConfig() (*xray.Config, error) {
 				if c["email"] == clientTraffic.Email {
 					if ! clientTraffic.Enable {
 						clients = RemoveIndex(clients,index)
-						logger.Info("Remove Inbound User",c["email"] ,index)
+						logger.Info("Remove Inbound User",c["email"] ,"due the expire or traffic limit")
 
 					}
 
