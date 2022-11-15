@@ -20,7 +20,7 @@
                     </a-tooltip>
                 </span>
             
-                <a-input type="number" v-model.number="vmess.limitIp"></a-input>
+              <a-input type="number" v-model.number="vmess.limitIp" min="0" ></a-input>
             </a-form-item>
             <a-form-item v-if="vmess.email && vmess.limitIp > 0 && isEdit">
                 <span slot="label">

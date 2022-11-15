@@ -6,9 +6,15 @@ xray panel supporting multi-protocol, **Multi-lang (English,Chinese)**, **IP Res
 | ------------- |:-------------:|
 | Multi-lang | :heavy_check_mark: |
 | IP Restriction | :heavy_check_mark: |
-| Inbound Multi User | :clock1:       |
+| Inbound Multi User | :heavy_check_mark: |
 
 **If you think this project is helpful to you, you may wish to give a** :star2: 
+
+**Feel Free for Donation :** :heart:
+
+TRC20: TDam6uh8ctLJuz8Y3rRk4t5pLikQvtpvJE
+
+ETH: 0x256ddA590c35638fA4B3a25Ec4544Db087ceE826
 
 # Features
 
@@ -38,7 +44,7 @@ xray panel supporting multi-protocol, **Multi-lang (English,Chinese)**, **IP Res
 ```
 - change access log path as you want
 
-2 - add **IP limit and Email** for inbound(vmess & vless)
+2 - add **IP limit and Unique Email** for inbound(vmess & vless)
 
 # Install & Upgrade
 

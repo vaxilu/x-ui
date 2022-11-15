@@ -4,13 +4,10 @@ import (
 	"fmt"
 	"net"
 	"os"
-
 	"time"
-
 	"x-ui/logger"
 	"x-ui/util/common"
 	"x-ui/web/service"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -69,7 +66,7 @@ func (j *StatsNotifyJob) Run() {
 		fmt.Println("get hostname error:", err)
 		return
 	}
-	info = fmt.Sprintf("主机名称:%s\r\n", name)
+	info = fmt.Sprintf("Hostname:%s\r\n", name)
 	//get ip address
 	var ip string
 	netInterfaces, err := net.Interfaces()
@@ -95,7 +92,7 @@ func (j *StatsNotifyJob) Run() {
 			}
 		}
 	}
-	info += fmt.Sprintf("IP地址:%s\r\n \r\n", ip)
+	info += fmt.Sprintf("IP:%s\r\n \r\n", ip)
 
 	//get traffic
 	inbouds, err := j.inboundService.GetAllInbounds()
@@ -106,11 +103,11 @@ func (j *StatsNotifyJob) Run() {
 	//NOTE:If there no any sessions here,need to notify here
 	//TODO:分节点推送,自动转化格式
 	for _, inbound := range inbouds {
-		info += fmt.Sprintf("节点名称:%s\r\n端口:%d\r\n上行流量↑:%s\r\n下行流量↓:%s\r\n总流量:%s\r\n", inbound.Remark, inbound.Port, common.FormatTraffic(inbound.Up), common.FormatTraffic(inbound.Down), common.FormatTraffic((inbound.Up + inbound.Down)))
+		info += fmt.Sprintf("Node name:%s\r\nPort:%d\r\nUpload↑:%s\r\nDownload↓:%s\r\nTotal:%s\r\n", inbound.Remark, inbound.Port, common.FormatTraffic(inbound.Up), common.FormatTraffic(inbound.Down), common.FormatTraffic((inbound.Up + inbound.Down)))
 		if inbound.ExpiryTime == 0 {
-			info += fmt.Sprintf("到期时间:无限期\r\n \r\n")
+			info += fmt.Sprintf("Expire date:unlimited\r\n \r\n")
 		} else {
-			info += fmt.Sprintf("到期时间:%s\r\n \r\n", time.Unix((inbound.ExpiryTime/1000), 0).Format("2006-01-02 15:04:05"))
+			info += fmt.Sprintf("Expire date:%s\r\n \r\n", time.Unix((inbound.ExpiryTime/1000), 0).Format("2006-01-02 15:04:05"))
 		}
 	}
 	j.SendMsgToTgbot(info)
@@ -129,12 +126,12 @@ func (j *StatsNotifyJob) UserLoginNotify(username string, ip string, time string
 		return
 	}
 	if status == LoginSuccess {
-		msg = fmt.Sprintf("面板登录成功提醒\r\n主机名称:%s\r\n", name)
+		msg = fmt.Sprintf("Successfully logged-in to the panel\r\nHostname:%s\r\n", name)
 	} else if status == LoginFail {
-		msg = fmt.Sprintf("面板登录失败提醒\r\n主机名称:%s\r\n", name)
+		msg = fmt.Sprintf("Login to the panel was unsuccessful\r\nHostname:%s\r\n", name)
 	}
-	msg += fmt.Sprintf("时间:%s\r\n", time)
-	msg += fmt.Sprintf("用户:%s\r\n", username)
+	msg += fmt.Sprintf("Time:%s\r\n", time)
+	msg += fmt.Sprintf("Username:%s\r\n", username)
 	msg += fmt.Sprintf("IP:%s\r\n", ip)
 	j.SendMsgToTgbot(msg)
 }
