@@ -16,7 +16,7 @@
                 </a-tooltip>
             </span>
 
-            <a-input type="number" v-model.number="vless.limitIp"></a-input>
+            <a-input type="number" v-model.number="vless.limitIp" min="0" ></a-input>
         </a-form-item>
         <a-form-item v-if="vless.email && vless.limitIp > 0 && isEdit">
             <span slot="label">
