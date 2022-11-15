@@ -5,8 +5,10 @@ xray panel supporting multi-protocol, **Multi-lang (English,Chinese)**, **IP Res
 | Features        | Enable?           |
 | ------------- |:-------------:|
 | Multi-lang | :heavy_check_mark: |
-| IP Restriction | :heavy_check_mark: |
-| Inbound Multi User | :heavy_check_mark: |
+| [IP Restriction](https://github.com/hossinasaadi/x-ui/#enable-ip-restrictions-per-inbound) | :heavy_check_mark: |
+| [Inbound Multi User](https://github.com/hossinasaadi/x-ui/#enable-multi-user-traffic--exprire-day) | :heavy_check_mark: |
+| [Multi User Traffic & expire day](https://github.com/hossinasaadi/x-ui/#enable-multi-user-traffic--exprire-day) | :heavy_check_mark: |
+| [REST API](https://github.com/hossinasaadi/x-ui/pull/51) | :heavy_check_mark: |
 
 **If you think this project is helpful to you, you may wish to give a** :star2: 
 
@@ -45,6 +47,55 @@ ETH: 0x256ddA590c35638fA4B3a25Ec4544Db087ceE826
 - change access log path as you want
 
 2 - add **IP limit and Unique Email** for inbound(vmess & vless)
+
+# Enable Multi User Traffic & Exprire Day
+![Screenshot from 2022-11-15 07-43-58](https://user-images.githubusercontent.com/16622377/201922652-111ff5b8-272b-49f5-a656-d6f57d79eaed.png)
+
+**for enable traffic for users you should do :**
+
+find this in config : 
+``` json
+ "policy": {
+    "system": {
+```
+**and add this just after  ` "policy": {` :**
+```json
+    "levels": {
+      "0": {
+        "handshake": 4,
+        "connIdle": 300,
+        "uplinkOnly": 2,
+        "downlinkOnly": 5,
+        "statsUserUplink": true,
+        "statsUserDownlink": true,
+        "bufferSize": 4
+      }
+    },
+```
+
+
+**the final output is like :**
+```json
+  "policy": {
+    "levels": {
+      "0": {
+        "handshake": 4,
+        "connIdle": 300,
+        "uplinkOnly": 2,
+        "downlinkOnly": 5,
+        "statsUserUplink": true,
+        "statsUserDownlink": true,
+        "bufferSize": 4
+      }
+    },
+
+    "system": {
+      "statsInboundDownlink": true,
+      "statsInboundUplink": true
+    }
+  },
+  "routing": {
+```
 
 # Install & Upgrade
 
