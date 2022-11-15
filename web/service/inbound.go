@@ -8,6 +8,7 @@ import (
 	"x-ui/database/model"
 	"x-ui/util/common"
 	"x-ui/xray"
+	"x-ui/logger"
 
 	"gorm.io/gorm"
 )
@@ -192,7 +193,8 @@ func (s *InboundService) AddClientTraffic(traffics []*xray.ClientTraffic) (err e
 		err := db.Model(model.Inbound{}).Where("settings like ?", "%" + traffic.Email + "%").First(inbound).Error
 		traffic.InboundId = inbound.Id
 		if err != nil {
-			return err
+			logger.Warning("AddClientTraffic find model ", err)
+			continue
 		}
 		// get settings clients
 		settings := map[string][]model.Client{}
@@ -214,7 +216,8 @@ func (s *InboundService) AddClientTraffic(traffics []*xray.ClientTraffic) (err e
 		}
 		
 		if err != nil {
-			return err
+			logger.Warning("AddClientTraffic update data ", err)
+			continue
 		}
 	
 	}
