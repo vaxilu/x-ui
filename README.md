@@ -62,13 +62,8 @@ find this in config :
 ```json
     "levels": {
       "0": {
-        "handshake": 4,
-        "connIdle": 300,
-        "uplinkOnly": 2,
-        "downlinkOnly": 5,
         "statsUserUplink": true,
         "statsUserDownlink": true,
-        "bufferSize": 4
       }
     },
 ```
@@ -79,13 +74,8 @@ find this in config :
   "policy": {
     "levels": {
       "0": {
-        "handshake": 4,
-        "connIdle": 300,
-        "uplinkOnly": 2,
-        "downlinkOnly": 5,
         "statsUserUplink": true,
         "statsUserDownlink": true,
-        "bufferSize": 4
       }
     },
 
