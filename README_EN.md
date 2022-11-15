@@ -6,6 +6,7 @@ This project is a fork of [vaxilu&#39;s project](https://github.com/vaxilu/x-ui)
 If you need more language options ,please open a issue and let me know that
 
 # changes  
+- 2022.11.15：Add xtls-rprx-vision flow option  
 - 2022.10.23：Fully support for English,add export links,add CPU cores display
 - 2022.08.11：Support multi users on the same port;add CPU limit exceed  alert  
 - 2022.07.28：Add acme standalone mode for cert issue；add  mechanism to keep X-UI alive even there exist crashes
