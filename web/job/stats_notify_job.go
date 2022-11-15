@@ -32,7 +32,7 @@ func NewStatsNotifyJob() *StatsNotifyJob {
 func (j *StatsNotifyJob) SendMsgToTgbot(msg string) {
 	//Telegram bot basic info
 	tgBottoken, err := j.settingService.GetTgBotToken()
-	if err != nil {
+	if err != nil || tgBottoken == "" {
 		logger.Warning("sendMsgToTgbot failed,GetTgBotToken fail:", err)
 		return
 	}

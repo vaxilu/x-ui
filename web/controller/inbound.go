@@ -59,6 +59,19 @@ func (a *InboundController) getInbounds(c *gin.Context) {
 	}
 	jsonObj(c, inbounds, nil)
 }
+func (a *InboundController) getInbound(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		jsonMsg(c, I18n(c , "get"), err)
+		return
+	}
+	inbound, err := a.inboundService.GetInbound(id)
+	if err != nil {
+		jsonMsg(c, I18n(c , "pages.inbounds.toasts.obtain"), err)
+		return
+	}
+	jsonObj(c, inbound, nil)
+}
 
 func (a *InboundController) addInbound(c *gin.Context) {
 	inbound := &model.Inbound{}
@@ -71,8 +84,8 @@ func (a *InboundController) addInbound(c *gin.Context) {
 	inbound.UserId = user.Id
 	inbound.Enable = true
 	inbound.Tag = fmt.Sprintf("inbound-%v", inbound.Port)
-	err = a.inboundService.AddInbound(inbound)
-	jsonMsg(c, I18n(c , "pages.inbounds.addTo"), err)
+	inbound, err = a.inboundService.AddInbound(inbound)
+	jsonMsgObj(c, I18n(c , "pages.inbounds.addTo"), inbound, err)
 	if err == nil {
 		a.xrayService.SetToNeedRestart()
 	}
@@ -85,7 +98,7 @@ func (a *InboundController) delInbound(c *gin.Context) {
 		return
 	}
 	err = a.inboundService.DelInbound(id)
-	jsonMsg(c, I18n(c , "delete"), err)
+	jsonMsgObj(c, I18n(c , "delete"), id, err)
 	if err == nil {
 		a.xrayService.SetToNeedRestart()
 	}
@@ -105,8 +118,8 @@ func (a *InboundController) updateInbound(c *gin.Context) {
 		jsonMsg(c, I18n(c , "pages.inbounds.revise"), err)
 		return
 	}
-	err = a.inboundService.UpdateInbound(inbound)
-	jsonMsg(c, I18n(c , "pages.inbounds.revise"), err)
+	inbound, err = a.inboundService.UpdateInbound(inbound)
+	jsonMsgObj(c, I18n(c , "pages.inbounds.revise"), inbound, err)
 	if err == nil {
 		a.xrayService.SetToNeedRestart()
 	}
