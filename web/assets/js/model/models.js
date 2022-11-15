@@ -44,7 +44,7 @@ class DBInbound {
         this.streamSettings = "";
         this.tag = "";
         this.sniffing = "";
-
+        this.clientStats = ""
         if (data == null) {
             return;
         }
@@ -125,6 +125,7 @@ class DBInbound {
         if (!ObjectUtil.isEmpty(this.sniffing)) {
             sniffing = JSON.parse(this.sniffing);
         }
+
         const config = {
             port: this.port,
             listen: this.listen,
@@ -133,6 +134,7 @@ class DBInbound {
             streamSettings: streamSettings,
             tag: this.tag,
             sniffing: sniffing,
+            clientStats: this.clientStats,
         };
         return Inbound.fromJson(config);
     }

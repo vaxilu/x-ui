@@ -112,6 +112,57 @@
                 }
                 event.target.value = ""
             },
+            isExpiry(index) {
+                return this.inbound.isExpiry(index)
+            },
+            getUpStats(email) {
+                clientStats = this.inbound.clientStats
+                if(clientStats.length > 0)
+                {
+                    for (const key in clientStats) {
+                        if (Object.hasOwnProperty.call(clientStats, key)) {
+                            if(clientStats[key]['email'] == email)
+                                return clientStats[key]['up']
+
+                        }
+                    }
+                }
+
+            },
+            getDownStats(email) {
+                clientStats = this.inbound.clientStats
+                if(clientStats.length > 0)
+                {
+                    for (const key in clientStats) {
+                        if (Object.hasOwnProperty.call(clientStats, key)) {
+                            if(clientStats[key]['email'] == email)
+                                return clientStats[key]['down']
+
+                        }
+                    }
+                }
+            },
+            isClientEnable(email) {
+                clientStats = this.inbound.clientStats
+                if(clientStats.length > 0)
+                {
+                    for (const key in clientStats) {
+                        if (Object.hasOwnProperty.call(clientStats, key)) {
+                            if(clientStats[key]['email'] == email)
+                                return clientStats[key]['enable']
+
+                        }
+                    }
+                }
+            },
+
+            getHeaderText(email) {
+                if(email == "")
+                    return "Add Client"
+                
+                return email + (this.isClientEnable(email) == true ? ' Active' : ' Deactive')
+            },
+
 
         },
     });
