@@ -63,7 +63,7 @@ find this in config :
     "levels": {
       "0": {
         "statsUserUplink": true,
-        "statsUserDownlink": true,
+        "statsUserDownlink": true
       }
     },
 ```
@@ -75,7 +75,7 @@ find this in config :
     "levels": {
       "0": {
         "statsUserUplink": true,
-        "statsUserDownlink": true,
+        "statsUserDownlink": true
       }
     },
 
@@ -86,7 +86,7 @@ find this in config :
   },
   "routing": {
 ```
-
+ restart panel
 # Install & Upgrade
 
 ```
