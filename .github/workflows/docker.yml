@@ -12,8 +12,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build the Docker image
+    
+    - name: Docker Hub login
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
       run: |
-        echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin docker.io
-        docker buildx build . --platform=linux/amd64,linux/arm64 --file Dockerfile --tag docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPOSITORY }}:$GITHUB_SHA
-        docker push docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPOSITORY }}:$GITHUB_SHA
+        echo "${DOCKERHUB_TOKEN}" | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
+
+    - name: Build Dockerfile
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      run: |
+        docker buildx build \
+        --platform=linux/amd64,linux/arm64 \
+        --output "type=image,push=true" \
+        --file ${{ github.event.inputs.project }}/Dockerfile ./${{ github.event.inputs.project }} \
+        --tag $(echo "${DOCKERHUB_USERNAME}" | tr '[:upper:]' '[:lower:]')/${{ github.event.inputs.project }}:latest
