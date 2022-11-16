@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+    # Can't use service name with x- prefix here, because it's not supported by docker-compose
+    xui:
+        image: 'enwaiax/x-ui:latest'
+        container_name: xui
+        build: .
+        network_mode: host
+        volumes:
+            - 'xui-db:/etc/x-ui/'
+            - 'xui-cert:/root/cert/'
+        restart: unless-stopped
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:54321"]
+            interval: 1m
+            timeout: 10s
+            retries: 3
+            start_period: 30s
+
+volumes:
+    xui-db:
+    xui-cert:
