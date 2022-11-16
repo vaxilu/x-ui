@@ -20,6 +20,12 @@ jobs:
       run: |
         echo "${DOCKERHUB_TOKEN}" | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
 
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@v1
+      with:
+        buildx-version: latest
+
     - name: Build Dockerfile
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
