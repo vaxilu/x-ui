@@ -3,7 +3,12 @@ on:
   push:
     branches: [ master ]
   workflow_dispatch:
-  
+      inputs:
+        project:
+          description: 'Project'
+          required: true
+          default: 
+
 jobs:
 
   build:
@@ -40,5 +45,5 @@ jobs:
         docker buildx build \
         --platform=linux/amd64,linux/arm64 \
         --output "type=image,push=true" \
-        --file ${{ secrets.DOCKER_HUB_REPOSITORY }}/Dockerfile ./${{ secrets.DOCKER_HUB_REPOSITORY }} \
-        --tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPOSITORY }}:latest
+        --file ./Dockerfile ./ \
+        --tag $(echo "${DOCKERHUB_USERNAME}" | tr '[:upper:]' '[:lower:]')/${{ github.event.inputs.project }}:latest

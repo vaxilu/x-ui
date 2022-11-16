@@ -115,7 +115,7 @@ systemctl restart x-ui
 
 ## Install using docker
 
-> This docker tutorial and docker image are provided by [Chasing66](https://github.com/Chasing66)
+> This docker tutorial and docker image are provided by [hossinasaadi](https://github.com/hossinasaadi)
 
 1. install docker
 
@@ -131,7 +131,7 @@ docker run -itd --network=host \
     -v $PWD/db/:/etc/x-ui/ \
     -v $PWD/cert/:/root/cert/ \
     --name x-ui --restart=unless-stopped \
-    enwaiax/x-ui:latest
+    hossinasaadi/x-ui:latest
 ```
 
 > Build your own image
