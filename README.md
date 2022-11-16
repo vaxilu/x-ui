@@ -67,6 +67,25 @@ docker run -itd --network=host \
 docker build -t x-ui .
 ```
 
+## 使用docker-compose安装
+使用默认图像运行 (Run with the default image)：
+```shell
+docker-compose up -d --no-build
+```
+or in new version of docker
+```shell
+docker compose up -d --no-build
+```
+
+构建并运行 (Build and run)：
+```shell
+docker-compose up -d --build
+```
+or in new version of docker
+```shell
+docker compose up -d --build
+```
+
 ## SSL证书申请
 
 > 此功能与教程由[FranzKafkaYu](https://github.com/FranzKafkaYu)提供
