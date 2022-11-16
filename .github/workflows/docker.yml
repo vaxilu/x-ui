@@ -35,9 +35,10 @@ jobs:
     - name: Build Dockerfile
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKERHUB_REPO: ${{ secrets.DOCKER_HUB_REPOSITORY }}
       run: |
         docker buildx build \
         --platform=linux/amd64,linux/arm64 \
         --output "type=image,push=true" \
         --file ${{ github.event.inputs.project }}/Dockerfile ./${{ github.event.inputs.project }} \
-        --tag $(echo "${DOCKERHUB_USERNAME}" | tr '[:upper:]' '[:lower:]')/x-ui:latest
+        --tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPOSITORY }}:latest
