@@ -30,6 +30,12 @@
     }
   ],
   "policy": {
+    "levels": {
+      "0": {
+        "statsUserUplink": true,
+        "statsUserDownlink": true
+      }
+    },
     "system": {
       "statsInboundDownlink": true,
       "statsInboundUplink": true
