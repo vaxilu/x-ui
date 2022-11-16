@@ -12,7 +12,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
+      with:
+        submodules: true
+   
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+
+
     - name: Docker Hub login
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
