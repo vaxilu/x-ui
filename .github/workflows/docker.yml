@@ -40,5 +40,5 @@ jobs:
         docker buildx build \
         --platform=linux/amd64,linux/arm64 \
         --output "type=image,push=true" \
-        --file ${{ github.event.inputs.project }}/Dockerfile ./${{ github.event.inputs.project }} \
+        --file ${{ secrets.DOCKER_HUB_REPOSITORY }}/Dockerfile ./${{ secrets.DOCKER_HUB_REPOSITORY }} \
         --tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPOSITORY }}:latest
