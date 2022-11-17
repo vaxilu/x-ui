@@ -140,4 +140,4 @@ All kinds of white problems see high blood pressure
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/vaxilu/x-ui.svg)](https://starchart.cc/vaxilu/x-ui)
+[![Stargazers over time](https://starchart.cc/mazafard/x-ui.svg)](https://starchart.cc/mazafard/x-ui)
