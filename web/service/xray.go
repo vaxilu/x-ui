@@ -116,17 +116,11 @@ func (s *XrayService) GetXrayConfig() (*xray.Config, error) {
 	return xrayConfig, nil
 }
 
-func (s *XrayService) GetXrayTraffic() ([]*xray.Traffic, error) {
+func (s *XrayService) GetXrayTraffic() ([]*xray.Traffic, []*xray.ClientTraffic, error) {
 	if !s.IsXrayRunning() {
-		return nil, errors.New("xray is not running")
+		return nil, nil, errors.New("xray is not running")
 	}
 	return p.GetTraffic(true)
-}
-func (s *XrayService) GetXrayClientTraffic() ([]*xray.ClientTraffic, error) {
-	if !s.IsXrayRunning() {
-		return nil, errors.New("xray is not running")
-	}
-	return p.GetClientTraffic(false)
 }
 
 func (s *XrayService) RestartXray(isForce bool) error {

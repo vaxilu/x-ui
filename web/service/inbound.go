@@ -193,7 +193,7 @@ func (s *InboundService) AddClientTraffic(traffics []*xray.ClientTraffic) (err e
 		err := db.Model(model.Inbound{}).Where("settings like ?", "%" + traffic.Email + "%").First(inbound).Error
 		traffic.InboundId = inbound.Id
 		if err != nil {
-			logger.Warning("AddClientTraffic find model ", err)
+			logger.Warning("AddClientTraffic find model ", err, traffic.Email)
 			continue
 		}
 		// get settings clients
