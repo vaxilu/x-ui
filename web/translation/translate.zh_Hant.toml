@@ -34,5 +34,22 @@
 [pages.inbounds]
 "title" = "入站列表"
 
+[pages.inbounds.stream.general]
+"requestHeader" = "request header"
+"name" = "name"
+"value" = "value"
+
+[pages.inbounds.stream.tcp]
+"requestVersion" = "request version"
+"requestMethod" = "request method"
+"requestPath" = "request path"
+"responseVersion" = "response version"
+"responseStatus" = "response status"
+"responseStatusDescription" = "response status description"
+"responseHeader" = "response header"
+
+[pages.inbounds.stream.quic]
+"encryption" = "encryption"
+
 [pages.setting]
 "title" = "设置"

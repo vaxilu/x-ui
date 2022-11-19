@@ -125,6 +125,22 @@
 [pages.inbounds.toasts]
 "obtain" = "获取"
 
+[pages.inbounds.stream.general]
+"requestHeader" = "请求头"
+"name" = "名称"
+"value" = "值"
+
+[pages.inbounds.stream.tcp]
+"requestVersion" = "请求版本"
+"requestMethod" = "请求方法"
+"requestPath" = "请求路径"
+"responseVersion" = "响应版本"
+"responseStatus" = "响应状态"
+"responseStatusDescription" = "响应状态说明"
+"responseHeader" = "响应头"
+
+[pages.inbounds.stream.quic]
+"encryption" = "加密"
 
 
 [pages.setting]
