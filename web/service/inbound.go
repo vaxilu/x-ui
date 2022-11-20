@@ -178,6 +178,8 @@ func (s *InboundService) AddClientTraffic(traffics []*xray.ClientTraffic) (err e
 		return nil
 	}
 	db := database.GetDB()
+	dbInbound := db.Model(model.Inbound{})
+
 	db = db.Model(xray.ClientTraffic{})
 	tx := db.Begin()
 	defer func() {
@@ -187,13 +189,27 @@ func (s *InboundService) AddClientTraffic(traffics []*xray.ClientTraffic) (err e
 			tx.Commit()
 		}
 	}()
+	txInbound := dbInbound.Begin()
+	defer func() {
+		if err != nil {
+			txInbound.Rollback()
+		} else {
+			txInbound.Commit()
+		}
+	}()
+
 	for _, traffic := range traffics {
 		inbound := &model.Inbound{}
 
-		err := db.Model(model.Inbound{}).Where("settings like ?", "%" + traffic.Email + "%").First(inbound).Error
+		err := txInbound.Where("settings like ?", "%" + traffic.Email + "%").First(inbound).Error
 		traffic.InboundId = inbound.Id
 		if err != nil {
-			logger.Warning("AddClientTraffic find model ", err, traffic.Email)
+			if err == gorm.ErrRecordNotFound {
+				// delete removed client record
+				clientErr := s.DelClientStat(tx, traffic.Email)
+				logger.Warning(err, traffic.Email,clientErr)
+
+			}
 			continue
 		}
 		// get settings clients
@@ -273,6 +289,9 @@ func (s *InboundService) UpdateClientStat(inboundId int, inboundSettings string)
 	
 	}
 	return nil
+}
+func (s *InboundService) DelClientStat(tx *gorm.DB, email string) error {
+	return tx.Where("email = ?", email).Delete(xray.ClientTraffic{}).Error
 }
 
 func (s *InboundService) GetInboundClientIps(clientEmail string) (string, error) {
