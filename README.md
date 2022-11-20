@@ -57,6 +57,7 @@ mkdir x-ui && cd x-ui
 docker run -itd --network=host \
     -v $PWD/db/:/etc/x-ui/ \
     -v $PWD/cert/:/root/cert/ \
+    -v $PWD/bin/:/root/bin/ \
     --name x-ui --restart=unless-stopped \
     enwaiax/x-ui:latest
 ```
