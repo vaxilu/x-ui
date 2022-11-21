@@ -23,7 +23,7 @@ func (a *BaseController) checkLogin(c *gin.Context) {
 }
 
 
-func I18n(c *gin.Context , name string, data ...string) string{
+func I18n(c *gin.Context , name string) string{
     anyfunc, _  := c.Get("I18n")
     i18n, _ := anyfunc.(func(key string, params ...string) (string, error))
 
