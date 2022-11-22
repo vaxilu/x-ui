@@ -677,7 +677,7 @@ update_geo() {
         rm -f ${PATH_FOR_GEO_IP}.bak
     fi
     mv ${PATH_FOR_GEO_SITE} ${PATH_FOR_GEO_SITE}.bak
-    curl -s -L -o ${PATH_FOR_GEO_SITE} ${PATH_FOR_GEO_SITE}
+    curl -s -L -o ${PATH_FOR_GEO_SITE} ${URL_FOR_GEO_SITE}
     if [[ $? -ne 0 ]]; then
         echo "update geosite.dat failed"
         mv ${PATH_FOR_GEO_SITE}.bak ${PATH_FOR_GEO_SITE}
