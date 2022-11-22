@@ -9,6 +9,7 @@ xray panel supporting multi-protocol, **Multi-lang (English,Chinese)**, **IP Res
 | [Inbound Multi User](https://github.com/hossinasaadi/x-ui/#enable-multi-user-traffic--exprire-day) | :heavy_check_mark: |
 | [Multi User Traffic & expire day](https://github.com/hossinasaadi/x-ui/#enable-multi-user-traffic--exprire-day) | :heavy_check_mark: |
 | [REST API](https://github.com/hossinasaadi/x-ui/pull/51) | :heavy_check_mark: |
+| [Telegram BOT](https://github.com/hossinasaadi/x-ui/pull/110) | :heavy_check_mark: |
 
 **If you think this project is helpful to you, you may wish to give a** :star2: 
 
