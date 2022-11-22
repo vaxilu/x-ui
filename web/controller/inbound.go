@@ -33,6 +33,7 @@ func (a *InboundController) initRouter(g *gin.RouterGroup) {
 
 	g.POST("/clientIps/:email", a.getClientIps)
 	g.POST("/clearClientIps/:email", a.clearClientIps)
+	g.POST("/resetClientTraffic/:email", a.resetClientTraffic)
 	
 
 }
@@ -143,4 +144,14 @@ func (a *InboundController) clearClientIps(c *gin.Context) {
 		return
 	}
 	jsonMsg(c, "Log Cleared", nil)
+}
+func (a *InboundController) resetClientTraffic(c *gin.Context) {
+	email := c.Param("email")
+
+	err := a.inboundService.ResetClientTraffic(email)
+	if err != nil {
+		jsonMsg(c, "something worng!", err)
+		return
+	}
+	jsonMsg(c, "traffic reseted", nil)
 }

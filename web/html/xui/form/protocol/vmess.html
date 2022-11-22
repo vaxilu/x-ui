@@ -43,12 +43,18 @@
                         </template>
                         <a-icon type="question-circle" theme="filled"></a-icon>
                     </a-tooltip>
+                    <a-tooltip>
+                        <template slot="title">
+                            clear the log
+                        </template>
+                        <span style="color: #FF4D4F">
+                            <a-icon type="delete" @click="clearDBClientIps(vmess.email,$event)"></a-icon>
+                        </span>
+                    </a-tooltip>
                 </span>
                 
                 <a-textarea readonly @click="getDBClientIps(vmess.email,$event)" placeholder="Click To Get IPs"  :auto-size="{ minRows: 0.5, maxRows: 10 }">
                 </a-textarea>
-
-                <a-button type="danger" @click="clearDBClientIps(vmess.email,$event)" >clear log</a-button>
             </a-form-item>
 
         </a-form>
@@ -84,47 +90,55 @@
                            v-model="vmess._expiryTime" style="width: 300px;"></a-date-picker>
         </a-form-item>
         <a-form layout="inline">
+            <a-tooltip v-if="vmess._totalGB > 0">
+                <template slot="title">
+                    reset traffic
+                </template>
+                <span style="color: #FF4D4F">
+                    <a-icon type="delete" @click="resetClientTraffic(vmess,$event)"></a-icon>
+                </span>
+            </a-tooltip>
             <a-tag color="blue">[[ sizeFormat(getUpStats(vmess.email)) ]] / [[ sizeFormat(getDownStats(vmess.email)) ]]</a-tag>
-            <a-form v-if="vmess._totalGB > 0">
-                <a-tag color="red">used : [[ sizeFormat(getUpStats(vmess.email) + getDownStats(vmess.email)) ]]</a-tag>
-            </a-form>
+            <a-tag v-if="vmess._totalGB > 0" color="red">used : [[ sizeFormat(getUpStats(vmess.email) + getDownStats(vmess.email)) ]]</a-tag>
+                <a-tag>
+                    <!--Add Svg Icon-->
+                    <svg
+        
+                        @click="addClient(inbound.protocol,vmess, inbound.settings.vmesses)"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 22 22"
+                        width="22"
+                        height="22"
+                        class="mt-2 cursor-pointer"
+                        >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path
+                        fill="green"
+                        d="M11 11V7h2v4h4v2h-4v4h-2v-4H7v-2h4zm1 11C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"
+                        />
+                    </svg>
+                </a-tag>
+                <a-tag v-show="inbound.settings.vmesses.length > 1">
+
+                    <!--Remove Svg Icon-->
+                    <svg
+                        @click="removeClient(index, inbound.settings.vmesses)"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 22 22"
+                        width="22"
+                        height="22"
+                        class="mt-2 cursor-pointer"
+                        >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path
+                        fill="#EC4899"
+                        d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9.414l2.828-2.829 1.415 1.415L13.414 12l2.829 2.828-1.415 1.415L12 13.414l-2.828 2.829-1.415-1.415L10.586 12 7.757 9.172l1.415-1.415L12 10.586z"
+                        />
+                    </svg>
+            </a-tag>
         </a-form>
 
-            <!--Add Svg Icon-->
-            <svg
 
-                @click="addClient(inbound.protocol,vmess, inbound.settings.vmesses)"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-                class="ml-2 cursor-pointer"
-                >
-                <path fill="none" d="M0 0h24v24H0z" />
-                <path
-                fill="green"
-                d="M11 11V7h2v4h4v2h-4v4h-2v-4H7v-2h4zm1 11C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"
-                />
-            </svg>
-        
-            <!--Remove Svg Icon-->
-            <svg
-                v-show="inbound.settings.vmesses.length > 1"
-                @click="removeClient(index, inbound.settings.vmesses)"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-                class="ml-2 cursor-pointer"
-                >
-                <path fill="none" d="M0 0h24v24H0z" />
-                <path
-                fill="#EC4899"
-                d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-9.414l2.828-2.829 1.415 1.415L13.414 12l2.829 2.828-1.415 1.415L12 13.414l-2.828 2.829-1.415-1.415L10.586 12 7.757 9.172l1.415-1.415L12 10.586z"
-                />
-            </svg>
-            <!-- <a-divider style="height: 2px; background-color: #7e7e7e" /> -->
-    
     </a-collapse-panel>
 
 </a-collapse>

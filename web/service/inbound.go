@@ -392,3 +392,19 @@ func (s *InboundService) ClearClientIps(clientEmail string) (error) {
 	}
 	return nil
 }
+func (s *InboundService) ResetClientTraffic(clientEmail string) (error) {
+	db := database.GetDB()
+
+	result := db.Model(xray.ClientTraffic{}).
+		Where("email = ?", clientEmail).
+		Update("up", 0).
+		Update("down", 0)
+
+	err := result.Error
+
+
+	if err != nil {
+		return err
+	}
+	return nil
+}

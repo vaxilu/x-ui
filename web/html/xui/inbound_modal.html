@@ -112,6 +112,24 @@
                 }
                 event.target.value = ""
             },
+            async resetClientTraffic(client,event) {
+                const msg = await HttpUtil.post('/xui/inbound/resetClientTraffic/'+ client.email);
+                if (!msg.success) {
+                    return;
+                }
+                clientStats = this.inbound.clientStats
+                if(clientStats.length > 0)
+                {
+                    for (const key in clientStats) {
+                        if (Object.hasOwnProperty.call(clientStats, key)) {
+                            if(clientStats[key]['email'] == client.email){ 
+                                clientStats[key]['up'] = 0
+                                clientStats[key]['down'] = 0
+                            }
+                        }
+                    }
+                }
+            },
             isExpiry(index) {
                 return this.inbound.isExpiry(index)
             },
