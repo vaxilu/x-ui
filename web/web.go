@@ -328,6 +328,8 @@ func (s *Server) startTask() {
 			logger.Warning("Add NewStatsNotifyJob error", err)
 			return
 		}
+		// listen for TG bot income messages
+		go job.NewStatsNotifyJob().OnReceive()
 	} else {
 		s.cron.Remove(entry)
 	}

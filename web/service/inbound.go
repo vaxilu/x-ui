@@ -408,3 +408,33 @@ func (s *InboundService) ResetClientTraffic(clientEmail string) (error) {
 	}
 	return nil
 }
+func (s *InboundService) GetClientTrafficById(uuid string) (traffic *xray.ClientTraffic, err error) {
+	db := database.GetDB()
+	inbound := &model.Inbound{}
+	traffic = &xray.ClientTraffic{}
+
+	err = db.Model(model.Inbound{}).Where("settings like ?", "%" + uuid + "%").First(inbound).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			logger.Warning(err)
+			return nil, err
+		}
+	}
+	traffic.InboundId = inbound.Id
+
+	// get settings clients
+	settings := map[string][]model.Client{}
+	json.Unmarshal([]byte(inbound.Settings), &settings)
+	clients := settings["clients"]
+	for _, client := range clients {
+		if uuid == client.ID {
+			traffic.Email = client.Email
+		}
+	}
+	err = db.Model(xray.ClientTraffic{}).Where("email = ?", traffic.Email).First(traffic).Error
+	if err != nil {
+		logger.Warning(err)
+		return nil, err
+	}
+	return traffic, err
+}
