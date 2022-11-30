@@ -29,19 +29,19 @@
 - Telegram bot通知、控制功能
 - 更多高级配置项，详见面板 
 
-:bulb:具体**使用、配置细节以及问题排查**请点击这里:point_right:[WIKI](https://github.com/FranzKafkaYu/x-ui/wiki):point_left:  
- Specific **Usages、Configurations and Debug** please refer to [WIKI](https://github.com/FranzKafkaYu/x-ui/wiki)    
+:bulb:具体**使用、配置细节以及问题排查**请点击这里:point_right:[WIKI](https://github.com/mazafard/x-ui/wiki):point_left:  
+ Specific **Usages、Configurations and Debug** please refer to [WIKI](https://github.com/mazafard/x-ui/wiki)    
 # 一键安装
 在安装前请确保你的系统支持`bash`环境,且系统网络正常  
 
 &#x26A1;从原版升级也可使用该命令，数据不会丢失&#x26A1;
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/mazafard/x-ui/master/install.sh)
 ```    
 For English Users,please use the following command to install English supported version:  
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install_en.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/mazafard/x-ui/master/install_en.sh)
 ```    
 # 效果预览  
 `面板使用`:  
@@ -143,7 +143,7 @@ xray 状态: 运行
 
 ## SSL certificate application
 
-> This function and tutorial are provided by [FranzKafkaYu](https://github.com/FranzKafkaYu)
+> This function and tutorial are provided by [mazafard](https://github.com/mazafard)
 
 The script has a built-in SSL certificate application function. To use this script to apply for a certificate, the following conditions must be met:
 
@@ -167,7 +167,7 @@ Precautions:
 
 ## Tg robot use (under development, temporarily unavailable)
 
-> This function and tutorial are provided by [FranzKafkaYu](https://github.com/FranzKafkaYu)
+> This function and tutorial are provided by [mazafard](https://github.com/mazafard)
 
 X-UI supports daily traffic notification, panel login reminder and other functions through Tg robot. To use Tg robot, you need to apply for it yourself
 For specific application tutorials, please refer to [blog link] (https://coderfan.net/how-to-use-telegram-bot-to-alarm-you-when-someone-login-into-your-vps.html)
@@ -232,4 +232,4 @@ More functions are planned...
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/FranzKafkaYu/x-ui.svg)](https://starchart.cc/FranzKafkaYu/x-ui)
+[![Stargazers over time](https://starchart.cc/mazafard/x-ui.svg)](https://starchart.cc/mazafard/x-ui)

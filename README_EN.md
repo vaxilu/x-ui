@@ -35,17 +35,17 @@ If you need more language options ,please open a issue and let me know that
 - support telegram bot notify and control
 - more functions in control menu  
 
-for more detailed usages,plz see [WIKI](https://github.com/FranzKafkaYu/x-ui/wiki)
+for more detailed usages,plz see [WIKI](https://github.com/mazafard/x-ui/wiki)
 
 # installation
 Make sure your system `bash` and `curl` and `network` are ready,here we go
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/mazafard/x-ui/master/install.sh)
 ```  
 For English Users,please use the following command to install English supported version:  
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install_en.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/mazafard/x-ui/master/install_en.sh)
 ``` 
 
 ## shortcut  
@@ -108,4 +108,4 @@ if you want to purchase some virtual servers,you can purchase by my aff link:
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/FranzKafkaYu/x-ui.svg)](https://starchart.cc/FranzKafkaYu/x-ui)
+[![Stargazers over time](https://starchart.cc/mazafard/x-ui.svg)](https://starchart.cc/mazafard/x-ui)
