@@ -108,4 +108,4 @@ if you want to purchase some virtual servers,you can purchase by my aff link:
 
 ## Stargazers over time
 
-[![Stargazers over time](https://starchart.cc/mazafard/x-ui.svg)](https://starchart.cc/mazafard/x-ui)
+[![Stargazers over time](https://starchart.cc/mazafard/x-ui.svg)](https://starchart.cc/FranzKafkaYu/x-ui)
