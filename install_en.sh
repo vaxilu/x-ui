@@ -107,20 +107,20 @@ install_x-ui() {
     cd /usr/local/
 
     if [ $# == 0 ]; then
-        last_version=$(curl -Ls "https://api.github.com/repos/FranzKafkaYu/x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        last_version=$(curl -Ls "https://api.github.com/repos/mazafard/x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$last_version" ]]; then
             echo -e "${red}refresh x-ui version failed,it may due to Github API restriction,please try it later${plain}"
             exit 1
         fi
         echo -e "get x-ui latest version succeed:${last_version},begin to install..."
-        wget -N --no-check-certificate -O /usr/local/x-ui-linux-${arch}-english.tar.gz https://github.com/FranzKafkaYu/x-ui/releases/download/${last_version}/x-ui-linux-${arch}-english.tar.gz
+        wget -N --no-check-certificate -O /usr/local/x-ui-linux-${arch}-english.tar.gz https://github.com/mazafard/x-ui/releases/download/${last_version}/x-ui-linux-${arch}-english.tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}dowanload x-ui failed,please be sure that your server can access Github{plain}"
             exit 1
         fi
     else
         last_version=$1
-        url="https://github.com/FranzKafkaYu/x-ui/releases/download/${last_version}/x-ui-linux-${arch}-english.tar.gz"
+        url="https://github.com/mazafard/x-ui/releases/download/${last_version}/x-ui-linux-${arch}-english.tar.gz"
         echo -e "begin to install x-ui v$1 ..."
         wget -N --no-check-certificate -O /usr/local/x-ui-linux-${arch}-english.tar.gz ${url}
         if [[ $? -ne 0 ]]; then
@@ -138,7 +138,7 @@ install_x-ui() {
     cd x-ui
     chmod +x x-ui bin/xray-linux-${arch}
     cp -f x-ui.service /etc/systemd/system/
-    wget --no-check-certificate -O /usr/bin/x-ui https://raw.githubusercontent.com/FranzKafkaYu/x-ui/main/x-ui_en.sh
+    wget --no-check-certificate -O /usr/bin/x-ui https://raw.githubusercontent.com/mazafard/x-ui/main/x-ui_en.sh
     chmod +x /usr/local/x-ui/x-ui_en.sh
     chmod +x /usr/bin/x-ui
     config_after_install
