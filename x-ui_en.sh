@@ -512,8 +512,8 @@ ssl_cert_issue_standalone() {
     fi
     #install cert
     ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
-    --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
-    --fullchain-file /root/cert/fullchain.cer
+        --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+        --fullchain-file /root/cert/fullchain.cer
 
     if [ $? -ne 0 ]; then
         LOGE "install certs failed,exit"
@@ -595,8 +595,8 @@ ssl_cert_issue_by_cloudflare() {
             LOGI "issue cert succeed,installing..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+            --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
+            --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
             LOGE "install cert failed,exit"
             rm -rf ~/.acme.sh/${CF_Domain}
@@ -657,8 +657,8 @@ show_menu() {
   ${green}11.${plain} check x-ui status
   ${green}12.${plain} check x-ui logs
 ————————————————
-  ${green}13.${plain} enable  x-ui on sysyem startup
-  ${green}14.${plain} disabel x-ui on sysyem startup
+  ${green}13.${plain} enable  x-ui on system startup
+  ${green}14.${plain} disabel x-ui on system startup
 ————————————————
   ${green}15.${plain} enable bbr 
   ${green}16.${plain} issuse certs
