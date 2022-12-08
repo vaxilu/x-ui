@@ -146,7 +146,7 @@ xray 状态: 运行
 - Debian 8+
 
 # 变更记录  
-- 2022.12.07：添加设备并发限制;细化tls配置  
+- 2022.12.07：添加设备并发限制;细化tls配置,支持minVersion、maxVersion与cipherSuites选择    
 - 2022.11.14：添加xtls-rprx-vision流控选项
 - 2022.10.23：实现全英文支持;增加批量导出分享链接功能；优化页面细节与Telegram通知    
 - 2022.08.11：实现Vmess/Vless/Trojan单端口多用户；增加CPU使用超限提醒  
