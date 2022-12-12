@@ -179,6 +179,7 @@ xray 状态: 运行
 - [搬瓦工GIA高端线路](https://bandwagonhost.com/aff.php?aff=65703),仅推荐购买GIA套餐      
 - [Cloudcone性价比主机提供商](https://app.cloudcone.com/?ref=7536)  
 - [Spartan三网4837性价比主机](https://billing.spartanhost.net/aff.php?aff=1875)  
+- USDT TRC20:`TYZ5MAq5YvtCMsjQDq1TJZnMWmjMVGLk2T`  
 
 ## Stargazers over time
 
