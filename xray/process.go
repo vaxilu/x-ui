@@ -22,6 +22,7 @@ import (
 )
 
 var trafficRegex = regexp.MustCompile("(inbound|outbound)>>>([^>]+)>>>traffic>>>(downlink|uplink)")
+var ClientTrafficRegex = regexp.MustCompile("(user)>>>([^>]+)>>>traffic>>>(downlink|uplink)")
 
 func GetBinaryName() string {
 	return fmt.Sprintf("xray-%s-%s", runtime.GOOS, runtime.GOARCH)
@@ -161,7 +162,7 @@ func (p *process) Start() (err error) {
 		return common.NewErrorf("写入配置文件失败: %v", err)
 	}
 
-	cmd := exec.Command(GetBinaryPath(), "-c", configPath)
+	cmd := exec.Command(GetBinaryPath(), "-c", configPath, "-restrictedIPsPath", "./bin/blockedIPs")
 	p.cmd = cmd
 
 	stdReader, err := cmd.StdoutPipe()
@@ -229,13 +230,13 @@ func (p *process) Stop() error {
 	return p.cmd.Process.Kill()
 }
 
-func (p *process) GetTraffic(reset bool) ([]*Traffic, error) {
+func (p *process) GetTraffic(reset bool) ([]*Traffic, []*ClientTraffic, error) {
 	if p.apiPort == 0 {
-		return nil, common.NewError("xray api port wrong:", p.apiPort)
+		return nil, nil, common.NewError("xray api port wrong:", p.apiPort)
 	}
 	conn, err := grpc.Dial(fmt.Sprintf("127.0.0.1:%v", p.apiPort), grpc.WithInsecure())
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer conn.Close()
 
@@ -247,12 +248,45 @@ func (p *process) GetTraffic(reset bool) ([]*Traffic, error) {
 	}
 	resp, err := client.QueryStats(ctx, request)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	tagTrafficMap := map[string]*Traffic{}
+	emailTrafficMap := map[string]*ClientTraffic{}
+
+	clientTraffics := make([]*ClientTraffic, 0)
 	traffics := make([]*Traffic, 0)
 	for _, stat := range resp.GetStat() {
 		matchs := trafficRegex.FindStringSubmatch(stat.Name)
+		if len(matchs) < 3 {
+
+			matchs := ClientTrafficRegex.FindStringSubmatch(stat.Name)
+			if len(matchs) < 3 {
+				continue
+			}else {
+
+				isUser := matchs[1] == "user"
+				email := matchs[2]
+				isDown := matchs[3] == "downlink"
+				if ! isUser {
+					continue
+				}
+				traffic, ok := emailTrafficMap[email]
+				if !ok {
+					traffic = &ClientTraffic{
+						Email:       email,
+					}
+					emailTrafficMap[email] = traffic
+					clientTraffics = append(clientTraffics, traffic)
+				}
+				if isDown {
+					traffic.Down = stat.Value
+				} else {
+					traffic.Up = stat.Value
+				}
+		
+			}
+			continue
+		}
 		isInbound := matchs[1] == "inbound"
 		tag := matchs[2]
 		isDown := matchs[3] == "downlink"
@@ -275,5 +309,5 @@ func (p *process) GetTraffic(reset bool) ([]*Traffic, error) {
 		}
 	}
 
-	return traffics, nil
+	return traffics, clientTraffics, nil
 }

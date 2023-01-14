@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  xui:
+    image: hossinasaadi/x-ui
+    container_name: x-ui
+    volumes:
+      - $PWD/db/:/etc/x-ui/
+      - $PWD/cert/:/root/cert/
+    restart: unless-stopped
+    network_mode: host

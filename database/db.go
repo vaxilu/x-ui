@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"x-ui/config"
+	"x-ui/xray"
 	"x-ui/database/model"
 )
 
@@ -39,6 +40,12 @@ func initInbound() error {
 
 func initSetting() error {
 	return db.AutoMigrate(&model.Setting{})
+}
+func initInboundClientIps() error {
+	return db.AutoMigrate(&model.InboundClientIps{})
+}
+func initClientTraffic() error {
+	return db.AutoMigrate(&xray.ClientTraffic{})
 }
 
 func InitDB(dbPath string) error {
@@ -76,7 +83,15 @@ func InitDB(dbPath string) error {
 	if err != nil {
 		return err
 	}
-
+	err = initInboundClientIps()
+	if err != nil {
+		return err
+	}
+	err = initClientTraffic()
+	if err != nil {
+		return err
+	}
+	
 	return nil
 }
 

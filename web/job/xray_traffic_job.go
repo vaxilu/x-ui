@@ -18,7 +18,8 @@ func (j *XrayTrafficJob) Run() {
 	if !j.xrayService.IsXrayRunning() {
 		return
 	}
-	traffics, err := j.xrayService.GetXrayTraffic()
+
+	traffics, clientTraffics, err := j.xrayService.GetXrayTraffic()
 	if err != nil {
 		logger.Warning("get xray traffic failed:", err)
 		return
@@ -27,4 +28,11 @@ func (j *XrayTrafficJob) Run() {
 	if err != nil {
 		logger.Warning("add traffic failed:", err)
 	}
+	
+	err = j.inboundService.AddClientTraffic(clientTraffics)
+	if err != nil {
+		logger.Warning("add client traffic failed:", err)
+	}
+
+
 }

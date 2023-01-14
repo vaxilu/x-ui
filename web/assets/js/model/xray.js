@@ -608,6 +608,7 @@ class Inbound extends XrayCommonClass {
                 streamSettings=new StreamSettings(),
                 tag='',
                 sniffing=new Sniffing(),
+                clientStats='',
                 ) {
         super();
         this.port = port;
@@ -617,6 +618,10 @@ class Inbound extends XrayCommonClass {
         this.stream = streamSettings;
         this.tag = tag;
         this.sniffing = sniffing;
+        this.clientStats = clientStats;
+    }
+    getClientStats() {
+        return this.clientStats;
     }
 
     get protocol() {
@@ -810,6 +815,21 @@ class Inbound extends XrayCommonClass {
         return this.stream.grpc.serviceName;
     }
 
+    isExpiry(index) {
+        switch (this.protocol) {
+            case Protocols.VMESS:
+                if(this.settings.vmesses[index]._expiryTime != null)
+                    return this.settings.vmesses[index]._expiryTime < new Date().getTime();
+                return false
+            case Protocols.VLESS:
+                if(this.settings.vlesses[index]._expiryTime != null)
+                    return this.settings.vlesses[index]._expiryTime < new Date().getTime();
+                return false
+            default:
+                return false;
+        }
+    }
+
     canEnableTls() {
         switch (this.protocol) {
             case Protocols.VMESS:
@@ -881,7 +901,7 @@ class Inbound extends XrayCommonClass {
         this.sniffing = new Sniffing();
     }
 
-    genVmessLink(address='', remark='') {
+    genVmessLink(address='', remark='', clientIndex=0) {
         if (this.protocol !== Protocols.VMESS) {
             return '';
         }
@@ -934,8 +954,8 @@ class Inbound extends XrayCommonClass {
             ps: remark,
             add: address,
             port: this.port,
-            id: this.settings.vmesses[0].id,
-            aid: this.settings.vmesses[0].alterId,
+            id: this.settings.vmesses[clientIndex].id,
+            aid: this.settings.vmesses[clientIndex].alterId,
             net: network,
             type: type,
             host: host,
@@ -945,15 +965,16 @@ class Inbound extends XrayCommonClass {
         return 'vmess://' + base64(JSON.stringify(obj, null, 2));
     }
 
-    genVLESSLink(address = '', remark='') {
+    genVLESSLink(address = '', remark='', clientIndex=0) {
         const settings = this.settings;
-        const uuid = settings.vlesses[0].id;
+        const uuid = settings.vlesses[clientIndex].id;
         const port = this.port;
         const type = this.stream.network;
         const params = new Map();
         params.set("type", this.stream.network);
         if (this.xtls) {
             params.set("security", "xtls");
+            address = this.stream.tls.server;
         } else {
             params.set("security", this.stream.security);
         }
@@ -968,6 +989,7 @@ class Inbound extends XrayCommonClass {
                         const host = request.headers[index].value;
                         params.set("host", host);
                     }
+                    params.set("headerType", 'http');
                 }
                 break;
             case "kcp":
@@ -1009,7 +1031,7 @@ class Inbound extends XrayCommonClass {
         }
 
         if (this.xtls) {
-            params.set("flow", this.settings.vlesses[0].flow);
+            params.set("flow", this.settings.vlesses[clientIndex].flow);
         }
 
         const link = `vless://${uuid}@${address}:${port}`;
@@ -1036,10 +1058,10 @@ class Inbound extends XrayCommonClass {
         return `trojan://${settings.clients[0].password}@${address}:${this.port}#${encodeURIComponent(remark)}`;
     }
 
-    genLink(address='', remark='') {
+    genLink(address='', remark='', clientIndex=0) {
         switch (this.protocol) {
-            case Protocols.VMESS: return this.genVmessLink(address, remark);
-            case Protocols.VLESS: return this.genVLESSLink(address, remark);
+            case Protocols.VMESS: return this.genVmessLink(address, remark, clientIndex);
+            case Protocols.VLESS: return this.genVLESSLink(address, remark, clientIndex);
             case Protocols.SHADOWSOCKS: return this.genSSLink(address, remark);
             case Protocols.TROJAN: return this.genTrojanLink(address, remark);
             default: return '';
@@ -1055,6 +1077,7 @@ class Inbound extends XrayCommonClass {
             StreamSettings.fromJson(json.streamSettings),
             json.tag,
             Sniffing.fromJson(json.sniffing),
+            json.clientStats
         )
     }
 
@@ -1071,6 +1094,7 @@ class Inbound extends XrayCommonClass {
             streamSettings: streamSettings,
             tag: this.tag,
             sniffing: this.sniffing.toJson(),
+            clientStats: this.clientStats
         };
     }
 }
@@ -1157,18 +1181,49 @@ Inbound.VmessSettings = class extends Inbound.Settings {
     }
 };
 Inbound.VmessSettings.Vmess = class extends XrayCommonClass {
-    constructor(id=RandomUtil.randomUUID(), alterId=0) {
+    constructor(id=RandomUtil.randomUUID(), alterId=0, email='', limitIp=0, totalGB=0, expiryTime='') {
         super();
         this.id = id;
         this.alterId = alterId;
+        this.email = email;
+        this.limitIp = limitIp;
+        this.totalGB = totalGB;
+        this.expiryTime = expiryTime;
     }
 
     static fromJson(json={}) {
         return new Inbound.VmessSettings.Vmess(
             json.id,
             json.alterId,
+            json.email,
+            json.limitIp,
+            json.totalGB,
+            json.expiryTime,
+
         );
     }
+    get _expiryTime() {
+        if (this.expiryTime === 0 || this.expiryTime === "") {
+            return null;
+        }
+        return moment(this.expiryTime);
+    }
+
+    set _expiryTime(t) {
+        if (t == null || t === "") {
+            this.expiryTime = 0;
+        } else {
+            this.expiryTime = t.valueOf();
+        }
+    }
+    get _totalGB() {
+        return toFixed(this.totalGB / ONE_GB, 2);
+    }
+
+    set _totalGB(gb) {
+        this.totalGB = toFixed(gb * ONE_GB, 0);
+    }
+
 };
 
 Inbound.VLESSSettings = class extends Inbound.Settings {
@@ -1206,20 +1261,53 @@ Inbound.VLESSSettings = class extends Inbound.Settings {
             fallbacks: Inbound.VLESSSettings.toJsonArray(this.fallbacks),
         };
     }
+
 };
 Inbound.VLESSSettings.VLESS = class extends XrayCommonClass {
 
-    constructor(id=RandomUtil.randomUUID(), flow=FLOW_CONTROL.DIRECT) {
+    constructor(id=RandomUtil.randomUUID(), flow=FLOW_CONTROL.DIRECT, email='', limitIp=0, totalGB=0, expiryTime='') {
         super();
         this.id = id;
         this.flow = flow;
+        this.email = email;
+        this.limitIp = limitIp;
+        this.totalGB = totalGB;
+        this.expiryTime = expiryTime;
+
     }
 
     static fromJson(json={}) {
         return new Inbound.VLESSSettings.VLESS(
             json.id,
             json.flow,
+            json.email,
+            json.limitIp,
+            json.totalGB,
+            json.expiryTime,
+
         );
+    }
+
+    get _expiryTime() {
+        if (this.expiryTime === 0 || this.expiryTime === "") {
+            return null;
+        }
+        return moment(this.expiryTime);
+    }
+
+    set _expiryTime(t) {
+        if (t == null || t === "") {
+            this.expiryTime = 0;
+        } else {
+            this.expiryTime = t.valueOf();
+        }
+    }
+    get _totalGB() {
+        return toFixed(this.totalGB / ONE_GB, 2);
+    }
+
+    set _totalGB(gb) {
+        this.totalGB = toFixed(gb * ONE_GB, 0);
     }
 };
 Inbound.VLESSSettings.Fallback = class extends XrayCommonClass {

@@ -4,13 +4,10 @@ import (
 	"fmt"
 	"net"
 	"os"
-
 	"time"
-
 	"x-ui/logger"
 	"x-ui/util/common"
 	"x-ui/web/service"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -35,7 +32,7 @@ func NewStatsNotifyJob() *StatsNotifyJob {
 func (j *StatsNotifyJob) SendMsgToTgbot(msg string) {
 	//Telegram bot basic info
 	tgBottoken, err := j.settingService.GetTgBotToken()
-	if err != nil {
+	if err != nil || tgBottoken == "" {
 		logger.Warning("sendMsgToTgbot failed,GetTgBotToken fail:", err)
 		return
 	}
@@ -69,7 +66,7 @@ func (j *StatsNotifyJob) Run() {
 		fmt.Println("get hostname error:", err)
 		return
 	}
-	info = fmt.Sprintf("主机名称:%s\r\n", name)
+	info = fmt.Sprintf("Hostname:%s\r\n", name)
 	//get ip address
 	var ip string
 	netInterfaces, err := net.Interfaces()
@@ -95,7 +92,7 @@ func (j *StatsNotifyJob) Run() {
 			}
 		}
 	}
-	info += fmt.Sprintf("IP地址:%s\r\n \r\n", ip)
+	info += fmt.Sprintf("IP:%s\r\n \r\n", ip)
 
 	//get traffic
 	inbouds, err := j.inboundService.GetAllInbounds()
@@ -106,11 +103,11 @@ func (j *StatsNotifyJob) Run() {
 	//NOTE:If there no any sessions here,need to notify here
 	//TODO:分节点推送,自动转化格式
 	for _, inbound := range inbouds {
-		info += fmt.Sprintf("节点名称:%s\r\n端口:%d\r\n上行流量↑:%s\r\n下行流量↓:%s\r\n总流量:%s\r\n", inbound.Remark, inbound.Port, common.FormatTraffic(inbound.Up), common.FormatTraffic(inbound.Down), common.FormatTraffic((inbound.Up + inbound.Down)))
+		info += fmt.Sprintf("Node name:%s\r\nPort:%d\r\nUpload↑:%s\r\nDownload↓:%s\r\nTotal:%s\r\n", inbound.Remark, inbound.Port, common.FormatTraffic(inbound.Up), common.FormatTraffic(inbound.Down), common.FormatTraffic((inbound.Up + inbound.Down)))
 		if inbound.ExpiryTime == 0 {
-			info += fmt.Sprintf("到期时间:无限期\r\n \r\n")
+			info += fmt.Sprintf("Expire date:unlimited\r\n \r\n")
 		} else {
-			info += fmt.Sprintf("到期时间:%s\r\n \r\n", time.Unix((inbound.ExpiryTime/1000), 0).Format("2006-01-02 15:04:05"))
+			info += fmt.Sprintf("Expire date:%s\r\n \r\n", time.Unix((inbound.ExpiryTime/1000), 0).Format("2006-01-02 15:04:05"))
 		}
 	}
 	j.SendMsgToTgbot(info)
@@ -129,12 +126,123 @@ func (j *StatsNotifyJob) UserLoginNotify(username string, ip string, time string
 		return
 	}
 	if status == LoginSuccess {
-		msg = fmt.Sprintf("面板登录成功提醒\r\n主机名称:%s\r\n", name)
+		msg = fmt.Sprintf("Successfully logged-in to the panel\r\nHostname:%s\r\n", name)
 	} else if status == LoginFail {
-		msg = fmt.Sprintf("面板登录失败提醒\r\n主机名称:%s\r\n", name)
+		msg = fmt.Sprintf("Login to the panel was unsuccessful\r\nHostname:%s\r\n", name)
 	}
-	msg += fmt.Sprintf("时间:%s\r\n", time)
-	msg += fmt.Sprintf("用户:%s\r\n", username)
+	msg += fmt.Sprintf("Time:%s\r\n", time)
+	msg += fmt.Sprintf("Username:%s\r\n", username)
 	msg += fmt.Sprintf("IP:%s\r\n", ip)
 	j.SendMsgToTgbot(msg)
+}
+
+
+var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(
+    tgbotapi.NewInlineKeyboardRow(
+        tgbotapi.NewInlineKeyboardButtonData("Get Usage", "get_usage"),
+    ),
+)
+
+func (j *StatsNotifyJob) OnReceive() *StatsNotifyJob {
+	tgBottoken, err := j.settingService.GetTgBotToken()
+	if err != nil || tgBottoken == "" {
+		logger.Warning("sendMsgToTgbot failed,GetTgBotToken fail:", err)
+		return j
+	}
+	bot, err := tgbotapi.NewBotAPI(tgBottoken)
+	if err != nil {
+		fmt.Println("get tgbot error:", err)
+		return j
+	}
+	bot.Debug = false
+	u := tgbotapi.NewUpdate(0)
+    u.Timeout = 10
+
+    updates := bot.GetUpdatesChan(u)
+
+    for update := range updates {
+        if update.Message == nil { 
+			
+			if update.CallbackQuery != nil {
+				// Respond to the callback query, telling Telegram to show the user
+				// a message with the data received.
+				callback := tgbotapi.NewCallback(update.CallbackQuery.ID, update.CallbackQuery.Data)
+				if _, err := bot.Request(callback); err != nil {
+					logger.Warning(err)
+				}
+	
+				// And finally, send a message containing the data received.
+				msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, "")
+
+				switch update.CallbackQuery.Data {
+					case "get_usage":
+						msg.Text = "for get your usage send command like this : \n <code>/usage uuid | id</code> \n example : <code>/usage fc3239ed-8f3b-4151-ff51-b183d5182142</code>"
+						msg.ParseMode = "HTML"
+					}
+				if _, err := bot.Send(msg); err != nil {
+					logger.Warning(err)
+				}
+			}
+		
+            continue
+        }
+
+        if !update.Message.IsCommand() { // ignore any non-command Messages
+            continue
+        }
+
+        // Create a new MessageConfig. We don't have text yet,
+        // so we leave it empty.
+        msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+
+        // Extract the command from the Message.
+        switch update.Message.Command() {
+        case "help":
+            msg.Text = "What you need?"
+			msg.ReplyMarkup = numericKeyboard
+        case "start":
+            msg.Text = "Hi :) \n What you need?"
+			msg.ReplyMarkup = numericKeyboard
+
+        case "status":
+            msg.Text = "bot is ok."
+
+        case "usage":
+            msg.Text = j.getClientUsage(update.Message.CommandArguments())
+        default:
+            msg.Text = "I don't know that command, /help"
+			msg.ReplyMarkup = numericKeyboard
+
+        }
+
+        if _, err := bot.Send(msg); err != nil {
+            logger.Warning(err)
+        }
+    }
+	return j
+
+}
+func (j *StatsNotifyJob) getClientUsage(id string) string {
+	traffic , err := j.inboundService.GetClientTrafficById(id)
+	if err != nil {
+		logger.Warning(err)
+		return "something wrong!"
+	}
+	expiryTime := ""
+	if traffic.ExpiryTime == 0 {
+		expiryTime = fmt.Sprintf("unlimited")
+	} else {
+		expiryTime = fmt.Sprintf("%s", time.Unix((traffic.ExpiryTime/1000), 0).Format("2006-01-02 15:04:05"))
+	}
+	total := ""
+	if traffic.Total == 0 {
+		total = fmt.Sprintf("unlimited")
+	} else {
+		total = fmt.Sprintf("%s", common.FormatTraffic((traffic.Total)))
+	}
+	output := fmt.Sprintf("💡 Active: %t\r\n📧 Email: %s\r\n🔼 Upload↑: %s\r\n🔽 Download↓: %s\r\n🔄 Total: %s / %s\r\n📅 Expire in: %s\r\n",
+	traffic.Enable, traffic.Email, common.FormatTraffic(traffic.Up), common.FormatTraffic(traffic.Down), common.FormatTraffic((traffic.Up + traffic.Down)),
+	total, expiryTime)
+	
+	return output
 }

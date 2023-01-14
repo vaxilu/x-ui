@@ -1,0 +1,49 @@
+name: Docker Image CI
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+      inputs:
+        project:
+          description: 'Project'
+          required: true
+          default: 
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+   
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+
+
+    - name: Docker Hub login
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+      run: |
+        echo "${DOCKERHUB_TOKEN}" | docker login --username ${DOCKERHUB_USERNAME} --password-stdin
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@v1
+      with:
+        buildx-version: latest
+
+    - name: Build Dockerfile
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKERHUB_REPO: ${{ secrets.DOCKER_HUB_REPOSITORY }}
+      run: |
+        docker buildx build \
+        --platform=linux/amd64,linux/arm64 \
+        --output "type=image,push=true" \
+        --file ./Dockerfile ./ \
+        --tag $(echo "${DOCKERHUB_USERNAME}" | tr '[:upper:]' '[:lower:]')/${{ github.event.inputs.project }}:latest
