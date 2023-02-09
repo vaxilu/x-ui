@@ -146,6 +146,7 @@ xray 状态: 运行
 - Debian 8+
 
 # 变更记录  
+- 2023.02.09：支持单端口内用户流量限制与统计；支持VLESS utls配置与分享链接导出  
 - 2022.12.07：添加设备并发限制;细化tls配置,支持minVersion、maxVersion与cipherSuites选择    
 - 2022.11.14：添加xtls-rprx-vision流控选项
 - 2022.10.23：实现全英文支持;增加批量导出分享链接功能；优化页面细节与Telegram通知    
