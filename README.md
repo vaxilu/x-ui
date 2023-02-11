@@ -1,6 +1,8 @@
 # x-ui
 
 支持多协议多用户的 xray 面板
+fork自https://github.com/vaxilu/x-ui
+更改ssl证书获取方式，从腾讯云dnspod获取ssl证书
 
 # 功能介绍
 
@@ -17,7 +19,7 @@
 # 安装&升级
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
+bash <(curl -Ls https://github.com/LiZhiqiang0/x-ui/blob/main/install.sh)
 ```
 
 ## 手动安装&升级
@@ -69,20 +71,13 @@ docker build -t x-ui .
 
 ## SSL证书申请
 
-> 此功能与教程由[FranzKafkaYu](https://github.com/FranzKafkaYu)提供
-
 脚本内置SSL证书申请功能，使用该脚本申请证书，需满足以下条件:
 
-- 知晓Cloudflare 注册邮箱
-- 知晓Cloudflare Global API Key
-- 域名已通过cloudflare进行解析到当前服务器
+- 知晓 DNSPod ID
+- 知晓 DNSPod Token ID
+- 域名已通过DNSPod进行解析到当前服务器
 
-获取Cloudflare Global API Key的方法:
-    ![](media/bda84fbc2ede834deaba1c173a932223.png)
-    ![](media/d13ffd6a73f938d1037d0708e31433bf.png)
-
-使用时只需输入 `域名`, `邮箱`, `API KEY`即可，示意图如下：
-        ![](media/2022-04-04_141259.png)
+![](media/screenshot-20230211-223002.png)
 
 注意事项:
 
@@ -133,10 +128,6 @@ TG通知内容：
 ```
 x-ui v2-ui
 ```
-
-## issue 关闭
-
-各种小白问题看得血压很高
 
 ## Stargazers over time
 

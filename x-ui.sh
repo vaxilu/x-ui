@@ -438,20 +438,20 @@ ssl_cert_issue() {
         LOGD "请设置域名:"
         read -p "Input your domain here:" CF_Domain
         LOGD "你的域名设置为:${CF_Domain}"
-        LOGD "请设置API密钥:"
-        read -p "Input your key here:" CF_GlobalKey
-        LOGD "你的API密钥为:${CF_GlobalKey}"
-        LOGD "请设置注册邮箱:"
-        read -p "Input your email here:" CF_AccountEmail
-        LOGD "你的注册邮箱为:${CF_AccountEmail}"
+        LOGD "请设置DNSPod ID:"
+        read -p "Input your id here:" DP_Id
+        LOGD "你的DNSPod ID为:${DP_Id}"
+        LOGD "请设置DNSPod Token:"
+        read -p "Input your token here:" DP_Key
+        LOGD "你的DNSPod Token为:${DP_Key}"
         ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
         if [ $? -ne 0 ]; then
             LOGE "修改默认CA为Lets'Encrypt失败,脚本退出"
             exit 1
         fi
-        export CF_Key="${CF_GlobalKey}"
-        export CF_Email=${CF_AccountEmail}
-        ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
+        export DP_Id="${DP_Id}"
+        export DP_Key="${DP_Key}"
+        ~/.acme.sh/acme.sh --issue --force --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
         if [ $? -ne 0 ]; then
             LOGE "证书签发失败,脚本退出"
             exit 1
