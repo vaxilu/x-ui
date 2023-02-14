@@ -97,8 +97,22 @@ config_after_install() {
         echo -e "${yellow}panel port set down!${plain}"
     else
         echo -e "${red}cancel...${plain}"
-        echo -e "${red}if this is your first time to install,the default panel port is ${green}54321${plain},username and password both are${green}admin${plain},please change them in time"
-        echo -e "${red}if this is your upgrade,keep the old settings,if you forgot you login info,you can type x-ui and then type 7 to check${plain}"
+        if [[ ! -f "/etc/x-ui/x-ui.db" ]]; then
+            local usernameTemp=$(head -c 6 /dev/urandom | base64)
+            local passwordTemp=$(head -c 6 /dev/urandom | base64)
+            local portTemp=$(echo $RANDOM)
+            /usr/local/x-ui/x-ui setting -username ${usernameTemp} -password ${passwordTemp}
+            /usr/local/x-ui/x-ui setting -port ${portTemp}
+            echo -e "this is a fresh installation,will generate random login info for security concerns:"
+            echo -e "###############################################"
+            echo -e "${green}user name:${usernameTemp}${plain}"
+            echo -e "${green}user password:${passwordTemp}${plain}"
+            echo -e "${red}web port:${portTemp}${plain}"
+            echo -e "###############################################"
+            echo -e "${red}if you forgot your login info,you can type x-ui and then type 7 to check after installation${plain}"
+        else
+            echo -e "${red} this is your upgrade,will keep old settings,if you forgot your login info,you can type x-ui and then type 7 to check${plain}"
+        fi
     fi
 }
 

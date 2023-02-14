@@ -512,8 +512,8 @@ ssl_cert_issue_standalone() {
     fi
     #install cert
     ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+    --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+    --fullchain-file /root/cert/fullchain.cer
 
     if [ $? -ne 0 ]; then
         LOGE "install certs failed,exit"
@@ -595,8 +595,8 @@ ssl_cert_issue_by_cloudflare() {
             LOGI "issue cert succeed,installing..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-            --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-            --fullchain-file /root/cert/fullchain.cer
+        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
+        --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
             LOGE "install cert failed,exit"
             rm -rf ~/.acme.sh/${CF_Domain}
@@ -664,7 +664,7 @@ show_menu() {
   ${green}16.${plain} issuse certs
  "
     show_status
-    echo && read -p "please input a legal number[0-16]: " num
+    echo && read -p "please input a legal number[0-16],input 7 for checking login info:" num
 
     case "${num}" in
     0)
@@ -719,7 +719,7 @@ show_menu() {
         ssl_cert_issue
         ;;
     *)
-        LOGE "please input a legal number[0-16]"
+        LOGE "please input a legal number[0-16],input 7 for checking login info"
         ;;
     esac
 }

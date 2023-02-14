@@ -519,8 +519,8 @@ ssl_cert_issue_standalone() {
     fi
     #install cert
     ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+    --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+    --fullchain-file /root/cert/fullchain.cer
 
     if [ $? -ne 0 ]; then
         LOGE "证书安装失败,脚本退出"
@@ -604,8 +604,8 @@ ssl_cert_issue_by_cloudflare() {
             LOGI "证书签发成功,安装中..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-            --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-            --fullchain-file /root/cert/fullchain.cer
+        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
+        --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
             LOGE "证书安装失败,脚本退出"
             rm -rf ~/.acme.sh/${CF_Domain}
@@ -816,7 +816,7 @@ show_menu() {
   ${green}17.${plain} 配置x-ui定时任务
  "
     show_status
-    echo && read -p "请输入选择 [0-16]: " num
+    echo && read -p "请输入选择 [0-17],查看面板登录信息请输入数字7:" num
 
     case "${num}" in
     0)
@@ -874,7 +874,7 @@ show_menu() {
         check_install && cron_jobs
         ;;
     *)
-        LOGE "请输入正确的数字 [0-16]"
+        LOGE "请输入正确的数字 [0-17],查看面板登录信息请输入数字7"
         ;;
     esac
 }
