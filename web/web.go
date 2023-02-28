@@ -84,6 +84,7 @@ type Server struct {
 	index  *controller.IndexController
 	server *controller.ServerController
 	xui    *controller.XUIController
+	api    *controller.APIController
 
 	xrayService    service.XrayService
 	settingService service.SettingService
@@ -206,6 +207,7 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	s.index = controller.NewIndexController(g)
 	s.server = controller.NewServerController(g)
 	s.xui = controller.NewXUIController(g)
+	s.api = controller.NewAPIController(g)
 
 	return engine, nil
 }
@@ -254,7 +256,7 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 
 	var localizer *i18n.Localizer
 
-	engine.FuncMap["i18n"] = func(key string, params ...string) (string, error) {
+	I18n := func(key string, params ...string) (string, error) {
 		names := findI18nParamNames(key)
 		if len(names) != len(params) {
 			return "", common.NewError("find names:", names, "---------- params:", params, "---------- num not equal")
@@ -269,10 +271,22 @@ func (s *Server) initI18n(engine *gin.Engine) error {
 		})
 	}
 
+	engine.FuncMap["i18n"]  = I18n;
+
 	engine.Use(func(c *gin.Context) {
-		accept := c.GetHeader("Accept-Language")
-		localizer = i18n.NewLocalizer(bundle, accept)
+		//accept := c.GetHeader("Accept-Language")
+
+		var lang string
+
+		if cookie, err := c.Request.Cookie("lang"); err == nil {
+			lang = cookie.Value
+		} else {
+			lang = c.GetHeader("Accept-Language")
+		}
+
+		localizer = i18n.NewLocalizer(bundle, lang)
 		c.Set("localizer", localizer)
+		c.Set("I18n" , I18n)
 		c.Next()
 	})
 
@@ -295,6 +309,10 @@ func (s *Server) startTask() {
 
 	// 每 30 秒检查一次 inbound 流量超出和到期的情况
 	s.cron.AddJob("@every 30s", job.NewCheckInboundJob())
+
+	// check client ips from log file every 10 sec
+	s.cron.AddJob("@every 10s", job.NewCheckClientIpJob())
+
 	// 每一天提示一次流量情况,上海时间8点30
 	var entry cron.EntryID
 	isTgbotenabled, err := s.settingService.GetTgbotenabled()
