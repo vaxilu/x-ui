@@ -1,4 +1,8 @@
 {
+  "log": {
+   "loglevel": "warning", 
+   "access": "./access.log"
+ },
   "api": {
     "services": [
       "HandlerService",
@@ -30,6 +34,12 @@
     }
   ],
   "policy": {
+    "levels": {
+      "0": {
+        "statsUserUplink": true,
+        "statsUserDownlink": true
+      }
+    },
     "system": {
       "statsInboundDownlink": true,
       "statsInboundUplink": true
