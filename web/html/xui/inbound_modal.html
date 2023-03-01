@@ -10,14 +10,15 @@
         title: '',
         visible: false,
         confirmLoading: false,
-        okText: '确定',
+        okText: '{{ i18n "sure" }}',
+        isEdit: false,
         confirm: null,
         inbound: new Inbound(),
         dbInbound: new DBInbound(),
         ok() {
             ObjectUtil.execute(inModal.confirm, inModal.inbound, inModal.dbInbound);
         },
-        show({ title='', okText='确定', inbound=null, dbInbound=null, confirm=(inbound, dbInbound)=>{} }) {
+        show({ title='', okText='{{ i18n "sure" }}', inbound=null, dbInbound=null, confirm=(inbound, dbInbound)=>{}, isEdit=false  }) {
             this.title = title;
             this.okText = okText;
             if (inbound) {
@@ -32,6 +33,7 @@
             }
             this.confirm = confirm;
             this.visible = true;
+            this.isEdit = isEdit;
         },
         close() {
             inModal.visible = false;
@@ -64,6 +66,9 @@
             },
             get dbInbound() {
                 return inModal.dbInbound;
+            },
+            get isEdit() {
+                return inModal.isEdit;
             }
         },
         methods: {
@@ -71,8 +76,95 @@
                 if (oldValue === 'kcp') {
                     this.inModal.inbound.tls = false;
                 }
-            }
-        }
+            },
+            addClient(protocol,value, clients) {
+                switch (protocol) {
+                    case Protocols.VMESS: return clients.push(new Inbound.VmessSettings.Vmess());
+                    case Protocols.VLESS: return clients.push(new Inbound.VLESSSettings.VLESS());
+                    default: return null;
+                }
+            },
+            removeClient(index, clients) {
+                clients.splice(index, 1);
+            },
+
+            async getDBClientIps(email,event) {
+
+                const msg = await HttpUtil.post('/xui/inbound/clientIps/'+ email);
+                if (!msg.success) {
+                    return;
+                }
+                try {
+                    ips = JSON.parse(msg.obj)
+                    ips = ips.join(",")
+                    event.target.value = ips
+                } catch (error) {
+                    // text
+                    event.target.value = msg.obj
+
+                }
+
+            },
+            async clearDBClientIps(email,event) {
+                const msg = await HttpUtil.post('/xui/inbound/clearClientIps/'+ email);
+                if (!msg.success) {
+                    return;
+                }
+                event.target.value = ""
+            },
+            isExpiry(index) {
+                return this.inbound.isExpiry(index)
+            },
+            getUpStats(email) {
+                clientStats = this.inbound.clientStats
+                if(clientStats.length > 0)
+                {
+                    for (const key in clientStats) {
+                        if (Object.hasOwnProperty.call(clientStats, key)) {
+                            if(clientStats[key]['email'] == email)
+                                return clientStats[key]['up']
+
+                        }
+                    }
+                }
+
+            },
+            getDownStats(email) {
+                clientStats = this.inbound.clientStats
+                if(clientStats.length > 0)
+                {
+                    for (const key in clientStats) {
+                        if (Object.hasOwnProperty.call(clientStats, key)) {
+                            if(clientStats[key]['email'] == email)
+                                return clientStats[key]['down']
+
+                        }
+                    }
+                }
+            },
+            isClientEnable(email) {
+                clientStats = this.inbound.clientStats
+                if(clientStats.length > 0)
+                {
+                    for (const key in clientStats) {
+                        if (Object.hasOwnProperty.call(clientStats, key)) {
+                            if(clientStats[key]['email'] == email)
+                                return clientStats[key]['enable']
+
+                        }
+                    }
+                }
+            },
+
+            getHeaderText(email) {
+                if(email == "")
+                    return "Add Client"
+                
+                return email + (this.isClientEnable(email) == true ? ' Active' : ' Deactive')
+            },
+
+
+        },
     });
 
 </script>
