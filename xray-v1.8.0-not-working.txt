@@ -1,0 +1,9 @@
+Xray 1.8.0 (Xray, Penetrates Everything.) Custom (go1.20.2 linux/amd64)
+
+A unified platform for anti-censorship.
+
+2023/03/13 01:32:05 [Info] infra/conf/serial: Reading config: bin/config.json
+
+Failed to start: main: failed to load config files: [bin/config.json] > infra/conf: VLESS clients: "flow" doesn't support "xtls-rprx-direct" in this version
+
+problem in V1.8.0 of xray here is a log!
