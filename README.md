@@ -103,6 +103,21 @@ bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/insta
 
 </details>  
 
+`用户速览`:  
+<details>
+<summary><b>点击查看效果预览</b></summary> 
+  
+![image](https://user-images.githubusercontent.com/38254177/230761101-20431dd7-5bce-489e-9139-0ceb9ab9a2dc.png)
+
+</details>  
+
+`用户查询`:  
+<details>
+<summary><b>点击查看效果预览</b></summary> 
+  
+![image](https://user-images.githubusercontent.com/38254177/230761252-c283c02d-82a4-46ce-a180-dfab4048180d.png)
+
+</details>  
 
 
 
