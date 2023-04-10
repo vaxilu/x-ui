@@ -162,7 +162,7 @@ xray 状态: 运行
 - Debian 8+
 
 # 变更记录  
-- 2023.04.09：支持Relity;支持新的telegram bot控制指令  
+- 2023.04.09：支持Reality;支持新的telegram bot控制指令  
 - 2023.03.05：支持用户到期时间限制;随机用户名、密码与端口生成
 - 2023.02.09：支持单端口内用户流量限制与统计；支持VLESS utls配置与分享链接导出  
 - 2022.12.07：添加设备并发限制;细化tls配置,支持minVersion、maxVersion与cipherSuites选择    
