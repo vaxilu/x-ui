@@ -155,10 +155,10 @@ xray 状态: 运行
 
 请输入选择 [0-16]: 
 ```
-## 配置要求  
-### 内存  
+# 配置要求  
+## 内存  
 - 128MB minimal/256MB+ recommend  
-### OS  
+## OS  
 - CentOS 7+
 - Ubuntu 16+
 - Debian 8+
