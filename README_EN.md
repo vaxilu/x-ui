@@ -5,7 +5,11 @@ X-UI is a webUI panel based on Xray-core which supports multi protocols and mult
 This project is a fork of [vaxilu&#39;s project](https://github.com/vaxilu/x-ui),and it is a experiental project which used by myself for learning golang   
 If you need more language options ,please open a issue and let me know that
 
-# changes  
+# Changes  
+- 2023.04.09：Support REALITY for now  
+- 2023.03.05：User expiry time limit for each user  
+- 2023.02.09：User traffic limit for each user,support utls sharing link  
+- 2022.12.07：Add device limit and more tls configuration  
 - 2022.11.15：Add xtls-rprx-vision flow option  
 - 2022.10.23：Fully support for English,add export links,add CPU cores display
 - 2022.08.11：Support multi users on the same port;add CPU limit exceed  alert  
@@ -22,7 +26,7 @@ If you need more language options ,please open a issue and let me know that
 - 2022.04.12：Optimize Telegram bot notify,more human friendly
 - 2022.04.06：Add cert issue function，optimize installation/update and add telegram bot notify
 
-# basics
+# Basics
 
 - support system status info check
 - support multi protocols and multi users
@@ -37,7 +41,7 @@ If you need more language options ,please open a issue and let me know that
 
 for more detailed usages,plz see [WIKI](https://github.com/FranzKafkaYu/x-ui/wiki)
 
-# installation
+# Installation
 Make sure your system `bash` and `curl` and `network` are ready,here we go
 
 ```
@@ -48,7 +52,7 @@ For English Users,please use the following command to install English supported 
 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install_en.sh)
 ``` 
 
-## shortcut  
+## Shortcut  
 After Installation，you can input `x-ui`to enter control menu，current menu details：
 ```
  
@@ -83,22 +87,25 @@ xray status: running
 please input a legal number[0-16]: 
 ```
 
-## Suggested system as follows:
+# System requirements:  
+## MEM  
+- 128MB minimal/256MB+ recommend  
+## OS
 - CentOS 7+
 - Ubuntu 16+
 - Debian 8+
 
-# telegram
+# Telegram
 
 [Channel](https://t.me/CoderfanBaby)  
 [Group](https://t.me/franzkafayu)
 
-# credits
+# Credits
 - [vaxilu/x-ui](https://github.com/vaxilu/x-ui)
 - [XTLS/Xray-core](https://github.com/XTLS/Xray-core)
 - [telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api)  
 
-# sponsor  
+# Sponsor  
 
 if you want to purchase some virtual servers,you can purchase by my aff link:   
 - [BandwagonHost](https://bandwagonhost.com/aff.php?aff=65703)     
