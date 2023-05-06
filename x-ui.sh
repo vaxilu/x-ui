@@ -10,6 +10,7 @@ declare -r DEFAULT_LOG_FILE_DELETE_TRIGGER=35
 
 # consts for geo update
 PATH_FOR_GEO_IP='/usr/local/x-ui/bin/geoip.dat'
+PATH_FOR_CONFIG='/usr/local/x-ui/bin/config.json'
 PATH_FOR_GEO_SITE='/usr/local/x-ui/bin/geosite.dat'
 URL_FOR_GEO_IP='https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat'
 URL_FOR_GEO_SITE='https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat'
@@ -519,8 +520,8 @@ ssl_cert_issue_standalone() {
     fi
     #install cert
     ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
-    --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
-    --fullchain-file /root/cert/fullchain.cer
+        --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+        --fullchain-file /root/cert/fullchain.cer
 
     if [ $? -ne 0 ]; then
         LOGE "证书安装失败,脚本退出"
@@ -604,8 +605,8 @@ ssl_cert_issue_by_cloudflare() {
             LOGI "证书签发成功,安装中..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+            --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
+            --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
             LOGE "证书安装失败,脚本退出"
             rm -rf ~/.acme.sh/${CF_Domain}
@@ -740,21 +741,33 @@ clear_log() {
 #enable auto delete log，need file path as
 enable_auto_clear_log() {
     LOGI "设置定时清除xray日志..."
-    local filePath=''
-    read -p "请输入日志文件路径": filePath
-    if [[ ! -n ${filePath} ]]; then
-        LOGI "输入的日志文件路径无效,脚本退出"
+    local accessfilePath=''
+    local errorfilePath=''
+    accessfilePath=$(cat ${PATH_FOR_CONFIG} | jq .log.access | tr -d '"')
+    errorfilePath=$(cat ${PATH_FOR_CONFIG} | jq .log.error | tr -d '"')
+    if [[ ! -n ${accessfilePath} && ! -n ${errorfilePath} ]]; then
+        LOGI "配置文件中的日志文件路径无效,脚本退出"
         exit 1
     fi
-    if [[ ! -f ${filePath} ]]; then
-        LOGE "${filePath}不存在,设置定时清除xray日志失败"
-        exit 1
+    if [[ -f ${accessfilePath} ]]; then
+        crontab -l >/tmp/crontabTask.tmp
+        echo "30 4 */2 * * x-ui clear ${accessfilePath} > /dev/null" >>/tmp/crontabTask.tmp
+        crontab /tmp/crontabTask.tmp
+        rm /tmp/crontabTask.tmp
+        LOGI "设置定时清除xray日志:${accessfilePath}成功"
+    else
+        LOGE "accesslog不存在,将不会为其设置定时清除"
     fi
-    crontab -l >/tmp/crontabTask.tmp
-    echo "30 4 */2 * * x-ui clear ${filePath} > /dev/null" >>/tmp/crontabTask.tmp
-    crontab /tmp/crontabTask.tmp
-    rm /tmp/crontabTask.tmp
-    LOGI "设置定时清除xray日志成功"
+
+    if [[ -f ${errorfilePath} ]]; then
+        crontab -l >/tmp/crontabTask.tmp
+        echo "30 4 */2 * * x-ui clear ${errorfilePath} > /dev/null" >>/tmp/crontabTask.tmp
+        crontab /tmp/crontabTask.tmp
+        rm /tmp/crontabTask.tmp
+        LOGI "设置定时清除xray日志:${errorfilePath}成功"
+    else
+        LOGE "errorlog不存在,将不会为其设置定时清除"
+    fi
 }
 
 #disable auto dlete log
