@@ -482,17 +482,14 @@ ssl_cert_issue_standalone() {
     certPath=/root/cert
     if [ ! -d "$certPath" ]; then
         mkdir $certPath
-    else
-        rm -rf $certPath
-        mkdir $certPath
     fi
     #get the domain here,and we need verify it
     local domain=""
     read -p "请输入你的域名:" domain
     LOGD "你输入的域名为:${domain},正在进行域名合法性校验..."
     #here we need to judge whether there exists cert already
-    local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
-    if [ ${currentCert} == ${domain} ]; then
+    local currentCert=$(~/.acme.sh/acme.sh --list | grep ${domain} | wc -l)
+    if [ ${currentCert} -ne 0 ]; then
         local certInfo=$(~/.acme.sh/acme.sh --list)
         LOGE "域名合法性校验失败,当前环境已有对应域名证书,不可重复申请,当前证书详情:"
         LOGI "$certInfo"
@@ -566,16 +563,13 @@ ssl_cert_issue_by_cloudflare() {
         certPath=/root/cert
         if [ ! -d "$certPath" ]; then
             mkdir $certPath
-        else
-            rm -rf $certPath
-            mkdir $certPath
         fi
         LOGD "请设置域名:"
         read -p "Input your domain here:" CF_Domain
         LOGD "你的域名设置为:${CF_Domain},正在进行域名合法性校验..."
         #here we need to judge whether there exists cert already
-        local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
-        if [ ${currentCert} == ${CF_Domain} ]; then
+        local currentCert=$(~/.acme.sh/acme.sh --list | grep ${CF_Domain} | wc -l)
+        if [ ${currentCert} -ne 0 ]; then
             local certInfo=$(~/.acme.sh/acme.sh --list)
             LOGE "域名合法性校验失败,当前环境已有对应域名证书,不可重复申请,当前证书详情:"
             LOGI "$certInfo"

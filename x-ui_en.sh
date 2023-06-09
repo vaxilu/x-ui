@@ -474,17 +474,14 @@ ssl_cert_issue_standalone() {
     certPath=/root/cert
     if [ ! -d "$certPath" ]; then
         mkdir $certPath
-    else
-        rm -rf $certPath
-        mkdir $certPath
     fi
     #get the domain here,and we need verify it
     local domain=""
     read -p "please input your domain:" domain
     LOGD "your domain is:${domain},check it..."
     #here we need to judge whether there exists cert already
-    local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
-    if [ ${currentCert} == ${domain} ]; then
+    local currentCert=$(~/.acme.sh/acme.sh --list | grep ${domain} | wc -l)
+    if [ ${currentCert} -ne 0 ]; then
         local certInfo=$(~/.acme.sh/acme.sh --list)
         LOGE "system already have certs here,can not issue again,current certs details:"
         LOGI "$certInfo"
@@ -512,8 +509,8 @@ ssl_cert_issue_standalone() {
     fi
     #install cert
     ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
-    --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
-    --fullchain-file /root/cert/fullchain.cer
+        --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+        --fullchain-file /root/cert/fullchain.cer
 
     if [ $? -ne 0 ]; then
         LOGE "install certs failed,exit"
@@ -556,16 +553,13 @@ ssl_cert_issue_by_cloudflare() {
         certPath=/root/cert
         if [ ! -d "$certPath" ]; then
             mkdir $certPath
-        else
-            rm -rf $certPath
-            mkdir $certPath
         fi
         LOGD "please input your domain:"
         read -p "Input your domain here:" CF_Domain
         LOGD "your domain is:${CF_Domain},check it..."
         #here we need to judge whether there exists cert already
-        local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
-        if [ ${currentCert} == ${CF_Domain} ]; then
+        local currentCert=$(~/.acme.sh/acme.sh --list | grep ${CF_Domain} | wc -l)
+        if [ ${currentCert} -ne 0 ]; then
             local certInfo=$(~/.acme.sh/acme.sh --list)
             LOGE "system already have certs here,can not issue again,current certs details:"
             LOGI "$certInfo"
@@ -595,8 +589,8 @@ ssl_cert_issue_by_cloudflare() {
             LOGI "issue cert succeed,installing..."
         fi
         ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} --ca-file /root/cert/ca.cer \
-        --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
-        --fullchain-file /root/cert/fullchain.cer
+            --cert-file /root/cert/${CF_Domain}.cer --key-file /root/cert/${CF_Domain}.key \
+            --fullchain-file /root/cert/fullchain.cer
         if [ $? -ne 0 ]; then
             LOGE "install cert failed,exit"
             rm -rf ~/.acme.sh/${CF_Domain}
