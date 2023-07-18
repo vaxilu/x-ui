@@ -5,6 +5,16 @@ green='\033[0;32m'
 yellow='\033[0;33m'
 plain='\033[0m'
 
+#consts for log check and clear,unit:M
+declare -r DEFAULT_LOG_FILE_DELETE_TRIGGER=35
+
+# consts for geo update
+PATH_FOR_GEO_IP='/usr/local/x-ui/bin/geoip.dat'
+PATH_FOR_CONFIG='/usr/local/x-ui/bin/config.json'
+PATH_FOR_GEO_SITE='/usr/local/x-ui/bin/geosite.dat'
+URL_FOR_GEO_IP='https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat'
+URL_FOR_GEO_SITE='https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat'
+
 #Add some basic function here
 function LOGD() {
     echo -e "${yellow}[DEG] $* ${plain}"
@@ -614,6 +624,156 @@ ssl_cert_issue_by_cloudflare() {
     fi
 }
 
+#add for cron jobs,including sync geo data,check logs and restart x-ui
+cron_jobs() {
+    clear
+    echo -e "
+  ${green}x-ui cron jobs${plain}
+  ${green}0.${plain}  return main menu
+  ${green}1.${plain}  enable automatically update geo data
+  ${green}2.${plain}  disable automatically update geo data 
+  ${green}3.${plain}  enable automatically clear xray log
+  ${green}4.${plain}  disable automatically clear xray log
+  "
+    echo && read -p "plz input your choice [0-4]: " num
+    case "${num}" in
+    0)
+        show_menu
+        ;;
+    1)
+        enable_auto_update_geo
+        ;;
+    2)
+        disable_auto_update_geo
+        ;;
+    3)
+        enable_auto_clear_log
+        ;;
+    4)
+        disable_auto_clear_log
+        ;;
+    *)
+        LOGE "plz input a valid choice [0-4]"
+        ;;
+    esac
+}
+
+#update geo data
+update_geo() {
+    #back up first
+    mv ${PATH_FOR_GEO_IP} ${PATH_FOR_GEO_IP}.bak
+    #update data
+    curl -s -L -o ${PATH_FOR_GEO_IP} ${URL_FOR_GEO_IP}
+    if [[ $? -ne 0 ]]; then
+        echo "update geoip.dat failed"
+        mv ${PATH_FOR_GEO_IP}.bak ${PATH_FOR_GEO_IP}
+    else
+        echo "update geoip.dat succeed"
+        rm -f ${PATH_FOR_GEO_IP}.bak
+    fi
+    mv ${PATH_FOR_GEO_SITE} ${PATH_FOR_GEO_SITE}.bak
+    curl -s -L -o ${PATH_FOR_GEO_SITE} ${URL_FOR_GEO_SITE}
+    if [[ $? -ne 0 ]]; then
+        echo "update geosite.dat failed"
+        mv ${PATH_FOR_GEO_SITE}.bak ${PATH_FOR_GEO_SITE}
+    else
+        echo "update geosite.dat succeed"
+        rm -f ${PATH_FOR_GEO_SITE}.bak
+    fi
+    #restart x-ui
+    systemctl restart x-ui
+}
+
+enable_auto_update_geo() {
+    LOGI "enable automatically update geo data..."
+    crontab -l >/tmp/crontabTask.tmp
+    echo "00 4 */2 * * x-ui geo > /dev/null" >>/tmp/crontabTask.tmp
+    crontab /tmp/crontabTask.tmp
+    rm /tmp/crontabTask.tmp
+    LOGI "enable automatically update geo data succeed"
+}
+
+disable_auto_update_geo() {
+    crontab -l | grep -v "x-ui geo" | crontab -
+    if [[ $? -ne 0 ]]; then
+        LOGI "cancel x-ui automatically update geo data failed"
+    else
+        LOGI "cancel x-ui automatically update geo data succeed"
+    fi
+}
+
+#clear xray log,need enable log in config template
+#here we need input an absolute path for log
+clear_log() {
+    LOGI "clear xray logs..."
+    local filePath=''
+    if [[ $# -gt 0 ]]; then
+        filePath=$1
+    else
+        LOGE "invalid file path,will exit"
+        exit 1
+    fi
+    LOGI "log file:${filePath}"
+    if [[ ! -f ${filePath} ]]; then
+        LOGE "clear xray log failed,${filePath} didn't exist,plz check it"
+        exit 1
+    fi
+    fileSize=$(ls -la ${filePath} --block-size=M | awk '{print $5}' | awk -F 'M' '{print$1}')
+    if [[ ${fileSize} -gt ${DEFAULT_LOG_FILE_DELETE_TRIGGER} ]]; then
+        rm $1
+        if [[ $? -ne 0 ]]; then
+            LOGE "clear xray log :${filePath} failed"
+        else
+            LOGI "clear xray log :${filePath} succeed"
+            systemctl restart x-ui
+        fi
+    else
+        LOGI "current size of xray log is:${fileSize}M,smaller that ${DEFAULT_LOG_FILE_DELETE_TRIGGER}M,won't clear"
+    fi
+}
+
+#enable auto delete log，need file path as
+enable_auto_clear_log() {
+    LOGI "enable automatically clear xray logs..."
+    local accessfilePath=''
+    local errorfilePath=''
+    accessfilePath=$(cat ${PATH_FOR_CONFIG} | jq .log.access | tr -d '"')
+    errorfilePath=$(cat ${PATH_FOR_CONFIG} | jq .log.error | tr -d '"')
+    if [[ ! -n ${accessfilePath} && ! -n ${errorfilePath} ]]; then
+        LOGI "current configuration didn't set valid logs,will exited"
+        exit 1
+    fi
+    if [[ -f ${accessfilePath} ]]; then
+        crontab -l >/tmp/crontabTask.tmp
+        echo "30 4 */2 * * x-ui clear ${accessfilePath} > /dev/null" >>/tmp/crontabTask.tmp
+        crontab /tmp/crontabTask.tmp
+        rm /tmp/crontabTask.tmp
+        LOGI "enable automatically clear xray log:${accessfilePath} succeed"
+    else
+        LOGE "accesslog didn't existed,won't automatically clear it"
+    fi
+
+    if [[ -f ${errorfilePath} ]]; then
+        crontab -l >/tmp/crontabTask.tmp
+        echo "30 4 */2 * * x-ui clear ${errorfilePath} > /dev/null" >>/tmp/crontabTask.tmp
+        crontab /tmp/crontabTask.tmp
+        rm /tmp/crontabTask.tmp
+        LOGI "enable automatically clear xray log:${errorfilePath} succeed"
+    else
+        LOGE "errorlog didn't existed,won't automatically clear it"
+    fi
+}
+
+#disable auto dlete log
+disable_auto_clear_log() {
+    crontab -l | grep -v "x-ui clear" | crontab -
+    if [[ $? -ne 0 ]]; then
+        LOGI "cancel  automatically clear xray logs failed"
+    else
+        LOGI "cancel  automatically clear xray logs succeed"
+    fi
+}
+
 show_usage() {
     echo "x-ui control menu usages: "
     echo "------------------------------------------"
@@ -628,6 +788,8 @@ show_usage() {
     echo -e "x-ui update       - Update x-ui "
     echo -e "x-ui install      - Install x-ui "
     echo -e "x-ui uninstall    - Uninstall x-ui "
+    echo "x-ui geo             - Update x-ui geo "
+    echo "x-ui cron            - Cron x-ui jobs"
     echo "------------------------------------------"
 }
 
@@ -656,6 +818,7 @@ show_menu() {
 ————————————————
   ${green}15.${plain} enable bbr 
   ${green}16.${plain} issuse certs
+  ${green}17.${plain} x-ui cron jobs
  "
     show_status
     echo && read -p "please input a legal number[0-16],input 7 for checking login info:" num
@@ -712,8 +875,11 @@ show_menu() {
     16)
         ssl_cert_issue
         ;;
+    17)
+        check_install && cron_jobs
+        ;;
     *)
-        LOGE "please input a legal number[0-16],input 7 for checking login info"
+        LOGE "please input a legal number[0-17],input 7 for checking login info"
         ;;
     esac
 }
@@ -752,6 +918,15 @@ if [[ $# > 0 ]]; then
         ;;
     "uninstall")
         check_install 0 && uninstall 0
+        ;;
+    "geo")
+        check_install 0 && update_geo
+        ;;
+    "clear")
+        check_install 0 && clear_log $2
+        ;;
+    "cron")
+        check_install && cron_jobs
         ;;
     *) show_usage ;;
     esac
