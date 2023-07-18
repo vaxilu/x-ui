@@ -6,6 +6,7 @@ This project is a fork of [vaxilu&#39;s project](https://github.com/vaxilu/x-ui)
 If you need more language options ,please open a issue and let me know that
 
 # Changes   
+- 2023.07.18：Random Reality dest and serverNames;more detailed sniffing settings available  
 - 2023.06.10：Enable TLS will reuse panel's certs and domain;add setting for ocspStapling;refactor device limit  
 - 2023.04.09：Support REALITY for now  
 - 2023.03.05：User expiry time limit for each user  
