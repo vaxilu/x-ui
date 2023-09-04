@@ -22,6 +22,7 @@ import (
 	"x-ui/web/service"
 
 	"github.com/BurntSushi/toml"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -155,6 +156,9 @@ func (s *Server) initRouter() (*gin.Engine, error) {
 	}
 
 	engine := gin.Default()
+
+	// Add GZIP middleware to enable response compression
+	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	secret, err := s.settingService.GetSecret()
 	if err != nil {
