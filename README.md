@@ -201,12 +201,17 @@ xray 状态: 运行
 - [XTLS/Xray-core](https://github.com/XTLS/Xray-core)
 - [telegram-bot-api](https://github.com/go-telegram-bot-api/telegram-bot-api)  
 
-# 赞助  
+# 广告赞助  
 
 如果你觉得本项目对你有用,而且你也恰巧有这方面的需求,你也可以选择通过我的购买链接赞助我  
 - [搬瓦工GIA高端线路](https://bandwagonhost.com/aff.php?aff=65703),仅推荐购买GIA套餐      
 - [Cloudcone性价比主机提供商](https://app.cloudcone.com/?ref=7536)  
-- [Spartan三网4837性价比主机](https://billing.spartanhost.net/aff.php?aff=1875)      
+- [Spartan三网4837性价比主机](https://billing.spartanhost.net/aff.php?aff=1875)
+  
+如果你希望购买一些现成的代理服务,可选择下述代理服务
+- [搬瓦工关联机场](https://justmysocks.net/members/aff.php?aff=18177)  
+- [高端奶昔机场](https://nxboom.com/signupbyemail.aspx?MemberCode=2fd79885e45549049c66698f1eea154620230921234746)
+- [邀请制小机场](https://breakwalls.us/#/register?code=n1RkASl6)
 
 ## Stargazers over time
 
