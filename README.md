@@ -210,8 +210,7 @@ xray 状态: 运行
   
 如果你希望购买一些现成的代理服务,可选择下述代理服务
 - [搬瓦工关联机场](https://justmysocks.net/members/aff.php?aff=18177)  
-- [高端奶昔机场](https://nxboom.com/signupbyemail.aspx?MemberCode=2fd79885e45549049c66698f1eea154620230921234746)
-- [邀请制小机场](https://breakwalls.us/#/register?code=n1RkASl6)
+- [高端奶昔机场](https://nxboom.com/signupbyemail.aspx?MemberCode=2fd79885e45549049c66698f1eea154620230921234746)  
 
 ## Stargazers over time
 
