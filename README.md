@@ -207,7 +207,7 @@ xray 状态: 运行
 - [搬瓦工GIA高端线路](https://bandwagonhost.com/aff.php?aff=65703),仅推荐购买GIA套餐      
 - [Cloudcone性价比主机提供商](https://app.cloudcone.com/?ref=7536)  
 - [Spartan三网4837性价比主机](https://billing.spartanhost.net/aff.php?aff=1875)
-- USDT TRC20:`TY5qQLx8x3oaMxhL3MAFo74dRwBq3Mo7pE` 
+- USDT TRC20:`TYZ5MAq5YvtCMsjQDq1TJZnMWmjMVGLk2T` 
   
 如果你希望购买一些现成的代理服务,可选择下述代理服务
 - [搬瓦工关联机场](https://justmysocks.net/members/aff.php?aff=18177)  
